@@ -50,13 +50,15 @@ META_GROUPS = {
 }
 
 
-def train_metas(n_train: int | None = None) -> dict:
+def train_metas(n_train: int | None = "default") -> dict:
     """Train the meta-classifiers the serving configurations need.
 
     Trained on the 30,000-pair meta set, which is component-disjoint from the
     stream pool, so nothing in the stream was seen during training.
     """
     splits = build_splits()
+    if n_train == "default":
+        n_train = C.META_TRAIN_CAP
     df = splits.meta if n_train is None else splits.meta.iloc[:n_train]
     enc = encode_frame(df, f"meta{len(df)}", with_cross=True)
     out = {}

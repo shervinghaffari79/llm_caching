@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Meta-classifier performance with extended features. 5-fold group-disjoint CV on 30,000 balanced QQP pairs; normalisation fitted inside each training fold.}
+\label{tab:meta_classifier_extended}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lccccc}
+\toprule
+Classifier & Accuracy & Precision & Recall & F1 & AUC\\
+\midrule
+LightGBM & 0.8363 $\pm$ 0.0238 & 0.8223 $\pm$ 0.0193 & 0.8530 $\pm$ 0.0389 & 0.8366 $\pm$ 0.0123 & 0.9156 $\pm$ 0.0228\\
+XGBoost & 0.8345 $\pm$ 0.0198 & 0.8216 $\pm$ 0.0209 & 0.8473 $\pm$ 0.0310 & 0.8338 $\pm$ 0.0147 & 0.9161 $\pm$ 0.0210\\
+RandomForest & 0.8142 $\pm$ 0.0317 & 0.8054 $\pm$ 0.0312 & 0.8267 $\pm$ 0.0692 & 0.8136 $\pm$ 0.0223 & 0.9049 $\pm$ 0.0195\\
+\bottomrule
+\end{tabular}
+}
+\end{table}

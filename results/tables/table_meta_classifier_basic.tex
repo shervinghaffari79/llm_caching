@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Meta-classifier performance with basic features (bi-encoder cosine + cross-encoder score). 5-fold group-disjoint CV on 30,000 balanced QQP pairs; normalisation fitted inside each training fold.}
+\label{tab:meta_classifier_basic}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lccccc}
+\toprule
+Classifier & Accuracy & Precision & Recall & F1 & AUC\\
+\midrule
+LightGBM & 0.7940 $\pm$ 0.0243 & 0.7759 $\pm$ 0.0332 & 0.8215 $\pm$ 0.0576 & 0.7962 $\pm$ 0.0146 & 0.8843 $\pm$ 0.0169\\
+XGBoost & 0.8098 $\pm$ 0.0175 & 0.7798 $\pm$ 0.0356 & 0.8567 $\pm$ 0.0451 & 0.8151 $\pm$ 0.0127 & 0.8947 $\pm$ 0.0172\\
+RandomForest & 0.8099 $\pm$ 0.0207 & 0.7876 $\pm$ 0.0379 & 0.8427 $\pm$ 0.0504 & 0.8126 $\pm$ 0.0164 & 0.8944 $\pm$ 0.0184\\
+\bottomrule
+\end{tabular}
+}
+\end{table}

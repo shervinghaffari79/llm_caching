@@ -1,0 +1,30 @@
+{
+  "audit": {
+    "n_rows_raw": 363846,
+    "n_exact_duplicate_rows": 559,
+    "n_mirrored_duplicate_rows": 250,
+    "n_self_pairs": 869,
+    "n_label_conflicts": 35,
+    "n_rows_clean": 362133,
+    "n_unique_questions": 492156,
+    "n_components": 186028,
+    "largest_component": 9954,
+    "pct_rows_in_top1pct_components": 26.709247707334043
+  },
+  "provenance": {
+    "seed": 42,
+    "meta_components": 16586,
+    "ablation_components": 2066,
+    "component_overlap_meta_ablation": 0,
+    "question_overlap_meta_ablation": 0,
+    "pair_overlap_meta_ablation": 0,
+    "ablation_duplicate_ratio": 0.6,
+    "meta_duplicate_ratio": 0.5
+  },
+  "sizes": {
+    "meta": 30000,
+    "ablation": 3000,
+    "ablation_balanced": 3000,
+    "stream_pool": 254119
+  }
+}

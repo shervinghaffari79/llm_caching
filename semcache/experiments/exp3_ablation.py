@@ -131,7 +131,7 @@ def run_suite(enc, folds, scheme: str, model: str = "LightGBM") -> dict:
             "_cv": cv_objects}
 
 
-def main(model: str = "LightGBM") -> dict:
+def main(model: str = "LightGBM", n_reference: int | None = None) -> dict:
     banner("EXP 3 | Feature-group ablation on the held-out 3,000-pair subset")
     splits = build_splits()
     abl = splits.ablation
@@ -175,15 +175,19 @@ def main(model: str = "LightGBM") -> dict:
         print(f"    {r['group_label']:44s} F1={r['f1_mean']:.4f}")
 
     # ---- the 30k reference, recomputed ---------------------------------
-    print("\n  Recomputing the 30k meta-classifier reference for comparison")
-    enc30 = encode_frame(splits.meta, "meta30000", with_cross=True)
+    ref = splits.meta if n_reference is None else splits.meta.iloc[:n_reference]
+    print(f"\n  Recomputing the {len(ref)}-pair meta-classifier reference "
+          f"for comparison")
+    enc30 = encode_frame(ref, f"meta{len(ref)}", with_cross=True)
     folds30 = make_group_folds(enc30.y, enc30.groups, C.CV_FOLDS_META)
     X30 = enc30.bundle.matrix(("bi_cosine", "cross_score", "distance",
                                "elementwise", "text"))
-    r30 = cross_validate(X30, enc30.y, folds30, model, name="30k_full",
+    r30 = cross_validate(X30, enc30.y, folds30, model,
+                         name=f"reference_{len(ref)}",
                          fold_scheme="stratified_group_kfold").agg()
+    r30["n_pairs"] = int(len(ref))
     full_abl = next(r for r in res_grp["incremental"] if r["label"] == "Full Model")
-    print(f"    30k balanced   F1 = {r30['f1_mean']:.4f} +/- {r30['f1_std']:.4f}")
+    print(f"    {len(ref)} balanced  F1 = {r30['f1_mean']:.4f} +/- {r30['f1_std']:.4f}")
     print(f"    3k  60/40      F1 = {full_abl['f1_mean']:.4f} +/- {full_abl['f1_std']:.4f}")
     print(f"    difference     {full_abl['f1_mean'] - r30['f1_mean']:+.4f}")
 
@@ -246,5 +250,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="LightGBM",
                     choices=["LightGBM", "XGBoost", "RandomForest"])
+    ap.add_argument("--n-reference", type=int, default=None,
+                    help="cap the meta-set reference recomputation (CPU runs)")
     a = ap.parse_args()
-    main(a.model)
+    main(a.model, a.n_reference)

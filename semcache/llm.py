@@ -139,12 +139,29 @@ class LLMBackend:
     mode="replay"  -- reproduce the recorded latency/tokens from the pool
     mode="sim"     -- no API at all; synthesise latency from a fitted lognormal
                       (used for smoke tests and for machines without a key)
+
+    `sleep` controls how a replayed/simulated generation latency is realised:
+
+      sleep=True   the call blocks for the recorded duration, so the caller's
+                   own wall-clock measurement includes it. Highest fidelity,
+                   and the default for the response-time experiment.
+      sleep=False  the call returns immediately and the caller adds
+                   `Generation.latency_s` to its measured elapsed time. The
+                   resulting average is identical in expectation but the run
+                   finishes in minutes instead of hours. Used by experiments
+                   whose headline metric is a hit ratio rather than a latency.
+
+    Which one produced a given result is recorded in the run manifest, because
+    a latency assembled arithmetically and one observed on a clock are not the
+    same evidence and should not be presented as if they were.
     """
 
     def __init__(self, mode: str = "replay", pool: AnswerPool | None = None,
                  model: str = C.LLM_MODEL, sim_mean_s: float = 0.854,
-                 sim_sigma: float = 0.35, seed: int = C.SEED):
+                 sim_sigma: float = 0.35, seed: int = C.SEED,
+                 sleep: bool = True):
         self.mode = mode
+        self.sleep = sleep
         self.model = model
         self.pool = pool or AnswerPool()
         self._client = None
@@ -206,7 +223,8 @@ class LLMBackend:
                 # Not prefetched (should not happen for a prefetched stream):
                 # fall back to simulation rather than silently reporting 0 ms.
                 return self._simulate(query)
-            time.sleep(g.latency_s)                 # reproduce the real cost
+            if self.sleep:
+                time.sleep(g.latency_s)             # reproduce the real cost
             return g
 
         return self._simulate(query)
@@ -216,7 +234,8 @@ class LLMBackend:
         mean = stats.get("mean_s", self.sim_mean_s)
         lat = float(self._rng.lognormal(np.log(max(mean, 1e-3)), self.sim_sigma))
         lat = min(lat, 10.0)
-        time.sleep(lat)
+        if self.sleep:
+            time.sleep(lat)
         pt = count_tokens(C.LLM_SYSTEM_PROMPT) + count_tokens(query)
         return Generation(query=query, answer=f"[simulated answer] {query[:60]}",
                           prompt_tokens=pt, completion_tokens=64,

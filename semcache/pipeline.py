@@ -204,6 +204,10 @@ class SemanticCache:
             stats.tokens_generated += gen.total_tokens
             self._insert(query, eq, gen, topic_id, stats)
             total_s = time.perf_counter() - t0
+            if not getattr(backend, "sleep", True):
+                # Backend returned without blocking; add the generation cost it
+                # would have imposed. Recorded in the manifest as such.
+                total_s += gen.latency_s
             stats.misses += 1
             stats.false_misses += int(oracle)
             stats.true_misses += int(not oracle)
@@ -256,6 +260,9 @@ class SemanticCache:
                 "batch_regime": "online", "batch_size": C.ONLINE_BATCH,
                 "hardware": C.HardwareProfile.capture().as_dict(),
                 "llm_mode": backend.mode, "llm_model": backend.model,
+                "llm_latency_realised_by": (
+                    "blocking wall clock" if getattr(backend, "sleep", True)
+                    else "arithmetic addition of recorded latency"),
                 "workload": wl.meta,
             })
 
@@ -297,6 +304,13 @@ class SemanticCache:
             out["correct_miss_ratio_on_hard_negatives_pct"] = (
                 100.0 * np.mean([not e["hit"] for e in hn]))
             out["n_hard_negatives"] = len(hn)
+            # The precise quantity: among distractors for which nothing
+            # equivalent was resident, how many were correctly sent to the LLM?
+            unserv = [e for e in hn if not e["oracle"]]
+            out["correct_miss_ratio_on_unservable_distractors_pct"] = (
+                100.0 * np.mean([not e["hit"] for e in unserv])
+                if unserv else float("nan"))
+            out["n_unservable_distractors"] = len(unserv)
         if novel:
             out["correct_miss_ratio_on_novel_pct"] = (
                 100.0 * np.mean([not e["hit"] for e in novel]))
@@ -309,10 +323,12 @@ def no_cache_baseline(wl: Workload, backend: LLMBackend) -> dict:
     speed-up factor: it is measured on the same stream, same process, same
     sequential (batch-1) regime as the cached runs."""
     lats, tokens = [], 0
+    blocking = getattr(backend, "sleep", True)
     for ev in wl.events:
         t0 = time.perf_counter()
         g = backend.generate(ev.query)
-        lats.append(time.perf_counter() - t0)
+        dt = time.perf_counter() - t0
+        lats.append(dt if blocking else dt + g.latency_s)
         tokens += g.total_tokens
     v = np.array(lats)
     return {
@@ -323,4 +339,6 @@ def no_cache_baseline(wl: Workload, backend: LLMBackend) -> dict:
         "total_tokens": int(tokens),
         "token_saving_pct": 0.0,
         "avg_overhead_ms": 0.0,
+        "llm_latency_realised_by": ("blocking wall clock" if blocking
+                                    else "arithmetic addition of recorded latency"),
     }

@@ -46,7 +46,11 @@ from .exp2_end_to_end import train_metas
 
 
 def main(config_key: str = "C2_bi_geo_lgb", llm_mode: str = "sim",
-         capacities=(None, 1500, 2000)) -> dict:
+         capacities=(None, 400, 150)) -> dict:
+    """Capacities are chosen to *bind*. Only misses insert, so a 2,000-event
+    stream with a ~60% hit ratio never exceeds ~800 entries; a 1,500-entry
+    cache would evict nothing and the capacity comparison would be vacuous.
+    """
     banner("EXP 5 | Dynamic cache behaviour over a live query stream")
     splits = build_splits()
     wls = build_workloads(splits.stream_pool, lengths=C.STREAM_LENGTHS)
@@ -57,7 +61,9 @@ def main(config_key: str = "C2_bi_geo_lgb", llm_mode: str = "sim",
           f"{wls[longest].meta['top10_topic_share_pct']:.1f}% of traffic")
 
     pool = AnswerPool()
-    backend = LLMBackend(mode=llm_mode, pool=pool)
+    # Hit ratio is this experiment's headline, not wall-clock latency, so
+    # generation cost is added arithmetically rather than slept through.
+    backend = LLMBackend(mode=llm_mode, pool=pool, sleep=False)
     metas = train_metas()
     cfg = C.CONFIGS[config_key]
     print(f"  configuration under test: {cfg.label}")
@@ -72,10 +78,11 @@ def main(config_key: str = "C2_bi_geo_lgb", llm_mode: str = "sim",
             per_length[L] = res.stats
             s = res.stats
             print(f"    cap={str(cap):>5s} L={L:5d} | hit {s['hit_ratio_pct']:5.1f}% "
+                  f"| precision {s['precision_of_hits_pct']:5.1f}% "
                   f"| oracle ceiling {s['oracle_hit_ratio_pct']:5.1f}% "
                   f"| of servable repeats {s.get('hit_ratio_on_servable_repeats_pct', float('nan')):5.1f}% "
-                  f"| correct-miss on distractors "
-                  f"{s.get('correct_miss_ratio_on_hard_negatives_pct', float('nan')):5.1f}% "
+                  f"| correct-miss on unservable distractors "
+                  f"{s.get('correct_miss_ratio_on_unservable_distractors_pct', float('nan')):5.1f}% "
                   f"| evictions {s['evictions']}")
         by_capacity[str(cap)] = per_length
 
