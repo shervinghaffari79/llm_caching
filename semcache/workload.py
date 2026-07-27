@@ -87,9 +87,12 @@ class Workload:
         return pd.DataFrame([e.as_dict() for e in self.events])
 
     def save(self, path: Path) -> Path:
+        # encoding is explicit: QQP contains non-ASCII text, and on Windows
+        # the platform default (cp1252) would write bytes that the utf8 read
+        # in `load` cannot decode.
         path.write_text(json.dumps(
             {"meta": self.meta, "events": [e.as_dict() for e in self.events]},
-            ensure_ascii=False, indent=1))
+            ensure_ascii=False, indent=1), encoding="utf8")
         return path
 
     @staticmethod
@@ -146,6 +149,18 @@ class WorkloadGenerator:
             if self.min_topic_size <= len(mem) <= self.max_topic_size:
                 self.topics.append([text_of[m] for m in mem])
         self.rng.shuffle(self.topics)
+
+        # Reverse index: which topic does a given surface form belong to?
+        # A hard negative drawn from a non-duplicate pair may itself be a
+        # member of some other topic. Assigning it a throwaway negative id
+        # would mark a legitimate hit on that other topic as a false hit and
+        # push the realised hit ratio above the oracle ceiling, which is
+        # incoherent. Distractors therefore carry their true topic when they
+        # have one.
+        self.topic_of_question: dict[str, int] = {}
+        for tid, forms in enumerate(self.topics):
+            for f in forms:
+                self.topic_of_question[f] = tid
 
         # hard negatives: q -> [questions labelled NOT duplicate with q]
         neg = pool[pool.is_duplicate == 0]
@@ -209,10 +224,16 @@ class WorkloadGenerator:
                             q = str(self.rng.choice(cands))
                             break
                 if q is not None:
-                    # A distractor gets its own singleton topic: it must NOT be
-                    # served from the anchor's cached response.
-                    tid = -(len(events) + 1)
-                    events.append(StreamEvent(len(events), q, tid, False, False,
+                    # A distractor must not be served from its *anchor's*
+                    # response. It may still be a legitimate member of another
+                    # topic, in which case that topic is its ground truth.
+                    tid = self.topic_of_question.get(q, -(len(events) + 1))
+                    is_rep = tid >= 0 and tid in seen_set
+                    if tid >= 0 and tid not in seen_set:
+                        seen_topics.append(tid)
+                        seen_set.add(tid)
+                        seen_forms.setdefault(tid, []).append(q)
+                    events.append(StreamEvent(len(events), q, tid, is_rep, False,
                                               True, session_id, turn))
                 else:
                     while next_fresh < len(self.topics) and next_fresh in seen_set:

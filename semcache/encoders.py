@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import contextlib
 import hashlib
+import os
+import sys
 import time
 from pathlib import Path
 
@@ -50,6 +52,13 @@ class StageTimer:
 
     def snapshot_ms(self) -> dict[str, float]:
         return {k: v * 1000.0 for k, v in self.totals.items()}
+
+
+def _progress_ok() -> bool:
+    """Progress bars only when a human is watching; they corrupt captured logs."""
+    if os.environ.get("SEMCACHE_PROGRESS") == "1":
+        return True
+    return sys.stderr.isatty()
 
 
 def configure_torch() -> None:
@@ -97,7 +106,8 @@ class BiEncoder:
             arr = np.load(path)
             if arr.shape[0] == len(texts):
                 return arr
-        arr = self.encode(texts, batch_size=batch_size, show_progress=True)
+        arr = self.encode(texts, batch_size=batch_size,
+                          show_progress=_progress_ok())
         np.save(path, arr)
         return arr
 
@@ -146,7 +156,8 @@ class CrossEncoderWrapper:
             arr = np.load(path)
             if arr.shape[0] == len(pairs):
                 return arr
-        arr = self.score(pairs, batch_size=batch_size, show_progress=True)
+        arr = self.score(pairs, batch_size=batch_size,
+                         show_progress=_progress_ok())
         np.save(path, arr)
         return arr
 
@@ -176,3 +187,6 @@ def warmup() -> None:
     bi = get_bi()
     for _ in range(3):
         bi.encode_one("warmup query for the semantic cache")
+    for name in list(_CE):
+        for _ in range(2):
+            _CE[name].score_one("warmup query", "warm up query")

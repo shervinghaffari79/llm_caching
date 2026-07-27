@@ -1,0 +1,51 @@
+
+==============================================================================
+EXP 2 | End-to-end response time and token savings by configuration
+==============================================================================
+  device=cpu  llm=gpt-5.4-nano (reasoning_effort=none)  mode=replay
+  stream: 300 events, 174 unique, 50.3% repeats (18.3% paraphrase), 14.7% near-duplicate distractors
+
+  [A] prefetching 174 unique queries (pool already holds 0)
+  prefetch 25/174 (errors=0)
+  prefetch 50/174 (errors=0)
+  prefetch 75/174 (errors=0)
+  prefetch 100/174 (errors=0)
+  prefetch 125/174 (errors=0)
+  prefetch 150/174 (errors=0)
+      {'prefetched': 174, 'errors': 0, 'pool_size': 174}
+  [B] sequential latency calibration (no-cache baseline)
+      {'n_sequential': 25, 'mean_s': 2.890114772017114, 'median_s': 2.761981200077571, 'std_s': 0.9918653184206357, 'p95_s': 4.344277539988976}
+  bi-encoded 3000 pairs in 0.0s (offline batching, not used for latency reporting)
+  cross-encoded 3000 pairs in 0.0s
+  trained meta for C2_bi_geo_lgb: 1545 features, 3000 rows
+  trained meta for C4_full_stacking: 1546 features, 3000 rows
+
+  [C] serving 300 requests | Bi-encoder only (cosine threshold)
+      hit ratio      58.0%  (precision of hits 85.6%)
+      overhead/req   67.56 ms
+      avg response   1.346 s
+      token saving   60.2% (correct hits only 51.5%)
+      identity residual +0.4 ms -> CONSISTENT
+
+  [C] serving 300 requests | Bi-encoder + geometric/text features + LightGBM (no cross-encoder)
+      hit ratio      56.3%  (precision of hits 87.0%)
+      overhead/req   70.17 ms
+      avg response   1.389 s
+      token saving   58.7% (correct hits only 51.0%)
+      identity residual +0.8 ms -> CONSISTENT
+
+  [C] serving 300 requests | Bi-encoder + cross-encoder re-ranking
+      hit ratio      57.0%  (precision of hits 86.5%)
+      overhead/req   310.25 ms
+      avg response   1.617 s
+      token saving   59.0% (correct hits only 51.1%)
+      identity residual -4.7 ms -> CONSISTENT
+
+  [C] serving 300 requests | Full stacking ensemble (bi + cross + geometric/text + LightGBM)
+      hit ratio      56.3%  (precision of hits 87.6%)
+      overhead/req   310.61 ms
+      avg response   1.634 s
+      token saving   58.4% (correct hits only 51.1%)
+      identity residual +0.1 ms -> CONSISTENT
+
+  [C] no-cache baseline over the same 300 requests

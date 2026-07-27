@@ -1,0 +1,161 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 4,
+      "cpu": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "platform": "Windows-11-10.0.22631-SP0",
+      "torch_version": "2.2.0+cpu"
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "batch_regime": "online",
+    "index_size": 500,
+    "n_queries": 40
+  },
+  "online_stages_ms": {
+    "bi_encode": {
+      "mean_ms": 58.52187749987934,
+      "median_ms": 56.77014996763319,
+      "p95_ms": 68.26233004103415,
+      "std_ms": 7.889833758464314,
+      "n": 40
+    },
+    "vector_search": {
+      "mean_ms": 1.3803300011204556,
+      "median_ms": 1.0148999863304198,
+      "p95_ms": 2.694750024238595,
+      "std_ms": 0.8894887928228882,
+      "n": 40
+    },
+    "cross_encode": {
+      "mean_ms": 250.29848500562366,
+      "median_ms": 243.03834995953366,
+      "p95_ms": 325.65114499884646,
+      "std_ms": 40.148895706132116,
+      "n": 40
+    },
+    "feat_distance": {
+      "mean_ms": 0.05853750335518271,
+      "median_ms": 0.031100003980100155,
+      "p95_ms": 0.038495054468512514,
+      "std_ms": 0.16841466709004485,
+      "n": 40
+    },
+    "feat_elementwise": {
+      "mean_ms": 0.02097001124639064,
+      "median_ms": 0.0188500271178782,
+      "p95_ms": 0.03629993298090994,
+      "std_ms": 0.005876816666104305,
+      "n": 40
+    },
+    "feat_text": {
+      "mean_ms": 0.03701498790178448,
+      "median_ms": 0.031949952244758606,
+      "p95_ms": 0.0712599663529545,
+      "std_ms": 0.01366075532115494,
+      "n": 40
+    },
+    "feat_bi_cosine": {
+      "mean_ms": 0.009460002183914185,
+      "median_ms": 0.009399955160915852,
+      "p95_ms": 0.010804965859279037,
+      "std_ms": 0.0008998032211313463,
+      "n": 40
+    },
+    "meta_infer": {
+      "mean_ms": 1.5695074980612844,
+      "median_ms": 1.3857500161975622,
+      "p95_ms": 2.4333450593985613,
+      "std_ms": 0.42452145797770846,
+      "n": 40
+    }
+  },
+  "offline_amortised": {
+    "batch_size": 32,
+    "n_pairs": 1000,
+    "bi_encode_ms_per_pair": 48.33085430006031,
+    "cross_encode_ms_per_pair": 255.32280829991217
+  },
+  "batching_speedup_cross": 0.9803216824703466,
+  "per_config": [
+    {
+      "config": "C1_bi_only",
+      "label": "Bi-encoder only (cosine threshold)",
+      "short": "bi-encoder caching",
+      "bi_encode_ms": 58.52187749987934,
+      "vector_search_ms": 1.3803300011204556,
+      "cross_encode_ms": null,
+      "features_meta_ms": null,
+      "total_overhead_ms": 59.90220750099979,
+      "components": {
+        "bi_encoder": true,
+        "cross_encoder": false,
+        "geometric": false,
+        "text": false,
+        "lightgbm": false
+      },
+      "overhead_vs_bi_only_x": 1.0,
+      "cross_encoder_share_pct": 0.0
+    },
+    {
+      "config": "C2_bi_geo_lgb",
+      "label": "Bi-encoder + geometric/text features + LightGBM (no cross-encoder)",
+      "short": "cheap-feature stacking",
+      "bi_encode_ms": 58.52187749987934,
+      "vector_search_ms": 1.3803300011204556,
+      "cross_encode_ms": null,
+      "features_meta_ms": 1.6954900027485564,
+      "total_overhead_ms": 61.59769750374835,
+      "components": {
+        "bi_encoder": true,
+        "cross_encoder": false,
+        "geometric": true,
+        "text": true,
+        "lightgbm": true
+      },
+      "overhead_vs_bi_only_x": 1.028304299181633,
+      "cross_encoder_share_pct": 0.0
+    },
+    {
+      "config": "C3_bi_cross",
+      "label": "Bi-encoder + cross-encoder re-ranking",
+      "short": "cross-encoder re-ranking",
+      "bi_encode_ms": 58.52187749987934,
+      "vector_search_ms": 1.3803300011204556,
+      "cross_encode_ms": 250.29848500562366,
+      "features_meta_ms": null,
+      "total_overhead_ms": 310.20069250662345,
+      "components": {
+        "bi_encoder": true,
+        "cross_encoder": true,
+        "geometric": false,
+        "text": false,
+        "lightgbm": false
+      },
+      "overhead_vs_bi_only_x": 5.1784517707706526,
+      "cross_encoder_share_pct": 80.68920897082756
+    },
+    {
+      "config": "C4_full_stacking",
+      "label": "Full stacking ensemble (bi + cross + geometric/text + LightGBM)",
+      "short": "stacking ensemble caching",
+      "bi_encode_ms": 58.52187749987934,
+      "vector_search_ms": 1.3803300011204556,
+      "cross_encode_ms": 250.29848500562366,
+      "features_meta_ms": 1.6954900027485564,
+      "total_overhead_ms": 311.896182509372,
+      "components": {
+        "bi_encoder": true,
+        "cross_encoder": true,
+        "geometric": true,
+        "text": true,
+        "lightgbm": true
+      },
+      "overhead_vs_bi_only_x": 5.206756069952285,
+      "cross_encoder_share_pct": 80.25057664760054
+    }
+  ],
+  "note": "Overhead is per *request*, not per hit: the similarity decision runs before the hit/miss outcome is known, so it is paid on misses too."
+}

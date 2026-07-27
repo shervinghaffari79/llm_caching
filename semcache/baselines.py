@@ -179,6 +179,8 @@ class BaselineCache:
                 stats.tokens_generated += gen.total_tokens
                 self._insert(ev.query, eq, gen, ev.topic_id, stats, ev)
                 total_s = time.perf_counter() - t0
+                if not getattr(backend, "sleep", True):
+                    total_s += gen.latency_s
                 stats.misses += 1
                 stats.false_misses += int(oracle)
                 stats.true_misses += int(not oracle)

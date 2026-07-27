@@ -43,7 +43,9 @@ def main(n_stream: int = 2000, config_key: str = "C2_bi_geo_lgb",
     banner("EXP 7 | Eviction policies on a dynamic stream + weight sensitivity")
     splits = build_splits()
     wl = build_workloads(splits.stream_pool, lengths=(n_stream,))[n_stream]
-    backend = LLMBackend(mode=llm_mode, pool=AnswerPool())
+    # Same rationale as exp5: the metric here is hit ratio, and the weight
+    # sweep runs the stream dozens of times.
+    backend = LLMBackend(mode=llm_mode, pool=AnswerPool(), sleep=False)
     metas = train_metas()
     cfg = C.CONFIGS[config_key]
     meta = metas.get(config_key)

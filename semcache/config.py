@@ -119,6 +119,13 @@ N_ABLATION_BALANCED = 3_000  # 1500/1500 stability re-check
 CV_FOLDS_META = 5
 CV_FOLDS_CROSS = 3
 
+# Cap on the number of meta-set pairs used to FIT the serving meta-classifiers
+# (exp2/5/6/7). None = use all N_META. Exists because cross-encoding 30k pairs
+# is minutes on a GPU and hours on a CPU; set SEMCACHE_META_TRAIN_CAP to keep
+# a CPU smoke run tractable. It does not affect the reported CV tables, which
+# always use the full set.
+META_TRAIN_CAP = int(os.environ.get("SEMCACHE_META_TRAIN_CAP", "0")) or None
+
 # --------------------------------------------------------------------------
 # Workload simulation (dynamic stream)
 # --------------------------------------------------------------------------
