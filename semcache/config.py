@@ -91,11 +91,15 @@ class HardwareProfile:
     @staticmethod
     def capture() -> "HardwareProfile":
         import torch
-        dev = "cuda" if torch.cuda.is_available() else "cpu"
+        dev = ("cuda" if torch.cuda.is_available()
+               else "mps" if torch.backends.mps.is_available()
+               else "cpu")
         if dev == "cuda":
             cpu = torch.cuda.get_device_name(0)
         else:
             cpu = platform.processor() or platform.machine()
+        # On Apple Silicon "cpu" alone is ambiguous about whether MPS was
+        # actually used; the device field itself disambiguates that.
         return HardwareProfile(
             device=dev,
             torch_threads=torch.get_num_threads(),

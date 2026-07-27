@@ -61,6 +61,14 @@ def _progress_ok() -> bool:
     return sys.stderr.isatty()
 
 
+def _default_device() -> str:
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 def configure_torch() -> None:
     torch.set_grad_enabled(False)
     if C.TORCH_THREADS:
@@ -75,7 +83,7 @@ class BiEncoder:
         from sentence_transformers import SentenceTransformer
         configure_torch()
         self.name = name
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or _default_device()
         self.model = SentenceTransformer(name, device=self.device)
         self.model.eval()
 
@@ -124,7 +132,7 @@ class CrossEncoderWrapper:
         from sentence_transformers import CrossEncoder
         configure_torch()
         self.name = name
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or _default_device()
         self.model = CrossEncoder(name, device=self.device)
         self.model.model.eval()
 
