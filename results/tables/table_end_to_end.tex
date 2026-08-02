@@ -1,0 +1,18 @@
+\begin{table*}[htbp]
+\centering
+\caption{End-to-end serving results on the QQP-derived query stream. Every column comes from the same run of the same configuration, so the overhead, response time and token savings are mutually consistent (residual of the identity $\bar{T}=\bar{o}+(1-h)\bar{g}$ reported in the last column).}
+\label{tab:end_to_end}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Configuration} & \textbf{Overhead/req} & \textbf{Hit Ratio} & \textbf{Avg Response} & \textbf{Speed-up} & \textbf{Token Saving} & \textbf{Residual} \\
+\midrule
+No cache (direct LLM) & -- & -- & 4.518 s & 1.00$\times$ & 0.0\% & -- \\
+Bi-encoder only (cosine threshold) & 47.10 ms & 64.2\% & 1.124 s & 4.02$\times$ & 65.3\% & -1.6 ms \\
+Bi-encoder + geometric/text features + LightGBM (no cross-encoder) & 48.02 ms & 63.0\% & 1.167 s & 3.87$\times$ & 64.0\% & -0.0 ms \\
+Bi-encoder + cross-encoder re-ranking & 99.04 ms & 63.2\% & 1.210 s & 3.73$\times$ & 64.3\% & -2.2 ms \\
+Full stacking ensemble (bi + cross + geometric/text + LightGBM) & 92.28 ms & 62.5\% & 1.226 s & 3.69$\times$ & 63.7\% & +0.5 ms \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

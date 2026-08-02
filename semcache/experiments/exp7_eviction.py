@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import itertools
+import json
 
 import numpy as np
 
@@ -50,14 +51,44 @@ def main(n_stream: int = 2000, config_key: str = "C2_bi_geo_lgb",
     print(f"  configuration: {cfg.label}")
     print(f"  stream: {n_stream} events, {wl.meta['n_topics']} topics")
 
-    curves: dict[str, dict[int, float]] = {}
-    detail: dict[str, dict[str, dict]] = {}
+    checkpoint_path = C.RAW_DIR / "exp7_eviction_checkpoint.json"
+    checkpoint = {}
+    if checkpoint_path.exists():
+        try:
+            checkpoint = json.loads(checkpoint_path.read_text(encoding="utf8"))
+            print(f"  resuming checkpoint {checkpoint_path}")
+        except Exception:
+            checkpoint = {}
+
+    def save_checkpoint() -> None:
+        save_json({
+            "n_stream": n_stream,
+            "config_key": config_key,
+            "llm_mode": llm_mode,
+            "curves": curves,
+            "detail": detail,
+            "weight_rows": checkpoint.get("weight_rows", []),
+            "paper_weights_run": checkpoint.get("paper_weights_run"),
+        }, checkpoint_path.name)
+
+    curves: dict[str, dict[int, float]] = {
+        policy: {int(cap): float(hit) for cap, hit in caps.items()}
+        for policy, caps in checkpoint.get("curves", {}).items()
+    }
+    detail: dict[str, dict[str, dict]] = checkpoint.get("detail", {})
     for policy in ("SemanticDecay", "LRU", "LFU"):
-        curves[policy], detail[policy] = {}, {}
+        curves.setdefault(policy, {})
+        detail.setdefault(policy, {})
         for cap in C.CACHE_SIZES_EVICTION:
+            if str(cap) in detail[policy]:
+                s = detail[policy][str(cap)]
+                curves[policy][cap] = s["hit_ratio_pct"]
+                print(f"    {policy:14s} cap={cap:4d} resumed from checkpoint")
+                continue
             s = _run(cfg, meta, wl, backend, cap, policy)
             curves[policy][cap] = s["hit_ratio_pct"]
             detail[policy][str(cap)] = s
+            save_checkpoint()
             print(f"    {policy:14s} cap={cap:4d} hit={s['hit_ratio_pct']:5.1f}% "
                   f"precision={s['precision_of_hits_pct']:5.1f}% "
                   f"evictions={s['evictions']:4d} "
@@ -85,17 +116,32 @@ def main(n_stream: int = 2000, config_key: str = "C2_bi_geo_lgb",
         print("\n  Weight sensitivity (cap=500), simplex grid over (w1,w2,w3):")
         grid = [w for w in itertools.product(np.arange(0.0, 1.01, 0.2), repeat=3)
                 if abs(sum(w) - 1.0) < 1e-6]
-        rows = []
+        rows = list(checkpoint.get("weight_rows", []))
+        done_weights = {
+            (round(r["w_freshness"], 6), round(r["w_age"], 6),
+             round(r["w_boost"], 6))
+            for r in rows
+        }
         for w in grid:
+            key = tuple(round(float(v), 6) for v in w)
+            if key in done_weights:
+                continue
             s = _run(cfg, meta, wl, backend, 500, "SemanticDecay", weights=tuple(w))
             rows.append({"w_freshness": float(w[0]), "w_age": float(w[1]),
                          "w_boost": float(w[2]),
                          "hit_ratio_pct": s["hit_ratio_pct"],
                          "precision_of_hits_pct": s["precision_of_hits_pct"]})
+            checkpoint["weight_rows"] = rows
+            done_weights.add(key)
+            save_checkpoint()
         rows.sort(key=lambda r: -r["hit_ratio_pct"])
         hits = np.array([r["hit_ratio_pct"] for r in rows])
-        paper = _run(cfg, meta, wl, backend, 500, "SemanticDecay",
-                     weights=(C.SD_W_FRESHNESS, C.SD_W_AGE, C.SD_W_BOOST))
+        paper = checkpoint.get("paper_weights_run")
+        if paper is None:
+            paper = _run(cfg, meta, wl, backend, 500, "SemanticDecay",
+                         weights=(C.SD_W_FRESHNESS, C.SD_W_AGE, C.SD_W_BOOST))
+            checkpoint["paper_weights_run"] = paper
+            save_checkpoint()
         sens = {
             "grid_points": len(rows),
             "best": rows[0], "worst": rows[-1],
@@ -131,6 +177,7 @@ def main(n_stream: int = 2000, config_key: str = "C2_bi_geo_lgb",
                    "as preliminary."),
     }
     save_json(out, "exp7_eviction")
+    checkpoint_path.unlink(missing_ok=True)
     return out
 
 

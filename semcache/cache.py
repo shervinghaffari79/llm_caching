@@ -22,6 +22,7 @@ which separates similarity-model error from cold-start and eviction effects.
 """
 from __future__ import annotations
 
+import os
 import time
 from collections import OrderedDict, defaultdict
 from dataclasses import dataclass, field
@@ -93,6 +94,11 @@ class VectorBase:
         if use_faiss:
             try:
                 import faiss
+                # Batch-1 searches can stall in FAISS's macOS OpenMP runtime
+                # when it joins a multi-threaded pool. Keep FAISS single-threaded
+                # without reducing Torch's MPS helper threads.
+                faiss.omp_set_num_threads(
+                    int(os.environ.get("SEMCACHE_FAISS_THREADS", "1")))
                 self._faiss = faiss
                 self.index = faiss.IndexIDMap2(faiss.IndexFlatIP(dim))
             except Exception:

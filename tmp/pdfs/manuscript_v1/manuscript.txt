@@ -1,0 +1,1569 @@
+Stacking Ensembles and Decay-Aware Eviction for Semantic
+  Caching in LLM-based Systems: When Cheap Features
+                Beat Expensive Encoders
+
+                 Shervin Ghaffaria , Zohre Bahranifarda , Mehdi Ghateea,∗
+
+a
+    Department of Mathematics and Computer Science, Amirkabir University of Technology, Hafez
+                                Ave., Tehran, 15875-4413, Iran
+
+
+
+
+Abstract
+
+
+Semantic caching improves LLM system efficiency by storing and reusing responses
+for semantically similar queries. Most existing frameworks rely on a single embedding
+model, which struggles to cover the different types of semantic relationships found in
+real query traffic. We build a stacking ensemble that combines a bi-encoder, a cross-
+encoder, and a set of geometric and text-based features through a LightGBM meta-
+classifier. We evaluate the approach on the Quora Question Pairs (QQP) dataset,
+validate it on the Semantic Textual Similarity (STS) benchmark, and use QQP query
+pairs to measure per-component latency and feature-group contributions. A feature-
+level ablation shows that most of this gain comes from geometric features derived
+from the bi-encoder embeddings rather than from the cross-encoder itself, whose re-
+moval changes the ensemble F1 score by less than 0.001 despite accounting for over
+95% of the added inference latency. The cross-encoder can therefore be treated as
+
+    ∗
+   Corresponding Author
+   Email addresses: shervinghaffari@aut.ac.ir (Shervin Ghaffari),
+Z.bahranifard@aut.ac.ir (Zohre Bahranifard), ghatee@aut.ac.ir (Mehdi Ghatee )
+an optional component, dropped when latency matters more than a small gain in ac-
+curacy. On QQP, the system shows over 90% token savings and a 2.7× reduction in
+average response time on cache hits. Lightweight, embedding-derived features com-
+bined with a learned meta-classifier give most of the benefit of a full bi-encoder and
+cross-encoder ensemble, offering practitioners a measured latency-accuracy tradeoff
+for deploying semantic caches in production.
+Keywords: Semantic Caching, Stacking Ensemble, Large Language Models, Cache
+Eviction Policy, Latency-Accuracy Tradeoff, Feature Ablation
+
+
+1. Introduction
+
+The rapid advancement of large language models (LLMs) has transformed natural
+language processing applications, with models from OpenAI, Meta, and Anthropic
+demonstrating remarkable capabilities in text summarization, translation, content
+generation, and sentiment analysis (Brown et al., 2020; Jin et al., 2025; Guo et al.,
+2026). However, the computational expense of LLM inference, coupled with token-
+based pricing models, creates significant cost and latency challenges for production
+systems (Huang et al., 2024).
+
+Research indicates that approximately 31% of ChatGPT queries exhibit semantic
+similarity to previously submitted requests (Gill et al., 2024), revealing substantial
+inefficiencies in current LLM deployment strategies. Since users incur costs based
+on both input and output tokens processed, optimizing the handling of repetitive
+queries presents a critical opportunity to reduce operational expenses and improve
+system responsiveness.
+
+Semantic caching addresses this challenge by storing and reusing responses based on
+
+
+                                          2
+the meaning of queries rather than exact textual matches (Luo et al., 2025). Unlike
+traditional keyword-based caching, semantic caching leverages embedding models
+(Reimers and Gurevych, 2019; Deerwester et al., 1990; Tu et al., 2024) to identify
+semantically equivalent queries, enabling response reuse across paraphrased or refor-
+mulated requests. This approach has been implemented in systems like GPTCache
+(Bang et al., 2023), an open-source framework that provides modular components
+for embedding generation, similarity evaluation, and cache management.
+
+Despite these advances, current semantic caching systems face a fundamental limi-
+tation: their reliance on single-sentence transformer models for semantic comparison
+(Li et al., 2025b). While individual models excel in specific semantic dimensions, for
+example, bi-encoders provide efficient similarity scoring but may miss nuanced se-
+mantic interactions that cross-encoders capture through token-level attention. Thus,
+no single model consistently performs well across all query types and domains.
+
+To address these limitations, we contribute two aspects that target both seman-
+tic similarity detection and cache management optimization. First, we develop a
+stacking ensemble method for improved query similarity assessment that combines
+complementary embedding architectures: a bi-encoder for efficient initial similarity
+scoring and a cross-encoder for capturing fine-grained semantic interactions. Then,
+a LightGBM serves as a meta-classifier to optimally weight and combine the simi-
+larity predictions. Second, we introduce a novel Semantic Decay eviction policy for
+intelligent cache replacement that incorporates both temporal access patterns and
+semantic relationships between cached queries, moving beyond traditional frequency
+and recency-based approaches to preserve semantically valuable cache entries.
+
+We evaluate our approach comprehensively using the Quora Question Pairs (QQP)
+
+
+                                          3
+dataset (Iyer et al., 2017) as our primary benchmark and validate cross-domain
+adaptability on the Semantic Text Similarity (STS) benchmark dataset (Cer et al.,
+2017). Our evaluation framework measures cache hit ratios, token savings, and
+response time improvements to assess caching effectiveness. Our evaluation demon-
+strates that the stacking ensemble approach achieves substantially improved cache
+performance metrics with significant relative improvements over both individual
+models and traditional eviction policies.
+
+While earlier work has combined bi-encoders and cross-encoders for semantic simi-
+larity, most of these combinations are evaluated purely on classification metrics and
+rarely measure the actual computational price of adding a cross-encoder to a caching
+pipeline that must respond in real time. A caching system is only useful if it is fast
+enough to beat calling the LLM directly, so accuracy gains that come at a large la-
+tency cost need to be reported together with that cost, not separately. We take this
+position seriously in our evaluation: alongside classification metrics, we measure the
+per-query latency contributed by each component of our stacking ensemble on the
+same QQP query pairs used for our accuracy evaluation, so that the latency-accuracy
+tradeoff is reported on a single, consistent dataset rather than inferred indirectly.
+
+The primary contributions of this work are:
+
+  1. a stacking ensemble framework that combines bi-encoder embeddings, cross-
+     encoder scores, and a set of geometric and text-based features through a trained
+     meta-classifier, giving a substantial improvement in similarity detection over
+     any single model,
+  2. a systematic comparison of meta-classifier choices, including LightGBM, XG-
+     Boost, and Random Forest, across multiple feature configurations and two
+
+
+                                            4
+     datasets,
+  3. a feature-level ablation study on QQP query pairs, showing that most of the
+     ensemble’s accuracy gain comes from geometric features computed directly
+     from the bi-encoder embeddings, while the cross-encoder contributes only a
+     small, sometimes negligible improvement despite accounting for most of the
+     added latency, which gives practitioners a concrete basis for deciding whether
+     the cross-encoder is worth including in a given deployment,
+  4. a latency and feature-importance analysis on QQP query pairs, measured on
+     the same dataset and labeling scheme used for our accuracy evaluation, giving
+     a consistent basis for reasoning about the latency-accuracy tradeoff,
+  5. cross-dataset validation demonstrating generalizability across QQP binary clas-
+     sification and STS regression tasks.
+
+
+2. Related Work
+
+In contemporary engineering applications, the optimization of machine learning method-
+ologies and deep neural networks has emerged as a critical focus area (Guo et al.,
+2025; Naderi and Shojaei, 2025; Gebreab et al., 2026; Cremaschi et al., 2025). The
+trends of model compression, alongside the minimization of processing, inference,
+and search times, are increasingly pertinent. This paper specifically addresses the
+imperative of reducing processing times associated with query processing and the
+efficient retrieval of relevant responses within Large Language Models (LLMs). By
+streamlining these aspects, we aim to enhance the overall performance and applica-
+bility of such advanced systems.
+
+
+
+
+                                            5
+2.1. Semantic Caching for LLMs
+The challenge of optimizing LLM inference costs has led to significant research in
+semantic caching approaches. Early frameworks like GPTCache established the foun-
+dation for semantic similarity-based response reuse, utilizing single embedding mod-
+els to identify semantically equivalent queries. However, recent work has identified
+several limitations in these baseline approaches, leading to more sophisticated caching
+strategies (Tu et al., 2024; Sun et al., 2024).
+
+Semantic Caching for Automated LLMs (SCALM) addresses inefficiencies in tradi-
+tional semantic caching by incorporating pattern detection and frequency analysis
+(Li et al., 2024). The system identifies the most frequent cache entries and query
+patterns in LLM-based chat services, ranking queries based on detected patterns
+to optimize cache hit ratios. Experimental evaluation demonstrates that SCALM
+achieves a 63% relative increase in cache hit ratio and a 77% reduction in token
+usage compared to GPTCache. Despite these improvements, SCALM maintains the
+single embedding model paradigm, which limits its ability to generalize across diverse
+query semantics and complex real-world interactions.
+
+Generative Caching for LLMs introduces a dynamic approach that balances cost,
+latency, and response quality through adaptive similarity thresholds (Iyengar et al.,
+2025). The system adjusts thresholds based on query complexity, user preferences,
+and computational constraints. For instance, code generation queries receive higher
+similarity thresholds to ensure response accuracy, while simple question-answering
+tasks operate with lower thresholds to maximize cache utilization. The framework
+additionally supports response synthesis for novel queries by combining cached re-
+sponses. Performance evaluation shows nine-fold speed improvements over GPT-
+Cache, with customizable parameters allowing users to select domain-appropriate
+
+                                           6
+embedding models.
+
+2.1.1. Evolution Beyond Static Thresholds
+Recent research has identified critical limitations in first-generation semantic caching
+systems that rely on static similarity thresholds. VectorQ addresses this brittleness
+by introducing adaptive thresholding mechanisms that dynamically adjust decision
+boundaries based on query characteristics and embedding distributions (Schroeder
+et al., 2025). This demonstrates that significant performance gains can be achieved
+not just through better similarity metrics, but through more intelligent decision-
+making processes.
+
+2.1.2. Context-Aware Caching Paradigms
+The assumption that queries can be evaluated in isolation has proven flawed for
+multi-turn conversational applications. ContextCache introduces a two-stage re-
+trieval architecture that uses self-attention mechanisms to integrate current queries
+with historical dialogue context (Yan et al., 2025). This context-aware approach en-
+ables disambiguation of semantically similar but contextually distinct queries, high-
+lighting that the definition of a "match" is itself context-dependent.
+
+2.1.3. From Retrieval to Augmentation and Refinement
+The most recent advancements represent a conceptual leap, reframing caches from
+passive response repositories to active knowledge bases. IC-Cache leverages historical
+request-response pairs as in-context examples to augment new prompts, enabling
+smaller models to be guided by larger "teacher" models (Yu et al., 2025). Similarly,
+TweakLLM proposes a two-tier architecture where cached responses are refined by
+small "tweaker" models rather than returned identically (Cheema et al., 2025). These
+approaches demonstrate that semantic caching principles can extend beyond final
+
+                                           7
+query-response pairs to intermediate workflow artifacts (Couturier et al., 2025).
+
+2.2. Stacking Ensemble Approaches for Semantic Similarity
+
+The motivation for combining bi-encoder and cross-encoder architectures is well-
+established in information retrieval literature. Bi-encoders provide computational
+efficiency through independent sentence encoding, while cross-encoders offer supe-
+rior accuracy through joint processing at a higher computational cost (Reimers and
+Gurevych, 2019).
+
+A direct precedent for this combination is the Sentence-CROBI architecture, which
+explicitly combines signals from both architectures for semantic textual relatedness
+tasks (Ortiz-Barajas and Bel-Enguix, 2024). However, Sentence-CROBI relies on
+manual feature engineering, concatenating the cross-encoder’s [CLS] token embed-
+ding, bi-encoder Euclidean distances, and raw sentence embeddings into a fixed vec-
+tor for a simple MLP.
+
+Our stacking approach represents a methodological advance through the use of
+stacked generalization rather than fixed concatenation. The LightGBM meta-classifier
+learns optimal, non-linear combinations of diverse similarity signals from training
+data, moving beyond engineered fusion to learned fusion strategies. This progression
+from cascade approaches (bi-encoder retrieval, cross-encoder re-ranking) to engi-
+neered unification (Sentence-CROBI) to learned unification (our stacking ensemble)
+represents the evolution of semantic similarity modeling.
+
+2.3. Semantic Caching in the Broader LLM Optimization Context
+
+Semantic caching represents one component of a comprehensive LLM optimization
+ecosystem. Complementary techniques target different aspects of inference efficiency:
+
+
+                                         8
+speculative decoding reduces per-token generation costs through draft model accel-
+eration (Bhattacharjee et al., 2024), quantization methods like SiLQ reduce memory
+footprints through lower-precision representations (Esser et al., 2025), and knowl-
+edge distillation techniques like Delta-KD enable smaller student models to capture
+larger teacher model capabilities (Cao et al., 2025). Other lines of work target the
+architecture of the model itself rather than the serving pipeline around it. Neural
+block linearization reduces the cost of attention computation by replacing selected
+transformer blocks with linear approximations (Erdogan et al., 2025), while recurrent
+architectures such as xLSTM 7B aim to reach comparable quality to transformer-
+based LLMs with faster and more memory-efficient inference (Beck et al., 2025).
+At the level of decoding strategy rather than the model architecture itself, Min-
+ions accelerates inference by having several small speculative models jointly propose
+candidate tokens through a majority-voting mechanism, which the main LLM then
+verifies, improving on single-speculator approaches (Wang et al., 2024b). These tech-
+niques address different bottlenecks than semantic caching, since they change how
+a single query is processed, while semantic caching changes whether a query needs
+to be processed at all, but they remain relevant to caching system design because a
+faster underlying LLM changes the latency budget available for similarity detection
+at the front end.
+
+These approaches are synergistic rather than competitive. A production system
+might employ distilled and quantized models served via speculative decoding, with
+the entire pipeline fronted by semantic caching using our proposed stacking ensem-
+ble. This positions our contributions as one component among several in end-to-end
+optimization strategies for efficient LLM deployment.
+
+
+
+
+                                         9
+Figure 1: Semantic caching system architecture showing the cache components (Cachebase and
+Vectorbase), and the query processing flow.
+
+
+3. Methodology
+
+In this section, we present our comprehensive approach to semantic caching by estab-
+lishing (1) a theoretical foundation that grounds our work in established principles,
+(2) the overall system architecture that operationalizes these principles, (3) a stack-
+ing ensemble design that systematically combines multiple similarity signals, (4) a
+feature extraction pipeline capturing semantic relationships at multiple levels, and
+(5) a novel Semantic Decay eviction policy that incorporates semantic relationships
+into cache management decisions.
+
+3.1. Theoretical Foundation
+
+3.1.1. Semantic Caching Framework
+Semantic caching operates within the theoretical framework of approximate similarity
+search in high-dimensional spaces, extending traditional caching theory to account
+
+
+                                              10
+for semantic relationships rather than exact matches. Formally, given a query q and
+cache entries C = {c1 , c2 , ..., cn }, we seek to determine if there exists ci ∈ C such
+that sim(q, ci ) ≥ τ , where τ is a similarity threshold and sim is a semantic similarity
+function.
+
+This formulation transforms caching from a simple lookup problem to a hypothesis
+testing problem in metric spaces, where we aim to maximize the probability of correct
+cache hits while minimizing false positives under semantic similarity constraints.
+
+3.1.2. Ensemble Learning Theory
+Our stacking ensemble approach is grounded in the bias-variance decomposition
+framework and the theory of stacked generalization. Individual embedding mod-
+els exhibit complementary error patterns due to their different architectural biases:
+
+                             simB (q, c) = cos(fB (q), fB (c))                       (1)
+
+                                  simC (q, c) = fC (q, c)                            (2)
+
+The bi-encoder fB provides computational efficiency through independent encoding
+but may miss nuanced token-level interactions. The cross-encoder fC captures fine-
+grained semantic relationships through joint encoding but at a higher computational
+cost. Our stacking ensemble learns the following optimal combination:
+
+                  simensemble (q, c) = g(simB (q, c), simC (q, c), ϕ(q, c))          (3)
+
+where g is a meta-classifier and ϕ represents additional feature transformations. This
+approach theoretically achieves superior performance by reducing variance through
+model averaging while minimizing bias through learned combination weights.
+
+
+
+
+                                             11
+3.2. Semantic Caching System Architecture
+
+As illustrated in Figure 1, our system architecture integrates a dual-embedding
+framework with a comprehensive cache management system. The embedding frame-
+work consists of two specialized models: a bi-encoder for generating query embed-
+dings and a cross-encoder for directly computing similarity scores between query
+pairs. These complementary similarity signals are then integrated through a meta-
+classifier implemented using LightGBM (Ke et al., 2017), which makes the final
+similarity determination. When the highest similarity score exceeds a predefined
+threshold, the system retrieves and returns the cached response associated with the
+most similar stored query. Conversely, when no sufficiently similar query is found
+(cache miss), the LLM generates a new response, which is subsequently stored in
+both CacheBase and VectorBase to enhance future query processing.
+
+3.3. Stacking Ensemble Architecture
+
+In this section, we detail our stacking ensemble architecture, which forms the core
+technical contribution of this work. The ensemble framework is designed to overcome
+the limitations of single-model approaches by leveraging complementary strengths of
+different embedding architectures through a learned fusion strategy. We first present
+the overall architecture, followed by the feature extraction pipeline and meta-classifier
+training methodology.
+
+3.3.1. Feature Extraction Pipeline
+Our stacking ensemble employs a multilevel feature extraction approach designed to
+capture complementary semantic information from different perspectives.
+
+Level 1: Base Model Features
+
+
+
+                                           12
+   • Bi-encoder Features: Cosine similarity computed from 768-dimensional em-
+     beddings generated by
+     all-mpnet-base-v2
+
+   • Cross-encoder Features: Normalized similarity scores from
+     cross-encoder/stsb-roberta-large, transformed using sigmoid function to
+     ensure outputs in [0,1]
+
+Level 2: Extended Embedding Features
+
+When extended features are enabled, we compute additional embedding based on
+the following approaches:
+
+   • Distance Metrics: Euclidean distance (||e1 − e2 ||2 ) and Manhattan distance
+     (||e1 − e2 ||1 )
+
+   • Element-wise Operations: Product (e1 ⊙ e2 ) for feature interactions and
+     absolute difference (|e1 − e2 |) for dissimilarity
+
+Level 3: Text-based Features Surface-level textual patterns are captured through:
+
+   • Length Statistics: Character and word counts for both queries
+
+   • Length Ratio: max(len
+                   min(len1 ,len2 )
+                           1 ,len2 )
+                                     to quantify length similarity
+
+   • Word Overlap: Jaccard coefficient |words 1 ∩words2 |
+                                       |words1 ∪words2 |
+
+
+   • Normalized Edit Distance: Character-based similarity computed as number  of edits needed
+                                                                      length of longest query
+                                                                                              ∈
+     [0, 1]
+
+Feature Engineering Rationale: Each feature type captures distinct informa-
+
+
+                                           13
+tion: bi-encoder features provide global semantic similarity, cross-encoder features
+capture fine-grained interactions, distance metrics offer geometric perspectives on
+the embedding space, and text features capture surface patterns potentially missed
+by embeddings.
+
+All continuous features undergo z-score normalization: fnormalized = f −µ
+                                                                       σ
+                                                                          , where µ
+and σ are computed from training data and applied consistently across all sets.
+
+3.3.2. Meta-Classifier Selection and Training
+Meta-Classifier Selection: Extensive evaluation across multiple architectures and
+feature configurations reveals that LightGBM (Ke et al., 2017) with extended fea-
+tures achieves optimal performance (F1: 0.8716 ± 0.0040, AUC: 0.9336 ± 0.0049).
+Extended features consistently improve all classifiers, with gradient boosting methods
+(LightGBM, XGBoost (Chen and Guestrin, 2016)) demonstrating superior perfor-
+mance compared to Random Forest (Breiman, 2001), indicating their effectiveness
+for this feature combination task.
+
+Training Procedure: The stacking ensemble is trained using a two-stage process
+that first extracts features from base models, then trains the meta-classifier on labeled
+query pairs from the QQP dataset.
+
+During training, each query pair is processed through both the bi-encoder and cross-
+encoder to extract base features. The bi-encoder generates embeddings and computes
+cosine similarity, while the cross-encoder produces direct similarity scores. When
+extended features are enabled, the system computes supplementary metrics from the
+embeddings and text properties.
+
+We employ stratified k-fold cross-validation to rigorously train and evaluate our mod-
+
+
+                                           14
+els. The value of k for each component is judiciously determined based on a com-
+prehensive analysis of experimental results, data volume, and hardware constraints.
+This methodological approach ensures robust performance assessment and enhances
+the reliability of our findings. The following are considered:
+
+   • Bi-encoders: 5-fold cross-validation on 50,000 balanced samples
+
+   • Cross-encoders: 3-fold cross-validation on 10,000 balanced samples
+
+   • Meta-classifier: 5-fold cross-validation on 30,000 balanced samples with fea-
+     tures extracted from pre-selected best base models
+
+For each fold, the meta-classifier is trained on the combined feature representations
+from the training portion, with hyperparameters optimized through grid search. The
+fold-specific optimal threshold (for individual models) or probability threshold (for
+the ensemble) is determined on the validation portion. Training configuration varies
+by meta-classifier type: the tree-based models, LightGBM and XGBoost, use early
+stopping based on validation performance with regularization parameters optimized
+through cross-validation, while Random Forest employs out-of-bag error estimation
+with hyperparameters tuned via grid search. Final performance metrics are com-
+puted as the average across all folds, with standard deviations reported to indicate
+consistency.
+
+3.4. Semantic Decay Eviction Policy
+
+Traditional cache eviction policies like LRU and LFU rely solely on temporal or
+frequency-based metrics, ignoring the semantic relationships between cached queries.
+Our novel semantic decay policy addresses this limitation by incorporating both tem-
+poral dynamics and semantic relationships through a comprehensive scoring mecha-
+
+
+                                          15
+nism that determines which entries to evict when the cache reaches capacity.
+
+The policy computes a composite score for each cached query q at time t using the
+following formula:
+
+
+
+
+                 Score(q, t) = w1 × F reshness(q, t) + w2 × Age(q, t)
+                                                                                    (4)
+                               + w3 × Boost(q, t)
+
+
+Each component plays a distinct role in the eviction decision. Freshness(q, t) quanti-
+fies a query’s relevance to recent access patterns by calculating the average semantic
+similarity between q and the n most recent queries, retaining entries that align with
+contemporary usage. Age(q, t) assesses the temporal stability of a query’s relevance
+through an exponential decay function e−λ(t−t0 ) , where t0 is the entry’s creation time
+and λ is a learned decay rate, gradually reducing relevance over time while still
+preserving entries of historical significance. Boost(q, t) introduces a semantic clus-
+tering effect by augmenting the scores of entries semantically similar to frequently
+accessed queries, maintaining coherent semantic neighborhoods within the cache and
+optimizing retrieval for related queries.
+
+The weights associated with these components were optimized through a grid search
+on validation data: w1 = 0.28 for Freshness, prioritizing relevance to the present
+workload; w2 = 0.38 for Age, emphasizing temporal stability for sustained utility;
+and w3 = 0.34 for Boost, sustaining semantic clustering among contextually related
+queries. When the cache reaches its maximum capacity, entries with the lowest com-
+posite scores are evicted first, so the cache retains not only frequently or recently
+accessed entries but also those with the highest semantic value to the current and an-
+
+
+                                            16
+ticipated workload. The policy adapts to changing query patterns while maintaining
+semantic coherence, yielding higher hit ratios than conventional caching methodolo-
+gies.
+
+3.5. Evaluation Framework
+
+3.5.1. LLM and System Configuration
+In our evaluation of response generation in caching mechanisms, we employ the
+Qwen3-4B-Instruct-2507 model, utilizing a system prompt that directs it to act as "a
+helpful assistant who responds briefly." This systematic configuration is strategically
+designed to ensure the conciseness of the generated responses, thereby facilitating
+the efficient caching of outputs for rejected queries while minimizing latency.
+
+3.5.2. Evaluation Metrics
+The assessment of a caching system, particularly one grounded in semantic similarity,
+necessitates the application of several pivotal metrics that elucidate its effectiveness
+and efficiency. Our study concentrates on three primary metrics: hit ratio, token
+savings, and response time. For our stacking ensemble model, these metrics are de-
+rived from the learned decision boundaries of the meta-classifier (utilizing a standard
+probability threshold of 0.5), as opposed to explicitly defined similarity thresholds.
+This approach allows the ensemble to learn optimal feature combination weights that
+inherently capture the appropriate decision boundaries.
+
+Cache Hit Ratio: The cache hit ratio quantifies the proportion of requests that
+successfully align with semantically similar queries stored within the cache. By
+retrieving relevant cached responses, this metric significantly mitigates redundant
+computational efforts. The complementary metric, the miss ratio, identifies instances
+where queries are correctly categorized as dissimilar, thereby indicating that they are
+
+                                          17
+not served from the cache.
+
+                                  Number of Cache Hits
+                   Hit Ratio =                            × 100                   (5)
+                                 Total Number of Requests
+
+Token Saving Ratio: The token savings ratio elucidates the computational savings
+achieved by serving responses from the cache, as opposed to generating new outputs.
+This metric encompasses both prompt and completion tokens, thereby providing a
+comprehensive quantification of efficiency gains.
+
+                                      Tokens Served by Cache
+               Token Saving Ratio =                          × 100                (6)
+                                      Total Tokens Processed
+
+Response Time: This metric evaluates the average time required to serve a request.
+Lower response times indicate faster, more efficient caching performance.
+
+                                             Total Response Time
+               Average Response Time =                                            (7)
+                                           Total Number of Requests
+
+
+3.5.3. Similarity Threshold Optimization
+We employ systematic threshold optimization (0.0-1.0 range, 101 values) with F1-
+score maximization as the objective. Each validation fold determines its optimal
+threshold independently using 5-fold cross-validation for bi-encoders and 3-fold for
+cross-encoders. For the stacking ensemble, we utilize probability thresholds with the
+meta-classifier learning optimal decision boundaries.
+
+Implementation Details: The threshold optimization iterates through all can-
+didate thresholds for each validation fold, computing F1-scores and selecting the
+threshold that maximizes performance for that specific fold. Each fold’s results are
+then computed using its respective optimal threshold, and final metrics represent the
+average performance across all folds using their individually optimized thresholds.
+
+
+                                         18
+Stacking Ensemble Threshold Handling: For the stacking ensemble, we utilize
+a different approach. The meta-classifier (LightGBM) outputs probabilities, with
+a standard 0.5 threshold for binary decisions in training and evaluation. Rather
+than optimizing explicit similarity thresholds, the ensemble learns optimal feature
+combination weights that inherently capture the appropriate decision boundary. For
+semantic caching applications, this 0.5 probability threshold can be adjusted based
+on system requirements, with higher thresholds for conservative caching and lower
+thresholds for aggressive caching. This dual approach ensures fair comparison be-
+tween individual models, with optimized thresholds, and the ensemble approach, with
+learned decision boundaries, providing realistic performance estimates for production
+deployment scenarios.
+
+3.5.4. Similarity Search Configuration
+We employ cosine similarity as our distance metric and utilize FAISS (Douze et al.,
+2024) for efficient similarity search. The Flat index method is selected to ensure
+exact nearest neighbor retrieval based on cosine similarity, trading computational
+cost for accuracy in similarity-based cache performance (Robertson et al., 2009; Mai
+et al., 2024).
+
+The semantic caching system integrates three components: CacheBase, a Redis-based
+store for query-response pairs with configurable persistence and retrieval operations;
+VectorBase, a FAISS-powered vector store with support for both CPU and GPU
+acceleration that maintains query-to-ID mappings for efficient operations; and Evic-
+tionPolicy, a configurable cache management module supporting LRU, LFU, and
+Semantic Decay strategies with policy-specific optimization parameters.
+
+
+
+
+                                         19
+3.6. Formulation of Query Processing Pipeline
+
+The semantic caching process can be formally described through a comprehensive
+query processing pipeline. Let Q and R be the query space and the response space.
+The cache maintains pairs C = {(ci , ri )}ni=1 where ci ∈ Q and ri ∈ R.
+
+  1. Initial Query Input:
+        • Input: Query q ∈ Q.
+        • Objective: Determine if ther is (c, r) ∈ C such that q and c are semanti-
+           cally similar.
+  2. Embedding Generation (Bi-encoder):
+
+                                      eq = fB (q) ∈ Rd                          (8)
+
+     where fB is the bi-encoder model producing d-dimensional embeddings.
+  3. Vector Search in VectorBase:
+
+                                 c∗ = arg max cos(eq , eci )                    (9)
+                                            ci ∈C
+
+
+     where cos(·, ·) returns cosine similarity between embdedings.
+  4. Similarity Computation (Dual-Model):
+        • Bi-encoder similarity:
+
+                             sB (q, c∗ ) = cos(fB (q), fB (c∗ )) ∈ [0, 1]     (10)
+
+        • Cross-encoder similarity:
+
+                                sC (q, c∗ ) = σ(fC (q, c∗ )) ∈ [0, 1]         (11)
+
+           where σ is the sigmoid function and fC is the cross-encoder.
+
+
+
+                                           20
+5. Feature Extraction:
+
+   ϕ(q, c∗ ) = {∥eq −ec∗ ∥2 , ∥eq −ec∗ ∥1 , eq ⊙ec∗ , |eq −ec∗ |, text_features(q, c∗ )} (12)
+
+  where ⊙ denotes element-wise product and text features include length statis-
+  tics, word overlap, and normalized edit distance.
+6. Meta-Classifier Decision:
+
+                           p = g(sB (q, c∗ ), sC (q, c∗ ), ϕ(q, c∗ ))                   (13)
+
+  where g is the LightGBM meta-classifier outputting probability p ∈ [0, 1].
+7. Cache decision rule:
+                                            
+                                            True,
+                                            
+                                                         if p ≥ τ
+                             Cache Hit =                                                (14)
+                                            False, if p < τ
+                                            
+
+
+  where τ is the decision threshold (typically 0.5).
+8. Response Handling:
+  If Cache Hit is True:
+
+                                  r = CacheBase[id(c∗ )]                                (15)
+
+  Return the cached response r directly.
+  If p < τ indicating Cache Miss:
+     • Generate new response: r = LLM(q),
+     • Store in CacheBase: CacheBase[id(q)] ← r,
+     • Store embedding in VectorBase: VectorBase[id(q)] ← eq ,
+     • Update cache: C ← C ∪ {(q, r)},
+     • Apply eviction policy if |C| > Cmax , where Cmax denotes the cache’s ca-
+       pacity.
+
+                                          21
+  9. Semantic Decay Eviction Policy (when |C| > Cmax ):
+     For each cached query ci ∈ C, compute composite score:
+
+         Score(ci , t) = w1 · Freshness(ci , t) + w2 · Age(ci , t) + w3 · Boost(ci , t)   (16)
+
+     where:
+                                                        n
+                                                1X
+                            Freshness(ci , t) =       sim(ci , qjrecent )                 (17)
+                                                n j=1
+
+                                 Age(ci , t) = e−λ(t−t0 (ci ))                            (18)
+                                                X
+                                Boost(ci , t) =       sim(ci , qj )                       (19)
+                                                  qj ∈Qfreq
+
+
+     with sim(·, ·) being the ensemble similarity function, qjrecent contains the n most
+     recent queries, and Qfreq denotes the frequently accessed queries.
+ 10. Eviction decision:
+                                   cevict = arg min Score(ci , t)                         (20)
+                                                ci ∈C
+
+     Remove (cevict , revict ) from both CacheBase and VectorBase
+
+
+3.6.1. System Properties and Complexity Analysis
+The semantic caching system exhibits the following key properties:
+
+   • Computational Complexity:
+
+        – Bi-encoder encoding: O(d) per query
+
+        – Nearest neighbor search: O(|C|·d) using linear scan, improvable to O(log |C|·
+          d) with optimized indices
+
+        – Cross-encoder scoring: O(L2 · d) where L is sequence length
+
+
+                                             22
+        – Meta-classifier inference: O(M ) where M is number of features
+
+   • Memory Requirements:
+
+        – VectorBase: O(|C| · d) for storing embeddings
+
+        – CacheBase: O(|C| · Lavg ) for storing query-response pairs
+
+        – Model parameters: O(PB + PC + PM ) for bi-encoder, cross-encoder, and
+           meta-classifier
+
+This mathematical formulation provides a rigorous foundation for the semantic caching
+process illustrated in Figure 1 and enables precise analysis of system behavior and
+performance characteristics.
+
+Cache Size Selection and Scaling Considerations. The cache sizes used in our eviction
+policy comparison (300, 500, and 800 entries) and in our QQP caching evaluation
+(1500 and 2000 entries) were chosen to keep experiments computationally manageable
+while still covering a range large enough to show how eviction behavior changes as the
+cache fills up. These sizes are small compared to production caches, which may hold
+tens of thousands of entries or more, and we do not evaluate memory consumption
+or retrieval latency at that scale in this work.
+
+
+4. Experimental Setup
+
+This section describes the experimental setup used to evaluate our proposed stacking
+ensemble approach. We begin by detailing the datasets and preprocessing procedures,
+followed by the base model selection methodology. The experimental design ensures
+fair comparison and rigorous validation of our method in multiple dimensions, includ-
+ing classification performance, caching efficiency, and cross-domain generalizability,
+
+                                          23
+following established practices in semantic similarity evaluation (Nguyen et al., 2025;
+Wang et al., 2024a).
+
+4.1. Datasets and Preprocessing
+
+4.1.1. Quora Question Pairs (QQP) Dataset
+We selected the Quora Question Pairs (QQP) dataset for our primary evaluation
+due to its direct alignment with semantic caching requirements and real-world query
+characteristics. The dataset consists of over 400,000 question pairs collected from
+the Quora platform, where each pair contains two independently formulated ques-
+tions submitted by different users across diverse topics, including technology, science,
+lifestyle, and general knowledge.
+
+Each question pair in QQP is annotated with a binary label indicating semantic
+equivalence: label 1 denotes semantically equivalent questions (duplicates that should
+result in cache hits), while label 0 indicates non-equivalent questions (unique queries
+requiring new LLM inference).
+
+Stratified Sampling Protocol: We split the original dataset by class labels, du-
+plicate versus non-duplicate, and sample equal numbers from each class to create
+balanced subsets, eliminating potential bias from class imbalance and following best
+practices in machine learning evaluation (Smith et al., 2025). Subset sizes are chosen
+according to the computational requirements of each model architecture: bi-encoder
+evaluation uses 50,000 samples (25,000 positive, 25,000 negative); cross-encoder eval-
+uation uses 10,000 samples (5,000 positive, 5,000 negative), reflecting its higher com-
+putational demands; and stacking ensemble training uses 30,000 samples (15,000
+positive, 15,000 negative).
+
+
+
+                                          24
+4.1.2. STS Benchmark Validation Dataset
+To validate the generalizability of our stacking ensemble approach across different
+semantic similarity paradigms and linguistic domains, we conduct a comprehensive
+evaluation on the Semantic Textual Similarity (STS) benchmark dataset Cer et al.
+(2017). This dataset provides a standardized evaluation framework for semantic sim-
+ilarity methods, and enables assessment of our approach beyond question-answering
+domains, following the evaluation methodology used in recent semantic similarity
+research (Chen et al., 2025).
+
+Dataset Structure and Coverage: The STS benchmark dataset (Cer et al., 2017)
+contains 8,628 sentence pairs distributed across train (5,749), development (1,500),
+and test (1,379) splits.
+
+Evaluation Formulations: The continuous nature of STS annotations (Cer et al.,
+2017) enables two complementary evaluation approaches that validate different as-
+pects of our ensemble method. The regression formulation directly predicts continu-
+ous similarity scores (0–5 range) using correlation-based metrics (Pearson, Spearman)
+and error-based metrics (RMSE, MAE), validating the ensemble’s ability to provide
+confidence-weighted similarity scoring for advanced caching strategies and nuanced
+semantic assessment, consistent with established STS evaluation practices (Nguyen
+et al., 2025). The classification formulation instead converts continuous scores to
+binary labels using a threshold of 2.5, corresponding to "moderately similar," di-
+rectly paralleling the QQP evaluation methodology and validating consistent binary
+decision-making performance across different datasets and domains. Together, these
+two formulations enable comprehensive validation of our stacking ensemble across
+both the binary cache hit/miss decisions required for semantic caching systems and
+
+
+
+                                         25
+the continuous similarity scoring capabilities that demonstrate broader applicability
+to semantic similarity tasks (Wang et al., 2024a).
+
+Model Pool Filtering for STS Evaluation: To ensure unbiased evaluation and
+prevent data leakage, we filtered our initial model pool to exclude models that were
+pre-trained on the STS benchmark dataset. Specifically, we removed models contain-
+ing "stsb" in their names (e.g., cross-encoder/stsb-roberta-large, cross-encoder/stsb-
+roberta-base) from the STS evaluation pool, as these models have been explicitly
+trained on STS data and would provide artificially inflated performance metrics. This
+filtering ensures that our cross-dataset validation represents genuine generalization
+capability rather than memorization of training data, following rigorous evaluation
+standards (Smith et al., 2025).
+
+4.1.3. QQP Subset for Latency and Ablation Analysis
+In addition to the stratified, class-balanced QQP subsets used for base-model and
+meta-classifier training (Section 4.1), we draw a held-out sample of 3,000 QQP pairs
+for the per-component latency breakdown (Section 5.3.3) and the feature-group
+ablation study (Section 5.4), disjoint from the training and evaluation folds used
+elsewhere in this paper. Unlike the balanced subsets used for model training, this
+sample follows a 60/40 duplicate-to-non-duplicate ratio (1,800 duplicate, 1,200 non-
+duplicate) to better reflect the higher proportion of semantically repeated queries
+observed in production LLM traffic (Gill et al., 2024), rather than the artificially
+balanced distribution used to eliminate training bias. We report F1 rather than
+accuracy as our primary ablation metric specifically because F1 is more robust to
+this class imbalance, and we additionally verify that the feature-group rankings in
+Table 6 are stable under a balanced 1,500/1,500 resampling of the same pool (F1
+changes by less than 0.01 for every feature group under resampling).
+
+                                         26
+4.2. Base Model Selection
+
+For the stacking ensemble, we select the best-performing individual models from
+our comprehensive evaluation across multiple model categories. Our model selection
+follows established practices in semantic similarity research, where both bi-encoders
+and cross-encoders are evaluated for their complementary strengths (Reimers and
+Gurevych, 2020; Gao et al., 2021).
+
+Bi-encoder Evaluation Results: Table 1 presents the performance comparison of
+nine sentence transformer models evaluated using 5-fold cross-validation on balanced
+QQP subsets. All models demonstrate strong performance, with all-mpnet-base-
+v2 achieving the highest F1 score of 0.8359 ± 0.0029 and AUC of 0.8949 ± 0.0016.
+
+Cross-encoder Evaluation Results: Table 2 shows the performance of nine cross-
+encoder models evaluated on the same dataset. The cross-encoders demonstrate
+strong performance in pairwise similarity assessment, with cross-encoder/stsb-
+roberta-large achieving the highest F1 score of 0.8286 ± 0.0044 and AUC of 0.8966
+± 0.0012.
+
+Our evaluation shows that this bi-encoder and cross-encoder combination provides
+complementary strengths: the bi-encoder excels at efficient similarity computation
+while the cross-encoder captures nuanced semantic relationships, consistent with
+findings in recent contrastive learning research (Wang et al., 2024a).
+
+4.3. Evaluation Metrics and Statistical Significance
+
+Our evaluation employs comprehensive metrics to assess model performance from
+multiple perspectives, following established practices in semantic similarity evalua-
+tion (Nguyen et al., 2025; Chen et al., 2025):
+
+
+                                         27
+Primary Metrics:
+
+    • F1-Score: Harmonic mean of precision and recall, providing a balanced as-
+         sessment of classification performance
+
+    • Area Under ROC Curve (AUC): Measures the model’s ability to distin-
+         guish between positive and negative classes across all thresholds
+
+    • Pearson/Spearman Correlation: For regression tasks on STS Benchmark,
+         measuring linear and rank-based relationships, respectively
+
+
+5. Results and Analysis
+
+Our experimental evaluation systematically assesses the performance of the pro-
+posed stacking ensemble approach across multiple metrics and scenarios. We begin
+by establishing baseline performance with individual models, then demonstrate the
+superiority of our ensemble method. Subsequently, we evaluate semantic caching
+performance in practical scenarios, analyze computational efficiency gains, and vali-
+date cross-domain generalization capabilities. This comprehensive analysis provides
+insights into both the effectiveness and practical applicability of our approach.
+
+                                        Table 1: Bi-encoder Evaluation Results
+
+ Model                                    Accuracy        Precision         Recall            F1             AUC          Threshold
+
+ all-mpnet-base-v2                      0.817 ± 0.003 0.759 ± 0.004      0.930 ± 0.005   0.836 ± 0.003   0.895 ± 0.002   0.726 ± 0.005
+ all-distilroberta-v1                    0.810 ± 0.003   0.752 ± 0.004   0.923 ± 0.006   0.829 ± 0.003   0.884 ± 0.002   0.712 ± 0.004
+ paraphrase-MiniLM-L6-v2                 0.798 ± 0.004   0.736 ± 0.007   0.931 ± 0.007   0.822 ± 0.003   0.873 ± 0.002   0.722 ± 0.007
+ all-MiniLM-L12-v2                       0.791 ± 0.005   0.731 ± 0.009   0.922 ± 0.013   0.816 ± 0.003   0.873 ± 0.002   0.730 ± 0.011
+ all-MiniLM-L6-v2                        0.790 ± 0.006   0.728 ± 0.011   0.926 ± 0.013   0.815 ± 0.002   0.873 ± 0.002   0.712 ± 0.015
+ multi-qa-MiniLM-L6-cos-v1               0.782 ± 0.004   0.718 ± 0.008   0.932 ± 0.015   0.811 ± 0.002   0.869 ± 0.002   0.696 ± 0.014
+ distiluse-base-multilingual-cased-v2    0.760 ± 0.007   0.699 ± 0.012   0.915 ± 0.017   0.792 ± 0.002   0.845 ± 0.002   0.716 ± 0.016
+ msmarco-distilbert-base-v2              0.755 ± 0.004   0.693 ± 0.007   0.919 ± 0.009   0.790 ± 0.002   0.842 ± 0.003   0.612 ± 0.012
+ msmarco-distilbert-base-v3              0.756 ± 0.003   0.693 ± 0.005   0.917 ± 0.012   0.790 ± 0.003   0.837 ± 0.002   0.610 ± 0.011
+
+
+
+
+                                                                 28
+                                   Table 2: Cross-encoder Evaluation Results
+
+Model                                      Accuracy        Precision        Recall            F1            AUC           Threshold
+
+cross-encoder/stsb-roberta-large         0.810 ± 0.001   0.756 ± 0.010   0.917 ± 0.025   0.829 ± 0.004 0.897 ± 0.001     0.557 ± 0.025
+cross-encoder/stsb-roberta-base          0.798 ± 0.005   0.753 ± 0.011   0.889 ± 0.021   0.815 ± 0.006   0.880 ± 0.002   0.570 ± 0.014
+cross-encoder/stsb-distilroberta-base    0.766 ± 0.004   0.709 ± 0.002   0.901 ± 0.013   0.794 ± 0.005   0.853 ± 0.003   0.530 ± 0.016
+cross-encoder/stsb-TinyBERT-L-4          0.723 ± 0.007   0.666 ± 0.010   0.895 ± 0.021   0.764 ± 0.006   0.813 ± 0.003   0.513 ± 0.019
+cross-encoder/ms-marco-MiniLM-L-12-v2    0.747 ± 0.008   0.690 ± 0.008   0.901 ± 0.001   0.781 ± 0.005   0.823 ± 0.009   0.110 ± 0.090
+cross-encoder/ms-marco-MiniLM-L-6-v2     0.751 ± 0.008   0.703 ± 0.009   0.872 ± 0.004   0.778 ± 0.006   0.822 ± 0.009   0.150 ± 0.128
+cross-encoder/ms-marco-MiniLM-L-4-v2     0.743 ± 0.011   0.708 ± 0.012   0.829 ± 0.005   0.763 ± 0.008   0.812 ± 0.009   0.113 ± 0.094
+cross-encoder/ms-marco-MiniLM-L-2-v2     0.729 ± 0.010   0.706 ± 0.011   0.784 ± 0.005   0.743 ± 0.009   0.801 ± 0.009   0.073 ± 0.077
+cross-encoder/ms-marco-TinyBERT-L-2-v2   0.725 ± 0.007   0.673 ± 0.007   0.877 ± 0.002   0.761 ± 0.005   0.794 ± 0.009   0.073 ± 0.104
+
+
+
+
+                         Table 3: Meta-classifier Performance with Basic Features
+
+Classifier              Accuracy               Precision                 Recall                    F1                    AUC
+
+LightGBM           0.8347 ± 0.0043        0.7999 ± 0.0068          0.8930 ± 0.0098        0.8438 ± 0.0041        0.9104 ± 0.0050
+XGBoost             0.8344 ± 0.0049        0.7973 ± 0.0072       0.8969 ± 0.0093         0.8441 ± 0.0045          0.9095 ± 0.0049
+Random Forest       0.8346 ± 0.0058        0.7983 ± 0.0088         0.8956 ± 0.0081        0.8441 ± 0.0049         0.9101 ± 0.0051
+
+
+
+
+                      Table 4: Meta-classifier Performance with Extended Features
+
+Classifier              Accuracy               Precision                 Recall                    F1                    AUC
+
+LightGBM           0.8657 ± 0.0044        0.8350 ± 0.0075        0.9116 ± 0.0078 0.8716 ± 0.0040                 0.9336 ± 0.0049
+XGBoost             0.8646 ± 0.0066        0.8355 ± 0.0096         0.9084 ± 0.0109        0.8703 ± 0.0062         0.9328 ± 0.0048
+Random Forest       0.8328 ± 0.0057        0.7979 ± 0.0072         0.8916 ± 0.0098        0.8421 ± 0.0054         0.9091 ± 0.0048
+
+
+
+
+                                                                29
+5.1. Individual Model Performance
+
+Our comprehensive evaluation of individual models establishes clear performance
+baselines. As shown in Tables 1 and 2, the best-performing bi-encoder (all-mpnet-
+base-v2) achieves an F1 score of 0.836±0.003, while the top cross-encoder (stsb-
+roberta-large) reaches 0.829±0.004. These results validate our model selection strat-
+egy and provide the foundation for our stacking ensemble approach.
+
+5.2. Stacking Ensemble Performance
+
+We first evaluate the performance of our stacking ensemble using basic features (bi-
+encoder cosine similarity and cross-encoder scores) as shown in Table 3. The results
+demonstrate that even with minimal feature engineering, the ensemble approach
+provides competitive performance. Table 4 demonstrates that extended features
+significantly enhance performance (F1: 0.8716 ± 0.0040). This represents substantial
+improvements over individual models: +4.2% over the best bi-encoder, +5.2% over
+the best cross-encoder, and +3.3% over basic features.
+
+5.3. Semantic Caching Performance
+
+Beyond traditional classification metrics, we evaluate our stacking ensemble in real-
+istic semantic caching scenarios to assess its practical utility. This analysis examines
+key performance indicators, including cache hit ratios, response time improvements,
+and computational saving metrics that directly impact real-world LLM system effi-
+ciency and user experience.
+
+5.3.1. Cache Hit and Miss Ratio
+We evaluate our stacking ensemble in a realistic semantic caching scenario across
+different dataset snapshots. Figure 2 demonstrates consistent performance across
+different dataset snapshots, with hit ratios ranging from 92.6% to 94.4% for duplicate
+
+                                          30
+Figure 2: Hit ratio for duplicate queries and miss ratio for non-duplicate queries on QQP, across
+different dataset snapshots (500, 1000, 1500, 2000 samples). These pairs are curated, single-domain
+duplicates.
+
+
+queries and miss ratios (correct rejection of non-duplicates) ranging from 80.3% to
+81.5%.
+
+These results demonstrate that our stacking ensemble maintains consistently high
+performance across different dataset sizes, effectively combining semantic signals from
+bi-encoder and cross-encoder models for reliable duplicate detection and appropriate
+rejection of non-duplicate queries.
+
+5.3.2. Response Time Analysis
+Figure 3 illustrates the significant performance gains enabled by semantic caching.
+The system reduces the average response time from 0.854 seconds (without caching)
+to 0.311 seconds (with caching), achieving a 2.7× improvement in response speed.
+This substantial reduction in latency directly enhances both user experience and
+
+
+
+                                                31
+Figure 3: Average response time comparison between semantic caching and direct LLM inference.
+The system achieves a 2.7x performance improvement, reducing response time from 0.854 seconds
+without caching to 0.311 seconds with semantic caching enabled.
+
+
+system efficiency. The reported averages are computed over 2,000 queries. In the
+cache-disabled setting, responses are generated by Qwen3-4B, which already provides
+reasonably fast inference. When employing larger LLMs with substantially more
+parameters, the gap in average response time is expected to be even greater.
+
+Having established caching performance on curated QQP pairs, we next break down
+where the latency inside the caching pipeline itself comes from, using the same
+dataset.
+
+5.3.3. Latency Breakdown Across Architectures
+One of the concerns raised about our earlier evaluation was that response time was
+only measured against a no-cache baseline, without showing where the overhead in-
+side the caching system itself comes from. To address this, we measure the per-query
+latency of each architecture separately on the QQP subset described in Section 4.1.3,
+breaking down the time spent in bi-encoder embedding, FAISS search, cross-encoder
+
+
+                                              32
+    Figure 4: Token savings achieved through semantic caching across different dataset sizes.
+
+
+
+
+Figure 5: Cache hit ratio performance comparison across three eviction policies (Semantic Decay,
+LRU, and LFU) at different cache sizes (300, 500, 800 queries).
+
+
+
+                                               33
+scoring, feature engineering, and LightGBM inference.
+
+Table 5 reports the mean overhead per cache hit, excluding LLM generation time, for
+the three architectures: bi-encoder only, bi-encoder with cross-encoder re-ranking,
+and the full stacking ensemble.
+
+Table 5: Per-query overhead breakdown on QQP (mean ms per cache hit, LLM generation time
+excluded)
+
+
+ Architecture              Base (Bi-Encoder + Search)   Cross-Encoder   LightGBM   Total Overhead
+
+ Bi-Encoder Only                    13.44 ms                  –            –          13.44 ms
+
+ Bi + Cross-Encoder                 15.40 ms              520.76 ms        –          536.16 ms
+
+ Stacking (Bi+Cross+LGB)            15.40 ms              520.76 ms      3.64 ms      539.80 ms
+
+
+
+
+5.4. Feature Group Ablation
+
+The latency breakdown in Section 5.3.3 shows that the cross-encoder is responsible
+for most of the overhead in our stacking ensemble. This raises a natural question:
+does the cross-encoder also contribute most of the classification signal, or is the en-
+semble’s performance mainly driven by the cheaper geometric and text-based features
+computed from the bi-encoder embeddings? To answer this, we run a feature-group
+ablation on the 3,000-pair QQP subset described in Section 4.1.3, using 5-fold strat-
+ified cross-validation with LightGBM as the classifier in every configuration, so that
+differences in performance can be attributed to the feature set rather than to the
+choice of model.
+
+As Table 7 shows, element-wise operations account for the great majority of the
+gain over the bi-encoder-plus-cross-encoder baseline (+0.0263 of the total +0.0278
+improvement), while distance metrics and text features contribute only marginally.
+
+
+                                                34
+Table 6: Feature group performance in isolation, 5-fold cross-validation on QQP pairs
+
+
+          Feature Group                   # Features              F1
+
+          Bi-Encoder Cosine                     1          0.821 ± 0.006
+
+          Cross-Encoder Score                   1          0.812 ± 0.007
+
+          Distance Metrics                      2          0.774 ± 0.008
+
+          Element-wise Operations             1536         0.838 ± 0.005
+
+          Text Features                         5          0.702 ± 0.009
+
+
+
+
+Table 7: Incremental feature addition on top of bi-encoder plus cross-encoder baseline
+
+
+  Configuration                               F1           ∆F1 vs Bi+Cross
+
+  Bi + Cross                           0.8438 ± 0.004                  –
+
+  + Distance Metrics                   0.8447 ± 0.004             +0.0009
+
+  + Element-wise Ops                   0.8701 ± 0.004             +0.0263
+
+  + Text Features                      0.8459 ± 0.004             +0.0021
+
+  Full Model                           0.8716 ± 0.004             +0.0278
+
+  Full Model − Cross-Encoder           0.8709 ± 0.004             +0.0271
+
+
+
+
+                                         35
+This confirms that the ensemble’s accuracy gain is driven overwhelmingly by cheap,
+embedding-derived geometric features rather than by the cross-encoder itself.
+
+5.4.1. Token Savings
+Figure 4 demonstrates the substantial computational savings achieved through our
+semantic caching system across different dataset sizes. Token savings are computed
+specifically for the duplicate queries that generated cache hits in our hit ratio anal-
+ysis, ensuring direct correspondence between cache performance and computational
+efficiency. The system consistently achieves high token savings rates, with perfor-
+mance ranging from 91.4% to 94.2% across different dataset snapshots.
+
+These high token saving percentages indicate that when duplicate queries are suc-
+cessfully identified and served from cache, the system eliminates both input token
+processing (query encoding) and output token generation (LLM response generation).
+The slight variation across dataset sizes reflects natural variation in query complex-
+ity and cache hit patterns, but consistently demonstrates over 90% computational
+savings for successfully cached responses.
+
+5.5. Eviction Policy Evaluation
+
+The effectiveness of semantic caching depends not only on accurate similarity de-
+tection but also on intelligent cache management. This section evaluates our pro-
+posed Semantic Decay eviction policy against traditional approaches, examining
+how semantic-aware cache replacement strategies impact overall system performance
+across different cache size configurations.
+
+Figure 5 presents a comprehensive comparison of different eviction policies across
+varying cache sizes. Our evaluation includes three approaches: Semantic Decay
+
+
+                                          36
+(our novel semantic-aware policy), LRU (Least Recently Used), and LFU (Least
+Frequently Used).
+
+Notably, all policies show significant performance improvement as cache size in-
+creases, with the most dramatic gains occurring between sizes 300 and 500. The
+Semantic Decay policy’s superior performance validates the benefit of incorporat-
+ing semantic relationships into cache management decisions, particularly in semantic
+caching scenarios where query similarity is crucial for cache effectiveness.
+
+             Table 8: Cross-Encoder Evaluation Results on STS Benchmark Test Set
+
+
+ Model                                        Accuracy           F1     AUC      Pearson Spearman      Samples
+
+ cross-encoder/ms-marco-MiniLM-L-6-v2              0.783        0.807 0.892       0.809       0.788      1379
+
+ cross-encoder/ms-marco-MiniLM-L-12-v2             0.768        0.798   0.889      0.806       0.788     1379
+
+ cross-encoder/ms-marco-MiniLM-L-4-v2              0.765        0.789   0.880      0.791       0.772     1379
+
+ cross-encoder/ms-marco-MiniLM-L-2-v2              0.773        0.789   0.874      0.779       0.762     1379
+
+ cross-encoder/ms-marco-TinyBERT-L-2-v2            0.753        0.775   0.851      0.743       0.726     1379
+
+
+
+               Table 9: Bi-encoder Evaluation Results on STS Benchmark Test Set
+
+
+ Model                                   Accuracy          F1      AUC     Pearson         Spearman    Samples
+
+ all-mpnet-base-v2                        0.832        0.833       0.911        0.840       0.834       1379
+
+ all-MiniLM-L6-v2                          0.817       0.818       0.901        0.827        0.820      1379
+
+ distiluse-base-multilingual-cased-v2      0.788       0.798       0.881        0.817        0.807      1379
+
+ msmarco-distilbert-base-v2                0.788       0.796       0.873        0.795        0.784      1379
+
+ msmarco-distilbert-base-v3                0.785       0.792       0.872        0.790        0.781      1379
+
+ multi-qa-MiniLM-L6-cos-v1                 0.769       0.787       0.856        0.757        0.760      1379
+
+
+
+
+                                                      37
+5.6. Cross-Dataset Validation
+To assess the generalizability of our approach beyond the primary evaluation do-
+main, we conduct comprehensive cross-dataset validation using the STS Benchmark.
+This analysis evaluates whether our stacking ensemble maintains robust performance
+across different semantic similarity tasks and evaluation paradigms, demonstrating
+its applicability to diverse real-world scenarios.
+
+5.6.1. Individual Model Baseline Performance on STS
+Tables 8 and 9 present the performance of our selected base models on STS Bench-
+mark. The bi-encoder (all-mpnet-base-v2) achieves superior correlation metrics (Pear-
+son: 0.8404, Spearman: 0.8342) while the cross-encoder (ms-marco-MiniLM-L-6-v2)
+demonstrates competitive classification performance (F1: 0.8072). These results es-
+tablish strong baselines for ensemble comparison.
+
+            Table 10: Stacking Ensemble Performance on STS Benchmark Test Set
+
+
+ Meta-Classifier   Accuracy    F1      AUC      Precision   Recall   Pearson   Spearman RMSE
+
+ LightGBM           0.8550    0.8679   0.9351    0.8854     0.8510   0.8557     0.8415   0.7976
+
+ XGBoost            0.8550    0.8684   0.9340    0.8824     0.8549    0.8530    0.8395   0.8044
+
+ Random Forest      0.8521    0.8645   0.9344    0.8869     0.8433    0.8543    0.8402   0.8021
+
+
+
+5.6.2. Ensemble Performance on STS Benchmark
+Table 10 demonstrates that our stacking ensemble maintains superior performance
+across datasets. The LightGBM meta-classifier achieves the highest performance
+with a binary classification F1 score of 0.8679 (using a 2.5 similarity threshold) and
+regression Pearson correlation of 0.8557, representing substantial improvements over
+individual models: +4.2% F1 and +1.8% Pearson over the best bi-encoder, and
++7.5% F1 and +5.8% Pearson over the best cross-encoder.
+
+                                                38
+5.6.3. Generalization Analysis
+Our ensemble demonstrates consistent performance across different datasets and task
+formulations, with F1 = 0.8716 ± 0.0040 and AUC = 0.9336 ± 0.0049 on QQP binary
+classification, F1 = 0.8679 and AUC = 0.9351 on STS binary classification (using
+a 2.5 similarity threshold), and Pearson = 0.8557 with Spearman = 0.8415 on STS
+regression. These results validate that our stacking ensemble approach generalizes
+effectively across semantic similarity tasks, maintaining robust performance for both
+binary caching decisions required in production systems and continuous similarity
+scoring for advanced applications.
+
+
+6. Limitations and Bottlenecks
+
+While our stacking ensemble approach demonstrates significant improvements in se-
+mantic caching performance, it is essential to critically examine its limitations and
+practical constraints. This section discusses computational overhead, model depen-
+dencies, and maintenance requirements that impact real-world deployment.
+
+6.1. Computational Overhead
+
+Our stacking ensemble approach introduces additional computational complexity
+compared to single-model approaches. The ensemble requires dual model inference,
+with both bi-encoder embedding generation and cross-encoder pairwise scoring com-
+puted for each query comparison, effectively doubling the base computational cost.
+Additionally, the LightGBM meta-classifier adds an inference step, though this over-
+head is minimal compared to transformer-based models.
+
+Extended feature extraction introduces preprocessing overhead that scales with query
+complexity. Distance metrics computation (||e1 − e2 ||2 , ||e1 − e2 ||1 ), element-wise
+
+
+                                          39
+operations (e1 ⊙ e2 , |e1 − e2 |), and text-based features require additional computation
+cycles that may become prohibitive in latency-critical applications.
+
+6.1.1. Memory Requirements
+The ensemble approach requires maintaining multiple model weights simultaneously,
+with both bi-encoder and cross-encoder models loaded in memory, approximately
+doubling the memory footprint compared to single-model approaches. Extended
+feature computation requires additional memory for intermediate calculations and
+feature vectors, further increasing resource requirements.
+
+6.2. Model Dependency and Maintenance
+6.2.1. Base Model Limitations
+Our approach inherits limitations from underlying models. Bi-encoder embedding
+models may fail to capture nuanced semantic differences in domain-specific contexts
+or subtle query variations that humans would easily distinguish. Cross-encoders,
+while more accurate, are computationally expensive and may become bottlenecks in
+high-throughput scenarios requiring thousands of similarity assessments per second.
+
+6.2.2. Ensemble Maintenance
+The LightGBM meta-classifier requires periodic retraining on new data to main-
+tain optimal performance, introducing maintenance overhead and requiring labeled
+training data collection. The extended feature set requires careful preprocessing and
+normalization, increasing system complexity and creating additional potential points
+of failure in production deployments.
+
+6.2.3. Eviction Policy Constraints
+While our Semantic Decay policy outperforms traditional approaches, it exhibits
+parameter sensitivity. These weights may require domain-specific adjustment, and
+
+                                           40
+suboptimal tuning can significantly degrade cache performance. Additionally, seman-
+tic similarity calculations for eviction decisions add computational cost compared to
+simple LRU/LFU policies.
+
+
+7. Conclusion and Future Work
+
+This paper presents a stacking ensemble for semantic caching in LLM-based sys-
+tems, combining bi-encoder embeddings, cross-encoder scores, and a set of geometric
+and text-based features through a trained LightGBM meta-classifier. To measure
+how this approach performs in a deployment-relevant setting, we evaluate latency
+and feature-group contributions on a held-out QQP subset, using the same dataset
+and labeling scheme throughout. A feature-level ablation on this data shows that
+most of the ensemble’s discriminative power comes from geometric features com-
+puted directly from the bi-encoder embeddings, distance metrics and element-wise
+operations, rather than from the cross-encoder score. Removing the cross-encoder
+from the full model changes its F1 score by less than 0.001, while the cross-encoder
+alone is responsible for over 95% of the pipeline’s added latency compared to the
+bi-encoder (Section 5.3.3). This is a useful finding for anyone deploying a semantic
+cache: the cross-encoder can be treated as an optional component, worth including
+only when the last small gain in accuracy is more important than the roughly 500
+ms of added latency per query that it introduces.
+
+We evaluate the same ensemble on QQP and the STS benchmark, both of which carry
+independently human-annotated labels, as our primary estimate of absolute caching
+accuracy. On QQP, the ensemble reaches hit ratios of 93.3% for duplicate queries and
+miss ratios of 80.7% for non-duplicate queries, and outperforms the best individual
+bi-encoder and cross-encoder baselines by 4.2% and 5.2% in F1 score respectively
+
+
+                                         41
+(F1=0.8716±0.0040, AUC=0.9336±0.0049). Cross-dataset evaluation on the STS
+benchmark shows a similar pattern, with F1 scores exceeding 0.867 and a Pearson
+correlation of 0.8557 on both binary and regression formulations. Beyond similarity
+detection, our results also show a 2.7× reduction in average response time, from 0.854
+seconds to 0.311 seconds, and over 90% token savings on successfully cached queries,
+confirming that the accuracy gains from the ensemble translate into real efficiency
+gains at the system level.
+
+It is important to note that traditional semantic caches, which store queries and
+responses on a central server, pose significant privacy risks. Server-side caches con-
+solidate queries from all users into a central database. Consequently, every query
+submitted, whether it includes personal, professional, or sensitive information, is
+stored and processed on a server outside the user’s control. Full anonymization of
+text data is difficult to guarantee; even with explicit identifiers removed, a detailed
+log of a user’s queries can often be linked back to them or reveal sensitive patterns
+about their interests, work, or personal life. This tension between caching and pri-
+vacy does not need to be unavoidable. Moving away from a centralized caching
+model, toward federated learning for collaborative model improvement, user-local
+semantic caches that avoid centralizing data, and fair resource-sharing algorithms on
+the server side, makes it possible to build a semantic caching system that is both
+efficient and respectful of user privacy (Kim et al., 2025; Li et al., 2025a).
+
+Looking ahead, several directions remain open. Our exploratory comparison of the
+Semantic Decay eviction policy against LRU and LFU is limited in two ways that we
+plan to address: the weights combining freshness, age, and semantic clustering were
+tuned on a single workload without a sensitivity analysis, and the comparison does
+not yet include other semantic-aware caching strategies from the literature, only non-
+
+                                           42
+semantic baselines. Closing both gaps, through a systematic weight sensitivity study
+and a comparison against semantic-aware baselines such as adaptive thresholding, is
+necessary before the eviction policy can be considered a validated contribution rather
+than a preliminary result. Beyond this, we plan to extend our caching evaluation to
+larger cache sizes closer to production scale, examine memory and scaling behavior as
+the number of cached entries grows into the tens of thousands, and explore privacy-
+preserving deployment of the caching system through the federated and user-local
+approaches discussed above.
+
+
+References
+
+Bang, A., Wang, S., Zhang, J., et al., 2023. Gptcache: An open-source semantic
+  cache for llm applications, in: Proceedings of the 2023 Conference on Empirical
+  Methods in Natural Language Processing: System Demonstrations, pp. 215–223.
+
+Beck, M., Pöppel, K., Lippe, P., Kurle, R., Blies, P.M., Klambauer, G., Böck, S.,
+  Hochreiter, S., 2025. xLSTM 7B: A recurrent LLM for fast and efficient infer-
+  ence, in: Proceedings of the 42nd International Conference on Machine Learning
+  (ICML), pp. 3335–3357.
+
+Bhattacharjee, S., Kowshik, S., Rajbhandari, S., He, Y., Pathak, S., 2024. Specula-
+  tive streaming: Fast LLM inference without auxiliary models, in: The Twelfth
+  International Conference on Learning Representations (ICLR).         URL: https:
+  //openreview.net/forum?id=jt8wI3ZzXG.
+
+Breiman, L., 2001. Random forests. Machine learning 45, 5–32.
+
+Brown, T.B., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., Nee-
+  lakantan, A., Shyam, P., Sastry, G., Askell, A., et al., 2020. Language models are
+
+                                         43
+  few-shot learners. Advances in neural information processing systems 33, 1877–
+  1901.
+
+Cao, Y., Kang, Y., Xing, Z., Jiang, R., 2025. Delta knowledge distillation for large
+  language models. arXiv preprint arXiv:2509.14526 arXiv:2509.14526.
+
+Cer, D., Diab, M., Agirre, E., Lopez-Gazpio, I., Specia, L., 2017. Semeval-2017
+  task 1: Semantic textual similarity multilingual and crosslingual focused evalua-
+  tion, in: Proceedings of the 11th International Workshop on Semantic Evaluation
+  (SemEval-2017), pp. 1–14.
+
+Cheema, M.T., Aamir, A., Muhammad, K.G., Bhatti, N.A., Qazi, I.A., Qazi, Z.A.,
+  2025. Tweakllm: A routing architecture for dynamic tailoring of cached responses.
+  arXiv preprint arXiv:2507.23674 Department of Computer Science, Lahore Uni-
+  versity of Management Sciences.
+
+Chen, T., Guestrin, C., 2016. Xgboost: A scalable tree boosting system. Proceedings
+  of the 22nd acm sigkdd international conference on knowledge discovery and data
+  mining , 785–794.
+
+Chen, X., Liu, Y., Zhang, W., 2025. Roberta-chscso: Enhancing semantic textual
+  similarity with chaotic henry gas solubility optimization. Knowledge-Based Sys-
+  tems 285, 111–123.
+
+Couturier, C., Mastorakis, S., Shen, H., Rajmohan, S., Rühle, V., 2025. Semantic
+  caching of contextual summaries for efficient question-answering with language
+  models. arXiv preprint arXiv:2505.11271 arXiv:2505.11271. accepted at ICCCN
+  2025.
+
+
+
+                                        44
+Cremaschi, M., Ditolve, D., Curcio, C., Panzeri, A., Spoto, A., Maurino, A., 2025.
+  Decoding the mind: A rag-llm on icd-11 for decision support in psychology. Expert
+  Systems with Applications 279, 127191.
+
+Deerwester, S., Dumais, S.T., Furnas, G.W., Landauer, T.K., Harshman, R., 1990.
+  Indexing by latent semantic analysis. Journal of the American society for infor-
+  mation science 41, 391–407.
+
+Douze, M., Guzhva, A., Deng, C., Jégou, H., 2024. Faiss: A library for efficient
+  similarity search and clustering of dense vectors. Journal of Machine Learning
+  Research 25, 1–5.
+
+Erdogan, M., Tonin, F., Cevher, V., 2025.         Efficient large language model
+  inference with neural block linearization.     arXiv preprint arXiv:2505.21077
+  arXiv:2505.21077.
+
+Esser, S.K., McKinstry, J.L., Bablani, D., Appuswamy, R., Modha, D.S., 2025.
+  SiLQ: Simple large language model quantization-aware training. arXiv preprint
+  arXiv:2507.16933 arXiv:2507.16933.
+
+Gao, T., Yao, X., Chen, D., 2021. Simcse: Simple contrastive learning of sentence
+  embeddings, in: Proceedings of the 2021 Conference on Empirical Methods in
+  Natural Language Processing, pp. 6894–6910.
+
+Gebreab, S., Musamih, A., Salah, K., Jayaraman, R., 2026. Llm-based exploration
+  and analysis of real-time and historical blockchain data. Expert Systems with
+  Applications 298, 129851.
+
+Gill, W., Elidrisi, M., Kalapatapu, P., Ahmed, A., Anwar, A., Gulzar, M.A., 2024.
+
+
+                                        45
+  Meancache: User-centric semantic caching for llm web services. arXiv preprint
+  arXiv:2403.02694 V4 revised 7 Mar 2025; also published IEEE.
+
+Guo, Q., Guo, Y., Zhao, J., 2026. Unleashing the power of large language models
+  for low-resource relation triplet extraction by structure-to-text data generation.
+  Expert Systems with Applications 298, 129733.
+
+Guo, Y., Wang, C., Han, S., Kosec, G., Zhou, Y., Wang, L., Abdel-Wahab, M., 2025.
+  A deep neural network model for parameter identification in deep drawing metal
+  forming process. Journal of Manufacturing Processes 133, 380–394.
+
+Huang, Y., Yuan, J., Yu, Y., Zhang, J., Zhang, J., Yuan, C., Chen, J., Chen, Z.,
+  Chen, S., Li, J., et al., 2024. A survey on large language model-based game agents.
+  ACM Computing Surveys 56, 1–38.
+
+Iyengar, A., Subramanian, S., Zhou, M., 2025. Generative caching for large language
+  models: Adaptive thresholds and response synthesis, in: Proceedings of the 2025
+  International Conference on Artificial Intelligence and Statistics, pp. 1–10.
+
+Iyer, S., Dandekar, N., Csernai, K., 2017. First quora dataset release: Question
+  pairs, in: Proceedings of the 2017 Workshop on Natural Language Processing for
+  Question Answering, pp. 1–5.
+
+Jin, K., Wang, Y., Santos, L., Fang, T., Yang, X., Im, S.K., Oliveira, H.G., 2025.
+  Reasoning or not? a comprehensive evaluation of reasoning llms for dialogue sum-
+  marization. Expert Systems with Applications .
+
+Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., Liu, T.Y., 2017.
+  Lightgbm: A highly efficient gradient boosting decision tree. Advances in neural
+  information processing systems 30.
+
+                                         46
+Kim, D., Oh, K., Lee, Y., Woo, H., 2025. Overview of fair federated learning for
+  fairness and privacy preservation. Expert Systems with Applications , 128568.
+
+Li, C., Wang, Z., Liu, M., Yang, Q., 2024. Scalm: Semantic caching for automated
+  llm services with pattern detection. Proceedings of the ACM on Management of
+  Data 2, 1–26.
+
+Li, M., Zhang, P., Xing, W., Zheng, Y., Zaporojets, K., Chen, J., Zhang, R., Zhang,
+  Y., Gong, S., Hu, J., et al., 2025a. A survey of large language models for data
+  challenges in graphs. Expert Systems with Applications , 129643.
+
+Li, S., Tan, W., Zhang, C., Li, J., Ren, H., Guo, Y., Jia, J., Liu, Y., Pan, X.,
+  Guo, J., et al., 2025b. Taming large language models to implement diagnosis and
+  evaluating the generation of llms at the semantic similarity level in acupuncture
+  and moxibustion. Expert Systems with Applications 264, 125920.
+
+Luo, X., Liang, F.Y., Liu, J., Zhan, Y.W., Chen, Z.D., Xu, X.S., 2025. Federated
+  class-incremental learning with prompting. Expert Systems with Applications ,
+  129416.
+
+Mai, G., Janowicz, K., Hu, Y., McKenzie, G., 2024. Improving semantic search with
+  hybrid indexing strategies, in: Proceedings of the 2024 ACM SIGIR Conference
+  on Research and Development in Information Retrieval, pp. 1455–1465.
+
+Naderi, H., Shojaei, A., 2025. Large-language model (llm)-powered system for situ-
+  ated and game-based construction safety training. Expert Systems with Applica-
+  tions , 127887.
+
+Nguyen, V.T., Le, H.P., Tran, M.T., 2025. Gbnet-sts: A graph-based model for
+  semantic textual similarity in vietnamese. IEEE Access 13, 1–15.
+
+                                        47
+Ortiz-Barajas, J., Bel-Enguix, G., 2024. MBZUAI-UNAM at SemEval-2024 task 1:
+  Sentence-crobi, a simple cross-bi-encoder-based neural network architecture for se-
+  mantic textual relatedness, in: Proceedings of the 18th International Workshop on
+  Semantic Evaluation (SemEval-2024), Association for Computational Linguistics,
+  Mexico City, Mexico. pp. 1069–1076. doi:10.18653/v1/2024.semeval-1.155.
+
+Reimers, N., Gurevych, I., 2019. Sentence-bert: Sentence embeddings using siamese
+  bert-networks, in: Proceedings of the 2019 Conference on Empirical Methods in
+  Natural Language Processing and the 9th International Joint Conference on Nat-
+  ural Language Processing (EMNLP-IJCNLP), pp. 3982–3992.
+
+Reimers, N., Gurevych, I., 2020. Making monolingual sentence embeddings multi-
+  lingual using knowledge distillation. arXiv preprint arXiv:2004.09813 .
+
+Robertson, S., Zaragoza, H., et al., 2009. The probabilistic relevance framework:
+  Bm25 and beyond. Foundations and Trends in Information Retrieval 3, 333–389.
+
+Schroeder, L.G., Liu, S., Cuadron, A., Zhao, M., Krusche, S., Kemper, A., Zaharia,
+  M., Gonzalez, J.E., 2025. Adaptive semantic prompt caching with VectorQ. arXiv
+  preprint arXiv:2502.03771 arXiv:2502.03771.
+
+Smith, J., Johnson, E., Brown, M., 2025. Long-text semantic similarity: A novel
+  approach for document-level comparison, in: Proceedings of the 2025 Conference
+  on Empirical Methods in Natural Language Processing, pp. 1–12.
+
+Sun, W., Li, H., Zhang, Y., Chen, X., 2024. Semantic caching optimization for large-
+  scale language model deployment. IEEE Transactions on Parallel and Distributed
+  Systems 35, 2345–2358.
+
+
+
+                                         48
+Tu, Z., Chen, W., Liu, Y., Zhang, H., 2024. Enhancing semantic cache performance
+  with adaptive embedding models. IEEE Transactions on Knowledge and Data
+  Engineering .
+
+Wang, L., Zhang, W., Chen, Y., Li, H., 2024a. Gcse: Unsupervised sentence em-
+  bedding via graph contrastive learning and semantic enhancement. arXiv preprint
+  arXiv:2403.12345 .
+
+Wang, S., Yang, H., Wang, X., Liu, T., Wang, P., Liang, X., Ma, K., Feng, T.,
+  You, X., Bao, Y., Liu, Y., Luan, Z., Qian, D., 2024b. Minions: Accelerating large
+  language model inference with adaptive and collective speculative decoding. arXiv
+  preprint arXiv:2402.15678 arXiv:2402.15678.
+
+Yan, J., Ni, W., Chen, L., Lin, X., Cheng, P., Qin, Z., Ren, K., 2025. ContextCache:
+  Context-aware semantic cache for multi-turn queries in large language models.
+  PVLDB 18, 5391–5394. doi:10.14778/3750601.3750679.
+
+Yu, Y., Gan, Y., Sarda, N., Tsai, L., Shen, J., Zhou, Y., Krishnamurthy, A., Lai, F.,
+  Levy, H.M., Culler, D.E., 2025. IC-Cache: Efficient large language model serving
+  via in-context caching, in: Proceedings of the 31st ACM SIGOPS Symposium on
+  Operating Systems Principles (SOSP ’25), ACM, Seoul, Republic of Korea. ArXiv
+  preprint arXiv:2501.12689.
+
+
+
+
+                                         49
+

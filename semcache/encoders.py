@@ -66,7 +66,7 @@ class BiEncoder:
         from sentence_transformers import SentenceTransformer
         configure_torch()
         self.name = name
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or C.preferred_torch_device()
         self.model = SentenceTransformer(name, device=self.device)
         self.model.eval()
 
@@ -114,7 +114,7 @@ class CrossEncoderWrapper:
         from sentence_transformers import CrossEncoder
         configure_torch()
         self.name = name
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or C.preferred_torch_device()
         self.model = CrossEncoder(name, device=self.device)
         self.model.model.eval()
 

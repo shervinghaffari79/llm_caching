@@ -1,0 +1,17 @@
+\begin{table*}[htbp]
+\centering
+\caption{Per-request overhead breakdown on QQP, measured at batch size 1 (online serving regime) on mps (Apple MPS (arm)). Overhead is paid on every request, hits and misses alike, because the similarity decision precedes the outcome. LLM generation time is excluded.}
+\label{tab:latency_breakdown}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Configuration} & \textbf{Bi-Encoder} & \textbf{FAISS Search} & \textbf{Cross-Encoder} & \textbf{Features + LightGBM} & \textbf{Total Overhead} \\
+\midrule
+Bi-encoder only (cosine threshold) & 23.92 ms & 0.19 ms & -- & -- & \textbf{24.12 ms} \\
+Bi-encoder + geometric/text features + LightGBM (no cross-encoder) & 23.92 ms & 0.19 ms & -- & 2.18 ms & \textbf{26.30 ms} \\
+Bi-encoder + cross-encoder re-ranking & 23.92 ms & 0.19 ms & 60.13 ms & -- & \textbf{84.24 ms} \\
+Full stacking ensemble (bi + cross + geometric/text + LightGBM) & 23.92 ms & 0.19 ms & 60.13 ms & 2.18 ms & \textbf{86.42 ms} \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

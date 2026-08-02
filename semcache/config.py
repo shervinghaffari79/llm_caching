@@ -79,6 +79,20 @@ OFFLINE_BATCH = 32
 TORCH_THREADS = int(os.environ.get("SEMCACHE_TORCH_THREADS", "0")) or None
 
 
+def preferred_torch_device() -> str:
+    """Select the fastest available Torch backend, with an optional override."""
+    override = os.environ.get("SEMCACHE_DEVICE")
+    if override:
+        return override
+
+    import torch
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 @dataclass(frozen=True)
 class HardwareProfile:
     """Recorded alongside every timing result so tables cannot be mixed."""
@@ -91,9 +105,11 @@ class HardwareProfile:
     @staticmethod
     def capture() -> "HardwareProfile":
         import torch
-        dev = "cuda" if torch.cuda.is_available() else "cpu"
+        dev = preferred_torch_device()
         if dev == "cuda":
             cpu = torch.cuda.get_device_name(0)
+        elif dev == "mps":
+            cpu = f"Apple MPS ({platform.processor() or platform.machine()})"
         else:
             cpu = platform.processor() or platform.machine()
         return HardwareProfile(

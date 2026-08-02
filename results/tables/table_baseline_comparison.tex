@@ -1,0 +1,20 @@
+\begin{table*}[htbp]
+\centering
+\caption{Comparison against published semantic-caching systems on the same QQP-derived stream, same bi-encoder, same hardware, batch size 1. All systems are faithful re-implementations of the published decision logic sharing one cache substrate, so the comparison isolates the decision rule.}
+\label{tab:baseline_comparison}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{System} & \textbf{Hit Ratio} & \textbf{Hit Precision} & \textbf{Correct Miss (distractors)} & \textbf{Token Saving} & \textbf{Overhead/req} & \textbf{Avg Response} \\
+\midrule
+GPTCache (single embedding + fixed distance threshold) & 64.9\% & 75.6\% & 8.1\% & 66.6\% & 40.68 ms & 1.063 s \\
+SCALM (cluster + frequency-ranked retention) & 65.0\% & 75.4\% & 8.1\% & 66.7\% & 55.81 ms & 1.080 s \\
+VectorQ (per-entry adaptive thresholds) & 63.7\% & 75.5\% & 14.4\% & 65.5\% & 47.73 ms & 1.107 s \\
+ContextCache (two-stage, context-aware re-ranking) & 64.9\% & 75.6\% & 8.1\% & 66.6\% & 42.24 ms & 1.065 s \\
+Ours -- Bi-encoder only (cosine threshold) & 64.2\% & 76.2\% & 10.2\% & 66.0\% & 42.09 ms & 1.082 s \\
+Ours -- Bi-encoder + geometric/text features + LightGBM (no cross-encoder) & 63.0\% & 77.0\% & 14.4\% & 64.7\% & 48.65 ms & 1.131 s \\
+Ours -- Full stacking ensemble (bi + cross + geometric/text + LightGBM) & 62.5\% & 77.4\% & 16.2\% & 64.4\% & 181.11 ms & 1.277 s \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

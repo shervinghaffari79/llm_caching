@@ -1,0 +1,16 @@
+\begin{table*}[htbp]
+\centering
+\caption{Accuracy per unit of latency. \emph{Cheap} features are arithmetic over bi-encoder vectors the pipeline has already computed; the \emph{expensive} encoder is the cross-encoder, which requires a second pairwise forward pass and cannot reuse them.}
+\label{tab:cheap_vs_expensive}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Component} & \textbf{Class} & \textbf{$\Delta$F1} & \textbf{Added Latency} & \textbf{$\Delta$F1 per 100 ms} \\
+\midrule
+Element-wise ops (product, |diff|) & cheap & +0.0231 & 0.01 ms & +220.6320 \\
+Distance metrics (L2, L1) & cheap & -0.0063 & 0.02 ms & -29.9280 \\
+Text features & cheap & +0.0223 & 0.03 ms & +83.8139 \\
+LightGBM meta-classifier inference & cheap & +nan & 2.11 ms & -- \\
+Cross-encoder (stsb-roberta-large) & expensive & +0.0045 & 60.13 ms & +0.0074 \\
+\bottomrule
+\end{tabular}
+\end{table*}
