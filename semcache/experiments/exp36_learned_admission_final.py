@@ -492,7 +492,15 @@ if __name__ == "__main__":
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--tag", default="")
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--qqp-only", action="store_true",
+                    help="reduce the real-log part to a stub; only the qqp and shift tables of the output are valid")
     a = ap.parse_args()
+    if a.qqp_only:              # the log tables of this run are not reported
+        LOG_REF = (107_000, 3000)
+        LOG_TUNE = ((100_000, 1500), (101_500, 1500))
+        LOG_EVAL = ((0, 1500), (1500, 1500))
+        LOG_CAPS = (200,)
+        a.tag = a.tag or "qqp_only"
     if a.smoke:                 # code check only, on locally cached data
         LOG_REF = (107_000, 3000)
         LOG_TUNE = ((100_000, 1500), (101_500, 1500))

@@ -155,10 +155,53 @@ def train_metas(n_train: int | None = None, seed: int = C.SEED,
 # --------------------------------------------------------------------------
 # Shared serving helpers for the revision experiments
 # --------------------------------------------------------------------------
+EVAL_STREAM_SEEDS = (42, 43, 44, 45, 46)
+_DISJOINT: dict = {}
+
+
+def disjoint_pool():
+    """The QQP stream pool without any question component that occurs in an
+    evaluation stream (seeds 42-46).
+
+    A component is the connected set of questions linked by duplicate labels;
+    removing the whole component removes the evaluation questions, their
+    paraphrases, and every non-duplicate pair that mentions any of them. Streams
+    drawn from this pool therefore share no question and no label class with
+    the evaluation streams, which are unchanged."""
+    if "pool" in _DISJOINT:
+        return _DISJOINT["pool"]
+    from ..data import UnionFind, build_splits, qid_of
+    from ..workload import build_workloads
+    pool = build_splits().stream_pool
+    ev = {qid_of(e.query) for s in EVAL_STREAM_SEEDS
+          for e in build_workloads(pool, lengths=(2000,), seed=s)[2000].events}
+    pos = pool[pool.is_duplicate == 1]
+    uf = UnionFind()
+    for q1, q2 in zip(pos.question1, pos.question2):
+        uf.union(qid_of(q1), qid_of(q2))
+    members = {}
+    for q1, q2 in zip(pos.question1, pos.question2):
+        for q in (q1, q2):
+            members.setdefault(uf.find(qid_of(q)), set()).add(qid_of(q))
+    bad_roots = {uf.find(q) for q in ev if q in uf.parent}
+    bad = set().union(*(members[r] for r in bad_roots if r in members)) | ev
+    keep = ~(pool.question1.map(qid_of).isin(bad) | pool.question2.map(qid_of).isin(bad))
+    _DISJOINT.update(pool=pool[keep].reset_index(drop=True), n_bad=len(bad), n_rows_removed=int((~keep).sum()))
+    return _DISJOINT["pool"]
+
+
 def get_stream(seed: int = C.SEED, n: int = 2000, **params):
-    """One stream of `n` events; `params` override workload.STREAM_DEFAULTS."""
+    """One stream of `n` events; `params` override workload.STREAM_DEFAULTS.
+
+    With SEMCACHE_DISJOINT_QQP=1, every stream of seed >= 1000 (tuning and
+    reference streams) is drawn from `disjoint_pool()`; evaluation streams
+    (seeds 42-46) are drawn from the full pool exactly as before."""
+    import os
     from ..data import build_splits
     from ..workload import build_workloads
+    if os.environ.get("SEMCACHE_DISJOINT_QQP") == "1" and seed >= 1000:
+        return build_workloads(disjoint_pool(), lengths=(n,), seed=seed,
+                               cache_dir=C.DATA_DIR / "workloads_disjoint", **params)[n]
     return build_workloads(build_splits().stream_pool, lengths=(n,), seed=seed,
                            **params)[n]
 
