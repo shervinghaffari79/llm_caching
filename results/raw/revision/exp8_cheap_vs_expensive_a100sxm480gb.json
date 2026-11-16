@@ -1,0 +1,118 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 1,
+      "cpu": "NVIDIA A100-SXM4-80GB",
+      "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+      "torch_version": "2.14.0+cu130",
+      "host_cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+      "host_cpu_count": 12
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1
+  },
+  "definitions": {
+    "cheap_features": [
+      "bi_cosine",
+      "distance",
+      "elementwise",
+      "text"
+    ],
+    "expensive_encoder": [
+      "cross_score"
+    ],
+    "cheap_definition": "arithmetic over bi-encoder vectors already computed by the retrieval step; marginal cost is a vector operation. Not encoder-free: they consume bi-encoder output.",
+    "expensive_definition": "a second forward pass with quadratic attention over the concatenated pair, per candidate, unable to reuse either side's cached embedding."
+  },
+  "rows": [
+    {
+      "component": "Element-wise ops (product, |diff|)",
+      "class": "cheap",
+      "delta_f1": 0.022039866170790234,
+      "added_ms": 0.024874446717149112,
+      "f1_per_100ms": 88.60444785529785
+    },
+    {
+      "component": "Distance metrics (L2, L1)",
+      "class": "cheap",
+      "delta_f1": -0.004790265540851046,
+      "added_ms": 0.08378686006229448,
+      "f1_per_100ms": -5.717203792205059
+    },
+    {
+      "component": "Text features",
+      "class": "cheap",
+      "delta_f1": 0.021707223624297334,
+      "added_ms": 0.04220052335464667,
+      "f1_per_100ms": 51.438280615321254
+    },
+    {
+      "component": "LightGBM meta-classifier inference",
+      "class": "cheap",
+      "delta_f1": NaN,
+      "added_ms": 4.499963773323543,
+      "f1_per_100ms": NaN
+    },
+    {
+      "component": "Cross-encoder (stsb-roberta-large)",
+      "class": "expensive",
+      "delta_f1": 0.006340960044670885,
+      "added_ms": 22.22617097662199,
+      "f1_per_100ms": 0.028529250725824327
+    }
+  ],
+  "verdict": {
+    "cheap_features_gain_f1": 0.012244145013610264,
+    "cheap_features_cost_ms": 4.664298703343472,
+    "cheap_f1_per_100ms": 0.26250773786921905,
+    "cross_encoder_gain_f1": 0.006340960044670885,
+    "cross_encoder_cost_ms": 22.22617097662199,
+    "cross_f1_per_100ms": 0.028529250725824327,
+    "efficiency_ratio": 9.201354090649156,
+    "cross_encoder_ci95": [
+      -0.00045482757426197336,
+      0.013352851254283532
+    ],
+    "cross_encoder_ci_includes_zero": true,
+    "cross_encoder_paired_t_p": 0.33454124766008864,
+    "title_supported": true,
+    "statement": "Cheap, bi-encoder-derived features add +0.0122 F1 over the bare cosine for 4.66 ms per request. The cross-encoder adds +0.0063 F1 for 22.2 ms. Its 95% bootstrap CI includes zero, so on this data its contribution is not distinguishable from noise. The title's claim is supported on a per-millisecond basis and should be defended in those terms in the text, not left to the title alone."
+  },
+  "pareto": [
+    {
+      "label": "bi-encoder caching",
+      "overhead_ms": 14.765032043233077,
+      "f1": 0.8591251356247721,
+      "config": "C1_bi_only"
+    },
+    {
+      "label": "cheap-feature stacking",
+      "overhead_ms": 19.42933074657655,
+      "f1": 0.8713692806383824,
+      "config": "C2_bi_geo_lgb"
+    },
+    {
+      "label": "cross-encoder re-ranking",
+      "overhead_ms": 36.991203019855064,
+      "f1": 0.8483757158002024,
+      "config": "C3_bi_cross"
+    },
+    {
+      "label": "stacking ensemble caching",
+      "overhead_ms": 41.65550172319853,
+      "f1": 0.8777102406830533,
+      "config": "C4_full_stacking"
+    }
+  ],
+  "group_isolation_f1": {
+    "bi_cosine": 0.8591251356247721,
+    "cross_score": 0.8507436749136772,
+    "distance": 0.8470301460555127,
+    "elementwise": 0.8481314571723686,
+    "text": 0.7738698908339353
+  },
+  "why_keep_the_cross_encoder": "The measurements say it can be dropped for latency-sensitive deployments. Reasons to keep it as an optional stage, which should be argued explicitly rather than left implicit: (1) it is the only component that models token-level interaction between the two queries, so it degrades differently from the embedding-derived features under distribution shift; (2) on the STS regression formulation the ensemble uses its continuous score, where a threshold-free signal matters more than in binary cache decisions; (3) in an offline batching regime its amortised cost falls by an order of magnitude, so the trade-off differs for batch re-validation of a cache versus online serving. None of these justify keeping it on the online path by default, and the paper should recommend the cross-encoder-free configuration as the deployment default."
+}
