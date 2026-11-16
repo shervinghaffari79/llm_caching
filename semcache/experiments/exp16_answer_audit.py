@@ -71,6 +71,9 @@ def judge_one(client, item: dict) -> dict:
                             {"role": "user", "content": _judge_prompt(item)}],
                   response_format={"type": "json_object"},
                   max_completion_tokens=500)
+    if os.environ.get("SEMCACHE_JUDGE_TEMPERATURE"):        # open-model judge: fixed decoding, set per run
+        kwargs["temperature"] = float(os.environ["SEMCACHE_JUDGE_TEMPERATURE"])
+        kwargs["seed"] = int(os.environ.get("SEMCACHE_JUDGE_SEED", "0"))
     try:
         r = client.chat.completions.create(**kwargs)
         d = json.loads(r.choices[0].message.content or "{}")
@@ -258,6 +261,8 @@ def _judge_stage(seed, n, params, per_stratum, calibrate_only, keys, wl_meta, co
 
     out = {"manifest": hardware_manifest({"n_stream": n, "stream_params": params,
                                           "judge_model": JUDGE_MODEL,
+                                          "judge_temperature": os.environ.get("SEMCACHE_JUDGE_TEMPERATURE"),
+                                          "judge_endpoint": os.environ.get("OPENAI_BASE_URL", "api.openai.com"),
                                           "judge_prompt_version": JUDGE_PROMPT_VERSION,
                                           "per_stratum": per_stratum,
                                           "calibrate_only": calibrate_only}, seed=seed),
