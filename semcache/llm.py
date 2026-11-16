@@ -107,7 +107,7 @@ class AnswerPool:
     """Disk-persisted map: query -> Generation. Keyed by exact query text."""
 
     def __init__(self, path: Path | None = None):
-        self.path = path or (C.LLM_CACHE_DIR / f"pool_{C.LLM_MODEL}.jsonl")
+        self.path = path or (C.LLM_CACHE_DIR / f"pool_{C.LLM_MODEL.replace(chr(47), chr(95))}.jsonl")
         self._d: dict[str, Generation] = {}
         self._lock = threading.Lock()
         if self.path.exists():
