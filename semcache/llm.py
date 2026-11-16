@@ -80,6 +80,29 @@ class Generation:
         return self.prompt_tokens + self.completion_tokens
 
 
+class NullBackend:
+    """Backend for experiments whose metrics are cache decisions against a
+    ground-truth label (hit ratio, precision, coverage). A miss returns an
+    empty answer with zero tokens and zero latency, so nothing is generated,
+    replayed or simulated, and no token or latency figure derived from it may
+    be reported."""
+
+    mode = "none"
+    model = "none"
+    virtual_time = True
+    sleep = False
+
+    def __init__(self):
+        self.pool = AnswerPool()
+        self.pool_misses = 0
+        self.calls = 0
+
+    def generate(self, query: str) -> "Generation":
+        self.calls += 1
+        return Generation(query=query, answer="", prompt_tokens=0,
+                          completion_tokens=0, latency_s=0.0, model="none")
+
+
 class AnswerPool:
     """Disk-persisted map: query -> Generation. Keyed by exact query text."""
 
