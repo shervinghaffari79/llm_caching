@@ -1,0 +1,17 @@
+\begin{table*}[htbp]
+\centering
+\caption{Per-request overhead breakdown on QQP, measured at batch size 1 (online serving regime) on cpu (Intel64 Family 6 Model 158 Stepping 9, GenuineIntel). Overhead is paid on every request, hits and misses alike, because the similarity decision precedes the outcome. LLM generation time is excluded.}
+\label{tab:latency_breakdown}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Configuration} & \textbf{Bi-Encoder} & \textbf{FAISS Search} & \textbf{Cross-Encoder} & \textbf{Features + LightGBM} & \textbf{Total Overhead} \\
+\midrule
+Bi-encoder only (cosine threshold) & 58.52 ms & 1.38 ms & -- & -- & \textbf{59.90 ms} \\
+Bi-encoder + geometric/text features + LightGBM (no cross-encoder) & 58.52 ms & 1.38 ms & -- & 1.70 ms & \textbf{61.60 ms} \\
+Bi-encoder + cross-encoder re-ranking & 58.52 ms & 1.38 ms & 250.30 ms & -- & \textbf{310.20 ms} \\
+Full stacking ensemble (bi + cross + geometric/text + LightGBM) & 58.52 ms & 1.38 ms & 250.30 ms & 1.70 ms & \textbf{311.90 ms} \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

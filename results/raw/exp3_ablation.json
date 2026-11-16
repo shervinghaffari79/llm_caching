@@ -1,0 +1,747 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 4,
+      "cpu": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+      "platform": "Windows-11-10.0.22631-SP0",
+      "torch_version": "2.2.0+cpu"
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "model": "LightGBM",
+    "subset": "held-out 3,000 QQP pairs (60/40)",
+    "cv_folds": 5
+  },
+  "subset_description": {
+    "n_pairs": 3000,
+    "duplicate_ratio": 0.6,
+    "n_components": 2066,
+    "disjoint_from_meta_set": {
+      "seed": 42,
+      "meta_components": 16586,
+      "ablation_components": 2066,
+      "component_overlap_meta_ablation": 0,
+      "question_overlap_meta_ablation": 0,
+      "pair_overlap_meta_ablation": 0,
+      "ablation_duplicate_ratio": 0.6,
+      "meta_duplicate_ratio": 0.5
+    }
+  },
+  "stratified_kfold": {
+    "isolation": [
+      {
+        "group": "bi_cosine",
+        "group_label": "Bi-Encoder Cosine",
+        "n_features": 1,
+        "f1_mean": 0.8616365513290672,
+        "f1_std": 0.008255955416423405,
+        "auc_mean": 0.8851747685185185,
+        "auc_std": 0.015241322751385202,
+        "accuracy_mean": 0.8266666666666665,
+        "marginal_cost_ms": 0.009460002183914185
+      },
+      {
+        "group": "cross_score",
+        "group_label": "Cross-Encoder Score",
+        "n_features": 1,
+        "f1_mean": 0.8571466676337904,
+        "f1_std": 0.008714292174078002,
+        "auc_mean": 0.8852847222222223,
+        "auc_std": 0.01486745701809875,
+        "accuracy_mean": 0.8226666666666667,
+        "marginal_cost_ms": 250.29848500562366
+      },
+      {
+        "group": "distance",
+        "group_label": "Distance Metrics (L2, L1)",
+        "n_features": 2,
+        "f1_mean": 0.8557286391456232,
+        "f1_std": 0.00674098225718785,
+        "auc_mean": 0.8746782407407407,
+        "auc_std": 0.01119559383507071,
+        "accuracy_mean": 0.8203333333333334,
+        "marginal_cost_ms": 0.05853750335518271
+      },
+      {
+        "group": "elementwise",
+        "group_label": "Element-wise Operations (product, |diff|)",
+        "n_features": 1536,
+        "f1_mean": 0.8940142058886529,
+        "f1_std": 0.009197950285310336,
+        "auc_mean": 0.9256851851851853,
+        "auc_std": 0.0075767295967909265,
+        "accuracy_mean": 0.8700000000000001,
+        "marginal_cost_ms": 0.02097001124639064
+      },
+      {
+        "group": "text",
+        "group_label": "Text Features",
+        "n_features": 6,
+        "f1_mean": 0.7877232747706816,
+        "f1_std": 0.011324489957298737,
+        "auc_mean": 0.7667361111111112,
+        "auc_std": 0.01773870813896748,
+        "accuracy_mean": 0.7306666666666667,
+        "marginal_cost_ms": 0.03701498790178448
+      }
+    ],
+    "incremental": [
+      {
+        "label": "Bi + Cross",
+        "groups": [
+          "bi_cosine",
+          "cross_score"
+        ],
+        "n_features": 2,
+        "f1_mean": 0.8488740926704142,
+        "f1_std": 0.0074148717674518624,
+        "auc_mean": 0.8901909722222221,
+        "auc_std": 0.007637105440308338,
+        "accuracy_mean": 0.8149999999999998,
+        "precision_mean": 0.8325479678151433,
+        "recall_mean": 0.8661111111111112,
+        "overhead_ms": 311.77966000686865,
+        "delta_f1": 0.0
+      },
+      {
+        "label": "+ Distance Metrics",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance"
+        ],
+        "n_features": 4,
+        "f1_mean": 0.8503480602799897,
+        "f1_std": 0.009748805240733115,
+        "auc_mean": 0.8911203703703704,
+        "auc_std": 0.008710463139392109,
+        "accuracy_mean": 0.8163333333333334,
+        "precision_mean": 0.8317048243107161,
+        "recall_mean": 0.8700000000000001,
+        "overhead_ms": 311.83819751022384,
+        "delta_f1": 0.0014739676095754106
+      },
+      {
+        "label": "+ Element-wise Ops",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "elementwise"
+        ],
+        "n_features": 1538,
+        "f1_mean": 0.89704537180443,
+        "f1_std": 0.00827341589568264,
+        "auc_mean": 0.9346944444444445,
+        "auc_std": 0.00999114673685078,
+        "accuracy_mean": 0.8710000000000001,
+        "precision_mean": 0.860793976202704,
+        "recall_mean": 0.9366666666666668,
+        "overhead_ms": 311.80063001811504,
+        "delta_f1": 0.048171279134015754
+      },
+      {
+        "label": "+ Text Features",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "text"
+        ],
+        "n_features": 8,
+        "f1_mean": 0.8867487172724411,
+        "f1_std": 0.010292490455754172,
+        "auc_mean": 0.9134490740740742,
+        "auc_std": 0.008782323972396935,
+        "accuracy_mean": 0.859,
+        "precision_mean": 0.8564919388444745,
+        "recall_mean": 0.9199999999999999,
+        "overhead_ms": 311.81667499477044,
+        "delta_f1": 0.03787462460202684
+      },
+      {
+        "label": "Full Model",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1546,
+        "f1_mean": 0.903261285482891,
+        "f1_std": 0.008350507931946449,
+        "auc_mean": 0.9370856481481482,
+        "auc_std": 0.009861418118156128,
+        "accuracy_mean": 0.8786666666666667,
+        "precision_mean": 0.866202294427868,
+        "recall_mean": 0.9438888888888888,
+        "overhead_ms": 311.896182509372,
+        "delta_f1": 0.054387192812476726
+      },
+      {
+        "label": "Full Model - Cross-Encoder",
+        "groups": [
+          "bi_cosine",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1545,
+        "f1_mean": 0.8970363450929227,
+        "f1_std": 0.005325253998845226,
+        "auc_mean": 0.9324861111111111,
+        "auc_std": 0.008204795721985157,
+        "accuracy_mean": 0.8700000000000001,
+        "precision_mean": 0.854802262924369,
+        "recall_mean": 0.9438888888888888,
+        "overhead_ms": 61.59769750374835,
+        "delta_f1": 0.04816225242250849
+      },
+      {
+        "label": "Bi-Encoder Cosine only",
+        "groups": [
+          "bi_cosine"
+        ],
+        "n_features": 1,
+        "f1_mean": 0.8616365513290672,
+        "f1_std": 0.008255955416423405,
+        "auc_mean": 0.8851747685185185,
+        "auc_std": 0.015241322751385202,
+        "accuracy_mean": 0.8266666666666665,
+        "precision_mean": 0.8266810139993674,
+        "recall_mean": 0.9,
+        "overhead_ms": 61.48117500124499,
+        "delta_f1": 0.012762458658652998
+      }
+    ],
+    "cross_encoder_removal_test": {
+      "mean_delta_f1": 0.006224940389968303,
+      "std_delta_f1": 0.006136450073126369,
+      "paired_t": 2.268313064064676,
+      "paired_t_p": 0.0858875498254409,
+      "wilcoxon_p": 0.125,
+      "oof_f1_a": 0.9032429558745348,
+      "oof_f1_b": 0.8970432946145723,
+      "bootstrap_delta_mean": 0.006199139252043991,
+      "bootstrap_ci95_low": 0.0003068413174286522,
+      "bootstrap_ci95_high": 0.011639497947917923,
+      "bootstrap_ci_includes_zero": false,
+      "interpretation": "Positive mean_delta_f1 means the cross-encoder helps. If the bootstrap 95% CI on the out-of-fold F1 difference contains zero, the cross-encoder's contribution is not distinguishable from noise on this data, and its ~500 ms cost buys nothing measurable."
+    },
+    "fold_scheme": "stratified_kfold"
+  },
+  "stratified_group_kfold": {
+    "isolation": [
+      {
+        "group": "bi_cosine",
+        "group_label": "Bi-Encoder Cosine",
+        "n_features": 1,
+        "f1_mean": 0.8591251356247721,
+        "f1_std": 0.030824864380217372,
+        "auc_mean": 0.8816366741144824,
+        "auc_std": 0.02417991125737662,
+        "accuracy_mean": 0.8251788933448025,
+        "marginal_cost_ms": 0.009460002183914185
+      },
+      {
+        "group": "cross_score",
+        "group_label": "Cross-Encoder Score",
+        "n_features": 1,
+        "f1_mean": 0.8507436749136772,
+        "f1_std": 0.009550111928829074,
+        "auc_mean": 0.885395057403309,
+        "auc_std": 0.014225184740328379,
+        "accuracy_mean": 0.814071765124809,
+        "marginal_cost_ms": 250.29848500562366
+      },
+      {
+        "group": "distance",
+        "group_label": "Distance Metrics (L2, L1)",
+        "n_features": 2,
+        "f1_mean": 0.8472808943680505,
+        "f1_std": 0.02850845833287242,
+        "auc_mean": 0.8779274258182902,
+        "auc_std": 0.02306722163955231,
+        "accuracy_mean": 0.8132429602635444,
+        "marginal_cost_ms": 0.05853750335518271
+      },
+      {
+        "group": "elementwise",
+        "group_label": "Element-wise Operations (product, |diff|)",
+        "n_features": 1536,
+        "f1_mean": 0.8474653573786789,
+        "f1_std": 0.032818288251384664,
+        "auc_mean": 0.9031308787968676,
+        "auc_std": 0.017146364115633708,
+        "accuracy_mean": 0.8211967294645219,
+        "marginal_cost_ms": 0.02097001124639064
+      },
+      {
+        "group": "text",
+        "group_label": "Text Features",
+        "n_features": 6,
+        "f1_mean": 0.7738698908339353,
+        "f1_std": 0.019116986605863074,
+        "auc_mean": 0.7518175804087761,
+        "auc_std": 0.02344012447621697,
+        "accuracy_mean": 0.7179956049661487,
+        "marginal_cost_ms": 0.03701498790178448
+      }
+    ],
+    "incremental": [
+      {
+        "label": "Bi + Cross",
+        "groups": [
+          "bi_cosine",
+          "cross_score"
+        ],
+        "n_features": 2,
+        "f1_mean": 0.8483757158002024,
+        "f1_std": 0.022448694611778758,
+        "auc_mean": 0.8887721212372843,
+        "auc_std": 0.01727839662454208,
+        "accuracy_mean": 0.8140692688553367,
+        "precision_mean": 0.8263034933181423,
+        "recall_mean": 0.8752823630672703,
+        "overhead_ms": 311.77966000686865,
+        "delta_f1": 0.0
+      },
+      {
+        "label": "+ Distance Metrics",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance"
+        ],
+        "n_features": 4,
+        "f1_mean": 0.8438392775724817,
+        "f1_std": 0.024305139725464463,
+        "auc_mean": 0.8887722725722504,
+        "auc_std": 0.01844438983031638,
+        "accuracy_mean": 0.8096198334309005,
+        "precision_mean": 0.8269401768722906,
+        "recall_mean": 0.8654471163697274,
+        "overhead_ms": 311.83819751022384,
+        "delta_f1": -0.004536438227720763
+      },
+      {
+        "label": "+ Element-wise Ops",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "elementwise"
+        ],
+        "n_features": 1538,
+        "f1_mean": 0.8723405171076715,
+        "f1_std": 0.011774559952392965,
+        "auc_mean": 0.9164174113852948,
+        "auc_std": 0.012401903556528995,
+        "accuracy_mean": 0.8449939872791358,
+        "precision_mean": 0.8570915165943525,
+        "recall_mean": 0.8901062548796694,
+        "overhead_ms": 311.80063001811504,
+        "delta_f1": 0.02396480130746903
+      },
+      {
+        "label": "+ Text Features",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "text"
+        ],
+        "n_features": 8,
+        "f1_mean": 0.8700829394244998,
+        "f1_std": 0.0197039549285211,
+        "auc_mean": 0.9032946212405836,
+        "auc_std": 0.011185596589228977,
+        "accuracy_mean": 0.8412009421042577,
+        "precision_mean": 0.8496216111090881,
+        "recall_mean": 0.8947078264536865,
+        "overhead_ms": 311.81667499477044,
+        "delta_f1": 0.021707223624297334
+      },
+      {
+        "label": "Full Model",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1546,
+        "f1_mean": 0.8746930997734799,
+        "f1_std": 0.013030528199624252,
+        "auc_mean": 0.9191871448059805,
+        "auc_std": 0.012286489075379657,
+        "accuracy_mean": 0.8478612196264319,
+        "precision_mean": 0.8598995711114865,
+        "recall_mean": 0.892169863868643,
+        "overhead_ms": 311.896182509372,
+        "delta_f1": 0.02631738397327743
+      },
+      {
+        "label": "Full Model - Cross-Encoder",
+        "groups": [
+          "bi_cosine",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1545,
+        "f1_mean": 0.8730615084466951,
+        "f1_std": 0.015942974428163732,
+        "auc_mean": 0.9121317841386658,
+        "auc_std": 0.014814313782302599,
+        "accuracy_mean": 0.8440832512537713,
+        "precision_mean": 0.8483015841466097,
+        "recall_mean": 0.9012569281197165,
+        "overhead_ms": 61.59769750374835,
+        "delta_f1": 0.02468579264649262
+      },
+      {
+        "label": "Bi-Encoder Cosine only",
+        "groups": [
+          "bi_cosine"
+        ],
+        "n_features": 1,
+        "f1_mean": 0.8591251356247721,
+        "f1_std": 0.030824864380217372,
+        "auc_mean": 0.8816366741144824,
+        "auc_std": 0.02417991125737662,
+        "accuracy_mean": 0.8251788933448025,
+        "precision_mean": 0.8256904660210405,
+        "recall_mean": 0.900335689963455,
+        "overhead_ms": 61.48117500124499,
+        "delta_f1": 0.010749419824569673
+      }
+    ],
+    "cross_encoder_removal_test": {
+      "mean_delta_f1": 0.0016315913267847427,
+      "std_delta_f1": 0.009530561040298775,
+      "paired_t": 0.3828052832108387,
+      "paired_t_p": 0.7213366483260588,
+      "wilcoxon_p": 1.0,
+      "oof_f1_a": 0.873972602739726,
+      "oof_f1_b": 0.8722252301028696,
+      "bootstrap_delta_mean": 0.0019169316263499127,
+      "bootstrap_ci95_low": -0.005058503728548533,
+      "bootstrap_ci95_high": 0.008590294955186237,
+      "bootstrap_ci_includes_zero": true,
+      "interpretation": "Positive mean_delta_f1 means the cross-encoder helps. If the bootstrap 95% CI on the out-of-fold F1 difference contains zero, the cross-encoder's contribution is not distinguishable from noise on this data, and its ~500 ms cost buys nothing measurable."
+    },
+    "fold_scheme": "stratified_group_kfold"
+  },
+  "balanced_recheck": {
+    "isolation": [
+      {
+        "group": "bi_cosine",
+        "group_label": "Bi-Encoder Cosine",
+        "n_features": 1,
+        "f1_mean": 0.8020953876140137,
+        "f1_std": 0.02665531646272742,
+        "auc_mean": 0.8800001620961282,
+        "auc_std": 0.020811254150700197,
+        "accuracy_mean": 0.7931253079479335,
+        "marginal_cost_ms": 0.009460002183914185
+      },
+      {
+        "group": "cross_score",
+        "group_label": "Cross-Encoder Score",
+        "n_features": 1,
+        "f1_mean": 0.8133463787218785,
+        "f1_std": 0.025108867758430423,
+        "auc_mean": 0.8868746328299506,
+        "auc_std": 0.02070784398671389,
+        "accuracy_mean": 0.8086669276285343,
+        "marginal_cost_ms": 250.29848500562366
+      },
+      {
+        "group": "distance",
+        "group_label": "Distance Metrics (L2, L1)",
+        "n_features": 2,
+        "f1_mean": 0.7864431290878924,
+        "f1_std": 0.021726208270825158,
+        "auc_mean": 0.8642624557626103,
+        "auc_std": 0.016803219172040508,
+        "accuracy_mean": 0.7810769989387267,
+        "marginal_cost_ms": 0.05853750335518271
+      },
+      {
+        "group": "elementwise",
+        "group_label": "Element-wise Operations (product, |diff|)",
+        "n_features": 1536,
+        "f1_mean": 0.7933359306967599,
+        "f1_std": 0.030515234143895033,
+        "auc_mean": 0.9053349937151834,
+        "auc_std": 0.015417851425586854,
+        "accuracy_mean": 0.8033967291229871,
+        "marginal_cost_ms": 0.02097001124639064
+      },
+      {
+        "group": "text",
+        "group_label": "Text Features",
+        "n_features": 6,
+        "f1_mean": 0.6817942912771141,
+        "f1_std": 0.015202381154151439,
+        "auc_mean": 0.7540996772988542,
+        "auc_std": 0.024627509925841683,
+        "accuracy_mean": 0.6770959702789333,
+        "marginal_cost_ms": 0.03701498790178448
+      }
+    ],
+    "incremental": [
+      {
+        "label": "Bi + Cross",
+        "groups": [
+          "bi_cosine",
+          "cross_score"
+        ],
+        "n_features": 2,
+        "f1_mean": 0.7935394741651786,
+        "f1_std": 0.027287903119009894,
+        "auc_mean": 0.8868540070714006,
+        "auc_std": 0.019500734166501943,
+        "accuracy_mean": 0.7919943941249136,
+        "precision_mean": 0.7811486990840659,
+        "recall_mean": 0.8098559387691058,
+        "overhead_ms": 311.77966000686865,
+        "delta_f1": 0.0
+      },
+      {
+        "label": "+ Distance Metrics",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance"
+        ],
+        "n_features": 4,
+        "f1_mean": 0.7933721471131105,
+        "f1_std": 0.021502552320275,
+        "auc_mean": 0.8849460764733221,
+        "auc_std": 0.019085014903331702,
+        "accuracy_mean": 0.7924045370412017,
+        "precision_mean": 0.781655739721001,
+        "recall_mean": 0.8090715883096035,
+        "overhead_ms": 311.83819751022384,
+        "delta_f1": -0.00016732705206801146
+      },
+      {
+        "label": "+ Element-wise Ops",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "elementwise"
+        ],
+        "n_features": 1538,
+        "f1_mean": 0.8326508624244155,
+        "f1_std": 0.019657642065297257,
+        "auc_mean": 0.9177585189812932,
+        "auc_std": 0.01441538518814787,
+        "accuracy_mean": 0.8351116118979863,
+        "precision_mean": 0.8386314725845446,
+        "recall_mean": 0.8310348728508506,
+        "overhead_ms": 311.80063001811504,
+        "delta_f1": 0.03911138825923699
+      },
+      {
+        "label": "+ Text Features",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "text"
+        ],
+        "n_features": 8,
+        "f1_mean": 0.8344462889893702,
+        "f1_std": 0.007448191495346295,
+        "auc_mean": 0.9161384094323566,
+        "auc_std": 0.011553757988523835,
+        "accuracy_mean": 0.8329623223826808,
+        "precision_mean": 0.8178867871863519,
+        "recall_mean": 0.8548202536408359,
+        "overhead_ms": 311.81667499477044,
+        "delta_f1": 0.04090681482419167
+      },
+      {
+        "label": "Full Model",
+        "groups": [
+          "bi_cosine",
+          "cross_score",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1546,
+        "f1_mean": 0.842333510452967,
+        "f1_std": 0.022498751963895783,
+        "auc_mean": 0.925292901902794,
+        "auc_std": 0.01641909412528039,
+        "accuracy_mean": 0.8431676277970114,
+        "precision_mean": 0.841692951505868,
+        "recall_mean": 0.8468396935708069,
+        "overhead_ms": 311.896182509372,
+        "delta_f1": 0.048794036287788445
+      },
+      {
+        "label": "Full Model - Cross-Encoder",
+        "groups": [
+          "bi_cosine",
+          "distance",
+          "elementwise",
+          "text"
+        ],
+        "n_features": 1545,
+        "f1_mean": 0.827455456250615,
+        "f1_std": 0.02366856457336234,
+        "auc_mean": 0.9134820386801328,
+        "auc_std": 0.0140298191961866,
+        "accuracy_mean": 0.8282019346100624,
+        "precision_mean": 0.8242168968988126,
+        "recall_mean": 0.833704836799118,
+        "overhead_ms": 61.59769750374835,
+        "delta_f1": 0.03391598208543645
+      },
+      {
+        "label": "Bi-Encoder Cosine only",
+        "groups": [
+          "bi_cosine"
+        ],
+        "n_features": 1,
+        "f1_mean": 0.8020953876140137,
+        "f1_std": 0.02665531646272742,
+        "auc_mean": 0.8800001620961282,
+        "auc_std": 0.020811254150700197,
+        "accuracy_mean": 0.7931253079479335,
+        "precision_mean": 0.7622661249461583,
+        "recall_mean": 0.8532948478109981,
+        "overhead_ms": 61.48117500124499,
+        "delta_f1": 0.008555913448835106
+      }
+    ],
+    "cross_encoder_removal_test": {
+      "mean_delta_f1": 0.014878054202351887,
+      "std_delta_f1": 0.004261202098842333,
+      "paired_t": 7.807266540684246,
+      "paired_t_p": 0.0014524043922197864,
+      "wilcoxon_p": 0.0625,
+      "oof_f1_a": 0.8400267737617135,
+      "oof_f1_b": 0.8254921588254922,
+      "bootstrap_delta_mean": 0.014616999111222878,
+      "bootstrap_ci95_low": 0.0036897858308876266,
+      "bootstrap_ci95_high": 0.025706839394542134,
+      "bootstrap_ci_includes_zero": false,
+      "interpretation": "Positive mean_delta_f1 means the cross-encoder helps. If the bootstrap 95% CI on the out-of-fold F1 difference contains zero, the cross-encoder's contribution is not distinguishable from noise on this data, and its ~500 ms cost buys nothing measurable."
+    },
+    "fold_scheme": "stratified_group_kfold_balanced"
+  },
+  "reference_30k_recomputed": {
+    "name": "reference_3000",
+    "n_features": 1546,
+    "n_folds": 5,
+    "fold_scheme": "stratified_group_kfold",
+    "scaler_fitted_inside_fold": true,
+    "accuracy_mean": 0.8362878936736049,
+    "accuracy_std": 0.023761063189236705,
+    "precision_mean": 0.8222536412684196,
+    "precision_std": 0.019279425046374817,
+    "recall_mean": 0.8530192918364132,
+    "recall_std": 0.03890392725581711,
+    "f1_mean": 0.8366204682399687,
+    "f1_std": 0.012348892644388688,
+    "auc_mean": 0.9155799549054621,
+    "auc_std": 0.022774069841246275,
+    "threshold_mean": 0.5,
+    "threshold_std": 0.0,
+    "fold_mean": 2.0,
+    "fold_std": 1.5811388300841898,
+    "n_train_mean": 2400.0,
+    "n_train_std": 202.741214359587,
+    "n_val_mean": 600.0,
+    "n_val_std": 202.741214359587,
+    "n_pairs": 3000
+  },
+  "delta_ablation_vs_30k_f1": 0.03807263153351115,
+  "normalisation_leak_check": {
+    "scaler_inside_fold": {
+      "name": "scaler_in_fold",
+      "n_features": 1546,
+      "n_folds": 5,
+      "fold_scheme": "stratified",
+      "scaler_fitted_inside_fold": true,
+      "accuracy_mean": 0.8478612196264319,
+      "accuracy_std": 0.018629711333669936,
+      "precision_mean": 0.8598995711114865,
+      "precision_std": 0.026453030966184964,
+      "recall_mean": 0.892169863868643,
+      "recall_std": 0.04341608414643902,
+      "f1_mean": 0.8746930997734799,
+      "f1_std": 0.013030528199624252,
+      "auc_mean": 0.9191871448059805,
+      "auc_std": 0.012286489075379657,
+      "threshold_mean": 0.5,
+      "threshold_std": 0.0,
+      "fold_mean": 2.0,
+      "fold_std": 1.5811388300841898,
+      "n_train_mean": 2400.0,
+      "n_train_std": 81.70985252709737,
+      "n_val_mean": 600.0,
+      "n_val_std": 81.70985252709737
+    },
+    "scaler_fitted_before_split": {
+      "name": "scaler_on_all_data",
+      "n_features": 1546,
+      "n_folds": 5,
+      "fold_scheme": "stratified",
+      "scaler_fitted_inside_fold": false,
+      "accuracy_mean": 0.8515602426350976,
+      "accuracy_std": 0.014708375851708887,
+      "precision_mean": 0.8629826497026875,
+      "precision_std": 0.02975952484987868,
+      "recall_mean": 0.8947689940379202,
+      "recall_std": 0.04078187917192403,
+      "f1_mean": 0.8775341553668646,
+      "f1_std": 0.01183051253279967,
+      "auc_mean": 0.9191751126929283,
+      "auc_std": 0.011642982093867946,
+      "threshold_mean": 0.5,
+      "threshold_std": 0.0,
+      "fold_mean": 2.0,
+      "fold_std": 1.5811388300841898,
+      "n_train_mean": 2400.0,
+      "n_train_std": 81.70985252709737,
+      "n_val_mean": 600.0,
+      "n_val_std": 81.70985252709737
+    },
+    "delta_f1": 0.002841055593384767,
+    "delta_auc": -1.2032113052229398e-05,
+    "note": "Tree ensembles are invariant to monotone per-feature affine transforms, so the measured delta is expected to be ~0. The protocol still matters for scale-sensitive meta-classifiers and is enforced structurally via sklearn Pipeline."
+  },
+  "group_importance": {
+    "elementwise": {
+      "importance": 21703.0,
+      "importance_pct": 96.4920860750489
+    },
+    "cross_score": {
+      "importance": 338.0,
+      "importance_pct": 1.5027565356571226
+    },
+    "text": {
+      "importance": 300.0,
+      "importance_pct": 1.3338075760270318
+    },
+    "distance": {
+      "importance": 82.0,
+      "importance_pct": 0.364574070780722
+    },
+    "bi_cosine": {
+      "importance": 69.0,
+      "importance_pct": 0.3067757424862173
+    }
+  },
+  "published_table7_for_comparison": {
+    "full_model_f1": "0.8716 +/- 0.004",
+    "full_minus_cross_f1": "0.8709 +/- 0.004",
+    "note": "Identical to the Table 4 30k result including the standard deviation. The values recomputed here on the actual 3k 60/40 subset are what Table 7 should report."
+  }
+}

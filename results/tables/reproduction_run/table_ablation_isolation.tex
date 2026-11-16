@@ -1,0 +1,16 @@
+\begin{table*}[htbp]
+\centering
+\caption{Feature groups in isolation. 5-fold stratified, group-disjoint cross-validation on the held-out 3,000-pair QQP subset (60/40 duplicate ratio). Normalisation is fitted inside each training fold. Cost is the marginal per-request cost of producing the group at batch size 1.}
+\label{tab:ablation_isolation}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Feature Group} & \textbf{\# Features} & \textbf{F1} & \textbf{Marginal Cost} \\
+\midrule
+Bi-Encoder Cosine & 1 & 0.859 $\pm$ 0.031 & 0.01 ms \\
+Cross-Encoder Score & 1 & 0.851 $\pm$ 0.010 & 250.30 ms \\
+Distance Metrics (L2, L1) & 2 & 0.847 $\pm$ 0.029 & 0.06 ms \\
+Element-wise Operations (product, |diff|) & 1536 & 0.847 $\pm$ 0.033 & 0.02 ms \\
+Text Features & 6 & 0.774 $\pm$ 0.019 & 0.04 ms \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -36,6 +36,9 @@ from ..reporting import save_json, save_latex, table_latency_breakdown
 from ._common import banner, encode_frame, hardware_manifest, save_result
 
 
+N_DISCARD = 5   # cold iterations dropped before timing steady state
+
+
 def _percentiles(v: list[float]) -> dict:
     a = np.array(v, dtype=float)
     return {"mean_ms": float(a.mean()), "median_ms": float(np.median(a)),
@@ -62,7 +65,8 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
         vb.add(i, v)
 
     queries = abl["question1"].tolist()
-    idx = rng.choice(len(queries), size=min(n_queries, len(queries)), replace=False)
+    idx = rng.choice(len(queries), size=min(n_queries + N_DISCARD, len(queries)),
+                     replace=False)
     queries = [queries[i] for i in idx]
 
     stages: dict[str, list[float]] = {k: [] for k in
@@ -77,7 +81,7 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
     meta = fit_final(X, enc.y, ("bi_cosine", "cross_score", "distance",
                                 "elementwise", "text")).set_inference_threads()
 
-    for q in queries:
+    for qi, q in enumerate(queries):
         t = StageTimer()
         eq = bi.encode_one(q, timer=t, stage="bi_encode")
         sims, ids = vb.search(eq, k=1, timer=t, stage="vector_search")
@@ -104,6 +108,10 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
         with t.stage("meta_infer"):
             meta.predict_proba_one(x)
 
+        # The first few iterations pay lazy allocator / cache-warming costs
+        # that a steady-state server does not; they are measured and dropped.
+        if qi < N_DISCARD:
+            continue
         snap = t.snapshot_ms()
         for k in stages:
             if k in snap:
@@ -184,10 +192,17 @@ def main(n_queries: int = 300, index_size: int = 2000) -> dict:
     print(f"\n  Offline (batch size {offline['batch_size']}) per-pair: "
           f"bi {offline['bi_encode_ms_per_pair']:.2f} ms, "
           f"cross {offline['cross_encode_ms_per_pair']:.2f} ms")
-    print(f"  -> batching speeds the cross-encoder up by "
-          f"{online['cross_encode']['mean_ms'] / max(1e-9, offline['cross_encode_ms_per_pair']):.1f}x, "
-          f"which is why an offline-measured cost must never be quoted next to "
-          f"an online serving average.")
+    sp = (online["cross_encode"]["mean_ms"] /
+          max(1e-9, offline["cross_encode_ms_per_pair"]))
+    if sp >= 1.5:
+        print(f"  -> batching speeds the cross-encoder up by {sp:.1f}x. An "
+              f"offline-measured cost must therefore never be quoted next to "
+              f"an online serving average.")
+    else:
+        print(f"  -> batching changes the cross-encoder cost by only {sp:.2f}x "
+              f"on this device, so on this hardware the two regimes agree and "
+              f"the batching caveat is not what explains any table mismatch. "
+              f"Expect a large divergence on a GPU, where batching does pay.")
 
     rows = compose_configs(online)
     print("\n  Per-configuration overhead (online, per request):")

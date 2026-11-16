@@ -364,5 +364,5 @@ def save_audit(splits: Splits, path: Path | None = None) -> Path:
                "sizes": {"meta": len(splits.meta), "ablation": len(splits.ablation),
                          "ablation_balanced": len(splits.ablation_bal),
                          "stream_pool": len(splits.stream_pool)}}
-    path.write_text(json.dumps(payload, indent=2))
+    path.write_text(json.dumps(payload, indent=2), encoding="utf8")
     return path

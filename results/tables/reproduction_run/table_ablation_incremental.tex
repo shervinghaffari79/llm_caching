@@ -1,0 +1,18 @@
+\begin{table*}[htbp]
+\centering
+\caption{Incremental feature addition, measured on the held-out 3,000-pair ablation subset (60/40). $\Delta$F1 is relative to the bi-encoder + cross-encoder baseline; the 95\% CI is a bootstrap over out-of-fold predictions.}
+\label{tab:ablation_incremental}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Configuration} & \textbf{F1} & \textbf{$\Delta$F1 vs Bi+Cross} & \textbf{95\% CI} & \textbf{Overhead} \\
+\midrule
+Bi + Cross & 0.8484 $\pm$ 0.0224 & +0.0000 & -- & 311.78 ms \\
++ Distance Metrics & 0.8438 $\pm$ 0.0243 & -0.0045 & -- & 311.84 ms \\
++ Element-wise Ops & 0.8723 $\pm$ 0.0118 & +0.0240 & -- & 311.80 ms \\
++ Text Features & 0.8701 $\pm$ 0.0197 & +0.0217 & -- & 311.82 ms \\
+Full Model & 0.8747 $\pm$ 0.0130 & +0.0263 & -- & 311.90 ms \\
+Full Model - Cross-Encoder & 0.8731 $\pm$ 0.0159 & +0.0247 & -- & 61.60 ms \\
+Bi-Encoder Cosine only & 0.8591 $\pm$ 0.0308 & +0.0107 & -- & 61.48 ms \\
+\bottomrule
+\end{tabular}
+\end{table*}

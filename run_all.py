@@ -74,7 +74,7 @@ def main() -> int:
         ("exp1", "latency breakdown", lambda: exp1_latency_breakdown.main(n_lat)),
         ("exp2", "end-to-end", lambda: exp2_end_to_end.main(
             args.stream, args.llm_mode, verify_live=args.verify_live)),
-        ("exp3", "ablation", lambda: exp3_ablation.main()),
+        ("exp3", "ablation", lambda: exp3_ablation.main(n_reference=n_meta)),
         ("exp4", "meta-classifier", lambda: exp4_meta_classifier.main(n_meta)),
         ("exp5", "dynamic cache", lambda: exp5_dynamic_cache.main(
             llm_mode="sim" if args.llm_mode == "sim" else "replay")),

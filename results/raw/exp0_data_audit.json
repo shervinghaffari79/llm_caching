@@ -1,0 +1,135 @@
+{
+  "audit": {
+    "n_rows_raw": 363846,
+    "n_exact_duplicate_rows": 559,
+    "n_mirrored_duplicate_rows": 250,
+    "n_self_pairs": 869,
+    "n_label_conflicts": 35,
+    "n_rows_clean": 362133,
+    "n_unique_questions": 492156,
+    "n_components": 186028,
+    "largest_component": 9954,
+    "pct_rows_in_top1pct_components": 26.709247707334043
+  },
+  "provenance": {
+    "seed": 42,
+    "meta_components": 16586,
+    "ablation_components": 2066,
+    "component_overlap_meta_ablation": 0,
+    "question_overlap_meta_ablation": 0,
+    "pair_overlap_meta_ablation": 0,
+    "ablation_duplicate_ratio": 0.6,
+    "meta_duplicate_ratio": 0.5
+  },
+  "sizes": {
+    "meta": 30000,
+    "ablation": 3000,
+    "ablation_balanced": 3000,
+    "stream_pool": 254119
+  },
+  "fold_schemes": {
+    "stratified_kfold": {
+      "per_fold": [
+        {
+          "fold": 0,
+          "n_train": 24000,
+          "n_val": 6000,
+          "shared_questions": 3057,
+          "pct_val_questions_seen": 28.33966811903217,
+          "shared_components": 1216,
+          "val_duplicate_ratio": 0.5
+        },
+        {
+          "fold": 1,
+          "n_train": 24000,
+          "n_val": 6000,
+          "shared_questions": 3077,
+          "pct_val_questions_seen": 28.231947885127077,
+          "shared_components": 1211,
+          "val_duplicate_ratio": 0.5
+        },
+        {
+          "fold": 2,
+          "n_train": 24000,
+          "n_val": 6000,
+          "shared_questions": 3014,
+          "pct_val_questions_seen": 27.90224032586558,
+          "shared_components": 1185,
+          "val_duplicate_ratio": 0.5
+        },
+        {
+          "fold": 3,
+          "n_train": 24000,
+          "n_val": 6000,
+          "shared_questions": 2994,
+          "pct_val_questions_seen": 27.586842347737953,
+          "shared_components": 1216,
+          "val_duplicate_ratio": 0.5
+        },
+        {
+          "fold": 4,
+          "n_train": 24000,
+          "n_val": 6000,
+          "shared_questions": 2982,
+          "pct_val_questions_seen": 27.473742399115533,
+          "shared_components": 1211,
+          "val_duplicate_ratio": 0.5
+        }
+      ],
+      "mean_shared_questions": 3024.8,
+      "mean_pct_val_questions_seen": 27.906888215375666
+    },
+    "stratified_group_kfold": {
+      "per_fold": [
+        {
+          "fold": 0,
+          "n_train": 25917,
+          "n_val": 4083,
+          "shared_questions": 0,
+          "pct_val_questions_seen": 0.0,
+          "shared_components": 0,
+          "val_duplicate_ratio": 0.5292676953220671
+        },
+        {
+          "fold": 1,
+          "n_train": 24679,
+          "n_val": 5321,
+          "shared_questions": 0,
+          "pct_val_questions_seen": 0.0,
+          "shared_components": 0,
+          "val_duplicate_ratio": 0.4373238113136628
+        },
+        {
+          "fold": 2,
+          "n_train": 24052,
+          "n_val": 5948,
+          "shared_questions": 0,
+          "pct_val_questions_seen": 0.0,
+          "shared_components": 0,
+          "val_duplicate_ratio": 0.48453261600537995
+        },
+        {
+          "fold": 3,
+          "n_train": 21160,
+          "n_val": 8840,
+          "shared_questions": 0,
+          "pct_val_questions_seen": 0.0,
+          "shared_components": 0,
+          "val_duplicate_ratio": 0.5276018099547511
+        },
+        {
+          "fold": 4,
+          "n_train": 24192,
+          "n_val": 5808,
+          "shared_questions": 0,
+          "pct_val_questions_seen": 0.0,
+          "shared_components": 0,
+          "val_duplicate_ratio": 0.5106749311294766
+        }
+      ],
+      "mean_shared_questions": 0.0,
+      "mean_pct_val_questions_seen": 0.0
+    }
+  },
+  "interpretation": "QQP is a graph, not a list of independent pairs. Under plain StratifiedKFold a large share of validation questions have already been seen during training in another pair, so validation F1 partly measures memorisation of individual questions. StratifiedGroupKFold over connected components removes that channel; every headline number in this study is reported under both schemes so the size of the effect is visible."
+}
