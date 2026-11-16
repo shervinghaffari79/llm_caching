@@ -1,0 +1,39 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 6,
+      "cpu": "NVIDIA A100-SXM4-80GB",
+      "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+      "torch_version": "2.14.0+cu130",
+      "host_cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+      "host_cpu_count": 12
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "judge_model": "Qwen/Qwen3.8-27B",
+    "judge_prompt_version": 2,
+    "rejudged_from": "results/raw/revision/exp16_judgements_seed42.jsonl"
+  },
+  "agreement_previous_prompt": {
+    "n": 228,
+    "agreement_pct": 72.80701754385966,
+    "cohen_kappa": 0.3951219512195123,
+    "label_false_but_substitutable": 48,
+    "label_correct_but_not_substitutable": 14
+  },
+  "agreement": {
+    "n": 232,
+    "agreement_pct": 72.84482758620689,
+    "cohen_kappa": 0.38567585743106925,
+    "label_false_but_substitutable": 52,
+    "label_correct_but_not_substitutable": 11
+  },
+  "verdicts_changed": 22,
+  "judge_tokens": {
+    "prompt": 168709,
+    "completion": 12976
+  }
+}

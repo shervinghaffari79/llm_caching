@@ -1,0 +1,121 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 6,
+      "cpu": "NVIDIA A100-SXM4-80GB",
+      "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+      "torch_version": "2.14.0+cu130",
+      "host_cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+      "host_cpu_count": 12
+    },
+    "seed": 46,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "n_stream": 2000,
+    "stream_params": {},
+    "judge_model": "Qwen/Qwen3.8-27B",
+    "judge_temperature": "0",
+    "judge_endpoint": "http://localhost:8000/v1",
+    "judge_prompt_version": 2,
+    "per_stratum": 150,
+    "calibrate_only": 0
+  },
+  "workload": {
+    "generator": "QQP positive-edge components + Zipf popularity",
+    "seed_params": {
+      "seed": 46,
+      "duplicate_rate": 0.5,
+      "hard_negative_rate": 0.35,
+      "exact_repeat_rate": 0.25,
+      "zipf_s": 1.1,
+      "max_topic_size": 12,
+      "min_topic_size": 2,
+      "mean_session_len": 4.0,
+      "fresh_hard_negatives": true,
+      "label_version": 2
+    },
+    "n_topics_available": 38574,
+    "n_events": 2000,
+    "n_unique_queries": 1214,
+    "n_topics": 1019,
+    "repeat_rate_pct": 49.05,
+    "exact_repeat_rate_pct": 39.300000000000004,
+    "paraphrase_repeat_rate_pct": 9.75,
+    "hard_negative_rate_pct": 7.3999999999999995,
+    "n_sessions": 480,
+    "mean_session_len": 4.166666666666667,
+    "top10_topic_share_pct": 26.900000000000002,
+    "prefix_of": 2000
+  },
+  "pool": {
+    "unique": 1214,
+    "missing_before": 0,
+    "missing_after": 0
+  },
+  "per_config": {
+    "C1_bi_only": {
+      "hits": 1053,
+      "verbatim_hits": 456,
+      "label_precision_pct": 91.92782526115859,
+      "judge_precision_pct": 82.19056663501108,
+      "judge_precision_non_verbatim_pct": 68.58738135120045,
+      "strata": {
+        "label_correct": {
+          "n_judged": 150,
+          "substitutable_pct": 73.33333333333333
+        },
+        "label_false": {
+          "n_judged": 85,
+          "substitutable_pct": 40.0
+        }
+      }
+    },
+    "C2_bi_geo_lgb": {
+      "hits": 999,
+      "verbatim_hits": 590,
+      "label_precision_pct": 95.5955955955956,
+      "judge_precision_pct": 93.26993660326993,
+      "judge_precision_non_verbatim_pct": 83.56153219233903,
+      "strata": {
+        "label_correct": {
+          "n_judged": 150,
+          "substitutable_pct": 87.33333333333333
+        },
+        "label_false": {
+          "n_judged": 44,
+          "substitutable_pct": 52.27272727272727
+        }
+      }
+    },
+    "C4_full_stacking": {
+      "hits": 1009,
+      "verbatim_hits": 566,
+      "label_precision_pct": 94.84638255698711,
+      "judge_precision_pct": 91.58044268252395,
+      "judge_precision_non_verbatim_pct": 80.82317531978933,
+      "strata": {
+        "label_correct": {
+          "n_judged": 150,
+          "substitutable_pct": 84.66666666666667
+        },
+        "label_false": {
+          "n_judged": 52,
+          "substitutable_pct": 51.92307692307693
+        }
+      }
+    }
+  },
+  "agreement": {
+    "n": 238,
+    "agreement_pct": 76.05042016806722,
+    "cohen_kappa": 0.4735739231664725,
+    "label_false_but_substitutable": 36,
+    "label_correct_but_not_substitutable": 21
+  },
+  "judge_tokens": {
+    "prompt": 172947,
+    "completion": 13283
+  }
+}
