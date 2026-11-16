@@ -108,7 +108,7 @@ def load_qqp_raw(force: bool = False) -> pd.DataFrame:
         df = pd.read_parquet(cache)
     else:
         from datasets import load_dataset
-        df = load_dataset("glue", "qqp", split="train").to_pandas()
+        df = load_dataset("nyu-mll/glue", "qqp", split="train").to_pandas()
         df.to_parquet(cache, index=False)
     df = df.rename(columns={"label": "is_duplicate"})
     df["question1"] = df["question1"].astype(str)
