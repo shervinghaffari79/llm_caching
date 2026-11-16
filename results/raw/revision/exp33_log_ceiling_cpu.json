@@ -1,0 +1,2557 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 43,
+      "cpu": "x86_64",
+      "platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "unknown",
+      "host_cpu_count": 43
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "windows": [
+      [
+        100000,
+        10000
+      ],
+      [
+        110000,
+        10000
+      ],
+      [
+        120000,
+        10000
+      ],
+      [
+        130000,
+        10000
+      ],
+      [
+        140000,
+        10000
+      ]
+    ],
+    "caps": [
+      500,
+      1000,
+      2000
+    ],
+    "tau": 0.895,
+    "selected": {
+      "WSemDemand": {
+        "kind": "WSemDemand",
+        "mult": 4,
+        "window": 0.3,
+        "radius_offset": 0.05
+      },
+      "WTinyLFU": {
+        "kind": "WTinyLFU",
+        "mult": 2,
+        "window": 0.3
+      }
+    },
+    "oracles": [
+      "OracleTopic",
+      "OracleServable",
+      "OracleNet"
+    ]
+  },
+  "results": {
+    "LRU": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 1.66,
+          "correct_hit_ratio_pct": 1.05,
+          "false_hit_rate_pct": 0.61,
+          "precision_of_hits_pct": 63.25301204819277,
+          "net_hit_ratio_pct": 0.44000000000000006,
+          "evictions": 9334,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9896084656084656
+        },
+        "1000": {
+          "hit_ratio_pct": 3.14,
+          "correct_hit_ratio_pct": 2.09,
+          "false_hit_rate_pct": 1.05,
+          "precision_of_hits_pct": 66.56050955414013,
+          "net_hit_ratio_pct": 1.0399999999999998,
+          "evictions": 8686,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9787039106145251
+        },
+        "2000": {
+          "hit_ratio_pct": 5.41,
+          "correct_hit_ratio_pct": 3.5900000000000003,
+          "false_hit_rate_pct": 1.82,
+          "precision_of_hits_pct": 66.35859519408503,
+          "net_hit_ratio_pct": 1.7700000000000002,
+          "evictions": 7459,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9573512658227848
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 1.71,
+          "correct_hit_ratio_pct": 1.05,
+          "false_hit_rate_pct": 0.66,
+          "precision_of_hits_pct": 61.40350877192982,
+          "net_hit_ratio_pct": 0.39,
+          "evictions": 9329,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9876719576719577
+        },
+        "1000": {
+          "hit_ratio_pct": 3.05,
+          "correct_hit_ratio_pct": 1.8900000000000001,
+          "false_hit_rate_pct": 1.16,
+          "precision_of_hits_pct": 61.967213114754095,
+          "net_hit_ratio_pct": 0.7300000000000002,
+          "evictions": 8695,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9772737430167598
+        },
+        "2000": {
+          "hit_ratio_pct": 5.42,
+          "correct_hit_ratio_pct": 3.51,
+          "false_hit_rate_pct": 1.91,
+          "precision_of_hits_pct": 64.76014760147602,
+          "net_hit_ratio_pct": 1.5999999999999999,
+          "evictions": 7458,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9561708860759492
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 1.5,
+          "correct_hit_ratio_pct": 1.03,
+          "false_hit_rate_pct": 0.47000000000000003,
+          "precision_of_hits_pct": 68.66666666666667,
+          "net_hit_ratio_pct": 0.56,
+          "evictions": 9350,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9878736842105265
+        },
+        "1000": {
+          "hit_ratio_pct": 2.92,
+          "correct_hit_ratio_pct": 1.8800000000000001,
+          "false_hit_rate_pct": 1.04,
+          "precision_of_hits_pct": 64.38356164383562,
+          "net_hit_ratio_pct": 0.8400000000000001,
+          "evictions": 8708,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9763184357541901
+        },
+        "2000": {
+          "hit_ratio_pct": 5.35,
+          "correct_hit_ratio_pct": 3.37,
+          "false_hit_rate_pct": 1.9800000000000002,
+          "precision_of_hits_pct": 62.99065420560748,
+          "net_hit_ratio_pct": 1.39,
+          "evictions": 7465,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9547151898734179
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 1.67,
+          "correct_hit_ratio_pct": 1.05,
+          "false_hit_rate_pct": 0.62,
+          "precision_of_hits_pct": 62.874251497005986,
+          "net_hit_ratio_pct": 0.43000000000000005,
+          "evictions": 9333,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9873650793650793
+        },
+        "1000": {
+          "hit_ratio_pct": 3.16,
+          "correct_hit_ratio_pct": 2.01,
+          "false_hit_rate_pct": 1.15,
+          "precision_of_hits_pct": 63.607594936708864,
+          "net_hit_ratio_pct": 0.8599999999999999,
+          "evictions": 8684,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.975854748603352
+        },
+        "2000": {
+          "hit_ratio_pct": 5.47,
+          "correct_hit_ratio_pct": 3.5999999999999996,
+          "false_hit_rate_pct": 1.87,
+          "precision_of_hits_pct": 65.81352833638026,
+          "net_hit_ratio_pct": 1.7299999999999995,
+          "evictions": 7453,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9531518987341773
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 1.48,
+          "correct_hit_ratio_pct": 0.9299999999999999,
+          "false_hit_rate_pct": 0.5499999999999999,
+          "precision_of_hits_pct": 62.83783783783784,
+          "net_hit_ratio_pct": 0.38,
+          "evictions": 9352,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9860740740740741
+        },
+        "1000": {
+          "hit_ratio_pct": 2.92,
+          "correct_hit_ratio_pct": 1.82,
+          "false_hit_rate_pct": 1.0999999999999999,
+          "precision_of_hits_pct": 62.32876712328767,
+          "net_hit_ratio_pct": 0.7200000000000002,
+          "evictions": 8708,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9744189944134077
+        },
+        "2000": {
+          "hit_ratio_pct": 5.51,
+          "correct_hit_ratio_pct": 3.4799999999999995,
+          "false_hit_rate_pct": 2.03,
+          "precision_of_hits_pct": 63.1578947368421,
+          "net_hit_ratio_pct": 1.4499999999999997,
+          "evictions": 7449,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9511803797468353
+        }
+      }
+    },
+    "LFU": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 2.2,
+          "correct_hit_ratio_pct": 1.4000000000000001,
+          "false_hit_rate_pct": 0.8,
+          "precision_of_hits_pct": 63.63636363636363,
+          "net_hit_ratio_pct": 0.6000000000000001,
+          "evictions": 9280,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.989079365079365
+        },
+        "1000": {
+          "hit_ratio_pct": 3.82,
+          "correct_hit_ratio_pct": 2.44,
+          "false_hit_rate_pct": 1.38,
+          "precision_of_hits_pct": 63.87434554973822,
+          "net_hit_ratio_pct": 1.06,
+          "evictions": 8618,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9784748603351955
+        },
+        "2000": {
+          "hit_ratio_pct": 6.04,
+          "correct_hit_ratio_pct": 4.01,
+          "false_hit_rate_pct": 2.03,
+          "precision_of_hits_pct": 66.3907284768212,
+          "net_hit_ratio_pct": 1.98,
+          "evictions": 7396,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9559430379746835
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 2.17,
+          "correct_hit_ratio_pct": 1.3599999999999999,
+          "false_hit_rate_pct": 0.8099999999999999,
+          "precision_of_hits_pct": 62.672811059907836,
+          "net_hit_ratio_pct": 0.5499999999999999,
+          "evictions": 9283,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9884973544973544
+        },
+        "1000": {
+          "hit_ratio_pct": 3.8,
+          "correct_hit_ratio_pct": 2.33,
+          "false_hit_rate_pct": 1.47,
+          "precision_of_hits_pct": 61.31578947368421,
+          "net_hit_ratio_pct": 0.8600000000000001,
+          "evictions": 8620,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9776145251396647
+        },
+        "2000": {
+          "hit_ratio_pct": 6.09,
+          "correct_hit_ratio_pct": 3.9699999999999998,
+          "false_hit_rate_pct": 2.12,
+          "precision_of_hits_pct": 65.1888341543514,
+          "net_hit_ratio_pct": 1.8499999999999996,
+          "evictions": 7391,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9559462025316456
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 1.9,
+          "correct_hit_ratio_pct": 1.23,
+          "false_hit_rate_pct": 0.67,
+          "precision_of_hits_pct": 64.73684210526316,
+          "net_hit_ratio_pct": 0.5599999999999999,
+          "evictions": 9310,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9875789473684213
+        },
+        "1000": {
+          "hit_ratio_pct": 3.42,
+          "correct_hit_ratio_pct": 2.15,
+          "false_hit_rate_pct": 1.27,
+          "precision_of_hits_pct": 62.865497076023395,
+          "net_hit_ratio_pct": 0.8799999999999999,
+          "evictions": 8658,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9758212290502793
+        },
+        "2000": {
+          "hit_ratio_pct": 5.84,
+          "correct_hit_ratio_pct": 3.6700000000000004,
+          "false_hit_rate_pct": 2.17,
+          "precision_of_hits_pct": 62.842465753424655,
+          "net_hit_ratio_pct": 1.5000000000000004,
+          "evictions": 7416,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9521930379746837
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 2.14,
+          "correct_hit_ratio_pct": 1.3299999999999998,
+          "false_hit_rate_pct": 0.8099999999999999,
+          "precision_of_hits_pct": 62.149532710280376,
+          "net_hit_ratio_pct": 0.5199999999999999,
+          "evictions": 9286,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9873968253968254
+        },
+        "1000": {
+          "hit_ratio_pct": 3.77,
+          "correct_hit_ratio_pct": 2.42,
+          "false_hit_rate_pct": 1.35,
+          "precision_of_hits_pct": 64.19098143236074,
+          "net_hit_ratio_pct": 1.0699999999999998,
+          "evictions": 8623,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.973022346368715
+        },
+        "2000": {
+          "hit_ratio_pct": 5.94,
+          "correct_hit_ratio_pct": 3.8699999999999997,
+          "false_hit_rate_pct": 2.07,
+          "precision_of_hits_pct": 65.15151515151516,
+          "net_hit_ratio_pct": 1.7999999999999998,
+          "evictions": 7406,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9510474683544304
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 2.01,
+          "correct_hit_ratio_pct": 1.16,
+          "false_hit_rate_pct": 0.8500000000000001,
+          "precision_of_hits_pct": 57.711442786069654,
+          "net_hit_ratio_pct": 0.30999999999999983,
+          "evictions": 9299,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9856296296296296
+        },
+        "1000": {
+          "hit_ratio_pct": 3.6,
+          "correct_hit_ratio_pct": 2.2399999999999998,
+          "false_hit_rate_pct": 1.3599999999999999,
+          "precision_of_hits_pct": 62.22222222222222,
+          "net_hit_ratio_pct": 0.8799999999999999,
+          "evictions": 8640,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9733966480446927
+        },
+        "2000": {
+          "hit_ratio_pct": 6.09,
+          "correct_hit_ratio_pct": 3.81,
+          "false_hit_rate_pct": 2.2800000000000002,
+          "precision_of_hits_pct": 62.5615763546798,
+          "net_hit_ratio_pct": 1.5299999999999998,
+          "evictions": 7391,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.95025
+        }
+      }
+    },
+    "SphereLFU": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 2.2,
+          "correct_hit_ratio_pct": 1.4000000000000001,
+          "false_hit_rate_pct": 0.8,
+          "precision_of_hits_pct": 63.63636363636363,
+          "net_hit_ratio_pct": 0.6000000000000001,
+          "evictions": 9280,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.989079365079365
+        },
+        "1000": {
+          "hit_ratio_pct": 3.83,
+          "correct_hit_ratio_pct": 2.45,
+          "false_hit_rate_pct": 1.38,
+          "precision_of_hits_pct": 63.9686684073107,
+          "net_hit_ratio_pct": 1.0700000000000003,
+          "evictions": 8617,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9784357541899441
+        },
+        "2000": {
+          "hit_ratio_pct": 6.04,
+          "correct_hit_ratio_pct": 4.03,
+          "false_hit_rate_pct": 2.01,
+          "precision_of_hits_pct": 66.72185430463576,
+          "net_hit_ratio_pct": 2.0200000000000005,
+          "evictions": 7396,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9552911392405066
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 2.17,
+          "correct_hit_ratio_pct": 1.3599999999999999,
+          "false_hit_rate_pct": 0.8099999999999999,
+          "precision_of_hits_pct": 62.672811059907836,
+          "net_hit_ratio_pct": 0.5499999999999999,
+          "evictions": 9283,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9884973544973544
+        },
+        "1000": {
+          "hit_ratio_pct": 3.81,
+          "correct_hit_ratio_pct": 2.34,
+          "false_hit_rate_pct": 1.47,
+          "precision_of_hits_pct": 61.41732283464567,
+          "net_hit_ratio_pct": 0.8699999999999999,
+          "evictions": 8619,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9776536312849162
+        },
+        "2000": {
+          "hit_ratio_pct": 6.1,
+          "correct_hit_ratio_pct": 3.9699999999999998,
+          "false_hit_rate_pct": 2.13,
+          "precision_of_hits_pct": 65.08196721311475,
+          "net_hit_ratio_pct": 1.8399999999999999,
+          "evictions": 7390,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9558196202531645
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 1.93,
+          "correct_hit_ratio_pct": 1.23,
+          "false_hit_rate_pct": 0.7000000000000001,
+          "precision_of_hits_pct": 63.73056994818653,
+          "net_hit_ratio_pct": 0.5299999999999999,
+          "evictions": 9307,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9857999999999998
+        },
+        "1000": {
+          "hit_ratio_pct": 3.43,
+          "correct_hit_ratio_pct": 2.16,
+          "false_hit_rate_pct": 1.27,
+          "precision_of_hits_pct": 62.97376093294461,
+          "net_hit_ratio_pct": 0.8900000000000001,
+          "evictions": 8657,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9739720670391062
+        },
+        "2000": {
+          "hit_ratio_pct": 5.87,
+          "correct_hit_ratio_pct": 3.6700000000000004,
+          "false_hit_rate_pct": 2.1999999999999997,
+          "precision_of_hits_pct": 62.52129471890971,
+          "net_hit_ratio_pct": 1.4700000000000006,
+          "evictions": 7413,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9513037974683545
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 2.14,
+          "correct_hit_ratio_pct": 1.3299999999999998,
+          "false_hit_rate_pct": 0.8099999999999999,
+          "precision_of_hits_pct": 62.149532710280376,
+          "net_hit_ratio_pct": 0.5199999999999999,
+          "evictions": 9286,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9873968253968254
+        },
+        "1000": {
+          "hit_ratio_pct": 3.77,
+          "correct_hit_ratio_pct": 2.42,
+          "false_hit_rate_pct": 1.35,
+          "precision_of_hits_pct": 64.19098143236074,
+          "net_hit_ratio_pct": 1.0699999999999998,
+          "evictions": 8623,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9728044692737431
+        },
+        "2000": {
+          "hit_ratio_pct": 5.94,
+          "correct_hit_ratio_pct": 3.8699999999999997,
+          "false_hit_rate_pct": 2.07,
+          "precision_of_hits_pct": 65.15151515151516,
+          "net_hit_ratio_pct": 1.7999999999999998,
+          "evictions": 7406,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9501139240506331
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 2.01,
+          "correct_hit_ratio_pct": 1.16,
+          "false_hit_rate_pct": 0.8500000000000001,
+          "precision_of_hits_pct": 57.711442786069654,
+          "net_hit_ratio_pct": 0.30999999999999983,
+          "evictions": 9299,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9856296296296296
+        },
+        "1000": {
+          "hit_ratio_pct": 3.58,
+          "correct_hit_ratio_pct": 2.21,
+          "false_hit_rate_pct": 1.37,
+          "precision_of_hits_pct": 61.73184357541899,
+          "net_hit_ratio_pct": 0.8399999999999999,
+          "evictions": 8642,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.972441340782123
+        },
+        "2000": {
+          "hit_ratio_pct": 6.09,
+          "correct_hit_ratio_pct": 3.82,
+          "false_hit_rate_pct": 2.27,
+          "precision_of_hits_pct": 62.725779967159276,
+          "net_hit_ratio_pct": 1.5499999999999998,
+          "evictions": 7391,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9481518987341772
+        }
+      }
+    },
+    "WSemDemand": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 2.54,
+          "correct_hit_ratio_pct": 1.72,
+          "false_hit_rate_pct": 0.8200000000000001,
+          "precision_of_hits_pct": 67.71653543307086,
+          "net_hit_ratio_pct": 0.8999999999999999,
+          "evictions": 9246,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9896719576719577
+        },
+        "1000": {
+          "hit_ratio_pct": 3.82,
+          "correct_hit_ratio_pct": 2.4899999999999998,
+          "false_hit_rate_pct": 1.3299999999999998,
+          "precision_of_hits_pct": 65.18324607329843,
+          "net_hit_ratio_pct": 1.16,
+          "evictions": 8618,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.973513966480447
+        },
+        "2000": {
+          "hit_ratio_pct": 5.96,
+          "correct_hit_ratio_pct": 4.01,
+          "false_hit_rate_pct": 1.95,
+          "precision_of_hits_pct": 67.28187919463087,
+          "net_hit_ratio_pct": 2.0599999999999996,
+          "evictions": 7404,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.957898734177215
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 2.6,
+          "correct_hit_ratio_pct": 1.63,
+          "false_hit_rate_pct": 0.97,
+          "precision_of_hits_pct": 62.69230769230769,
+          "net_hit_ratio_pct": 0.6599999999999999,
+          "evictions": 9240,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.988973544973545
+        },
+        "1000": {
+          "hit_ratio_pct": 3.61,
+          "correct_hit_ratio_pct": 2.31,
+          "false_hit_rate_pct": 1.3,
+          "precision_of_hits_pct": 63.988919667590025,
+          "net_hit_ratio_pct": 1.01,
+          "evictions": 8639,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9758826815642457
+        },
+        "2000": {
+          "hit_ratio_pct": 5.77,
+          "correct_hit_ratio_pct": 3.74,
+          "false_hit_rate_pct": 2.03,
+          "precision_of_hits_pct": 64.81802426343154,
+          "net_hit_ratio_pct": 1.7100000000000004,
+          "evictions": 7423,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9560569620253162
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 2.5,
+          "correct_hit_ratio_pct": 1.38,
+          "false_hit_rate_pct": 1.1199999999999999,
+          "precision_of_hits_pct": 55.2,
+          "net_hit_ratio_pct": 0.26,
+          "evictions": 9250,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9873157894736843
+        },
+        "1000": {
+          "hit_ratio_pct": 3.63,
+          "correct_hit_ratio_pct": 2.2800000000000002,
+          "false_hit_rate_pct": 1.35,
+          "precision_of_hits_pct": 62.8099173553719,
+          "net_hit_ratio_pct": 0.9300000000000002,
+          "evictions": 8637,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9757262569832402
+        },
+        "2000": {
+          "hit_ratio_pct": 5.84,
+          "correct_hit_ratio_pct": 3.84,
+          "false_hit_rate_pct": 2.0,
+          "precision_of_hits_pct": 65.75342465753425,
+          "net_hit_ratio_pct": 1.8399999999999999,
+          "evictions": 7416,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9495854430379745
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 2.68,
+          "correct_hit_ratio_pct": 1.71,
+          "false_hit_rate_pct": 0.97,
+          "precision_of_hits_pct": 63.80597014925373,
+          "net_hit_ratio_pct": 0.74,
+          "evictions": 9232,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9868677248677247
+        },
+        "1000": {
+          "hit_ratio_pct": 3.91,
+          "correct_hit_ratio_pct": 2.4899999999999998,
+          "false_hit_rate_pct": 1.4200000000000002,
+          "precision_of_hits_pct": 63.68286445012788,
+          "net_hit_ratio_pct": 1.0699999999999996,
+          "evictions": 8609,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9777486033519552
+        },
+        "2000": {
+          "hit_ratio_pct": 5.96,
+          "correct_hit_ratio_pct": 3.9,
+          "false_hit_rate_pct": 2.06,
+          "precision_of_hits_pct": 65.43624161073825,
+          "net_hit_ratio_pct": 1.8399999999999999,
+          "evictions": 7404,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9568955696202532
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 2.79,
+          "correct_hit_ratio_pct": 1.6400000000000001,
+          "false_hit_rate_pct": 1.15,
+          "precision_of_hits_pct": 58.78136200716846,
+          "net_hit_ratio_pct": 0.4900000000000002,
+          "evictions": 9221,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9903915343915344
+        },
+        "1000": {
+          "hit_ratio_pct": 3.96,
+          "correct_hit_ratio_pct": 2.31,
+          "false_hit_rate_pct": 1.6500000000000001,
+          "precision_of_hits_pct": 58.333333333333336,
+          "net_hit_ratio_pct": 0.6599999999999999,
+          "evictions": 8604,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9780279329608936
+        },
+        "2000": {
+          "hit_ratio_pct": 6.09,
+          "correct_hit_ratio_pct": 3.66,
+          "false_hit_rate_pct": 2.4299999999999997,
+          "precision_of_hits_pct": 60.09852216748769,
+          "net_hit_ratio_pct": 1.2300000000000004,
+          "evictions": 7391,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9557753164556961
+        }
+      }
+    },
+    "WTinyLFU": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 1.83,
+          "correct_hit_ratio_pct": 1.24,
+          "false_hit_rate_pct": 0.59,
+          "precision_of_hits_pct": 67.75956284153006,
+          "net_hit_ratio_pct": 0.65,
+          "evictions": 9317,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9877248677248678
+        },
+        "1000": {
+          "hit_ratio_pct": 3.33,
+          "correct_hit_ratio_pct": 2.19,
+          "false_hit_rate_pct": 1.1400000000000001,
+          "precision_of_hits_pct": 65.76576576576576,
+          "net_hit_ratio_pct": 1.0499999999999998,
+          "evictions": 8667,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9705865921787709
+        },
+        "2000": {
+          "hit_ratio_pct": 5.78,
+          "correct_hit_ratio_pct": 3.8600000000000003,
+          "false_hit_rate_pct": 1.92,
+          "precision_of_hits_pct": 66.78200692041523,
+          "net_hit_ratio_pct": 1.9400000000000004,
+          "evictions": 7422,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9563955696202532
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 1.88,
+          "correct_hit_ratio_pct": 1.23,
+          "false_hit_rate_pct": 0.65,
+          "precision_of_hits_pct": 65.42553191489361,
+          "net_hit_ratio_pct": 0.58,
+          "evictions": 9312,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9892698412698412
+        },
+        "1000": {
+          "hit_ratio_pct": 3.12,
+          "correct_hit_ratio_pct": 1.97,
+          "false_hit_rate_pct": 1.15,
+          "precision_of_hits_pct": 63.14102564102564,
+          "net_hit_ratio_pct": 0.8200000000000001,
+          "evictions": 8688,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9733240223463685
+        },
+        "2000": {
+          "hit_ratio_pct": 5.64,
+          "correct_hit_ratio_pct": 3.65,
+          "false_hit_rate_pct": 1.9900000000000002,
+          "precision_of_hits_pct": 64.71631205673759,
+          "net_hit_ratio_pct": 1.6599999999999997,
+          "evictions": 7436,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9560917721518988
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 1.84,
+          "correct_hit_ratio_pct": 1.06,
+          "false_hit_rate_pct": 0.7799999999999999,
+          "precision_of_hits_pct": 57.608695652173914,
+          "net_hit_ratio_pct": 0.28000000000000014,
+          "evictions": 9316,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9858315789473685
+        },
+        "1000": {
+          "hit_ratio_pct": 3.2,
+          "correct_hit_ratio_pct": 2.12,
+          "false_hit_rate_pct": 1.08,
+          "precision_of_hits_pct": 66.25,
+          "net_hit_ratio_pct": 1.04,
+          "evictions": 8680,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9756648044692736
+        },
+        "2000": {
+          "hit_ratio_pct": 5.63,
+          "correct_hit_ratio_pct": 3.71,
+          "false_hit_rate_pct": 1.92,
+          "precision_of_hits_pct": 65.89698046181172,
+          "net_hit_ratio_pct": 1.79,
+          "evictions": 7437,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9502151898734178
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 1.81,
+          "correct_hit_ratio_pct": 1.11,
+          "false_hit_rate_pct": 0.7000000000000001,
+          "precision_of_hits_pct": 61.32596685082873,
+          "net_hit_ratio_pct": 0.41000000000000003,
+          "evictions": 9319,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9871216931216932
+        },
+        "1000": {
+          "hit_ratio_pct": 3.34,
+          "correct_hit_ratio_pct": 2.09,
+          "false_hit_rate_pct": 1.25,
+          "precision_of_hits_pct": 62.5748502994012,
+          "net_hit_ratio_pct": 0.8399999999999999,
+          "evictions": 8666,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.975905027932961
+        },
+        "2000": {
+          "hit_ratio_pct": 5.75,
+          "correct_hit_ratio_pct": 3.73,
+          "false_hit_rate_pct": 2.02,
+          "precision_of_hits_pct": 64.8695652173913,
+          "net_hit_ratio_pct": 1.71,
+          "evictions": 7425,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9566835443037975
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 1.84,
+          "correct_hit_ratio_pct": 1.1199999999999999,
+          "false_hit_rate_pct": 0.72,
+          "precision_of_hits_pct": 60.869565217391305,
+          "net_hit_ratio_pct": 0.3999999999999999,
+          "evictions": 9316,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9927195767195766
+        },
+        "1000": {
+          "hit_ratio_pct": 3.24,
+          "correct_hit_ratio_pct": 1.92,
+          "false_hit_rate_pct": 1.32,
+          "precision_of_hits_pct": 59.25925925925926,
+          "net_hit_ratio_pct": 0.5999999999999999,
+          "evictions": 8676,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9780782122905027
+        },
+        "2000": {
+          "hit_ratio_pct": 5.73,
+          "correct_hit_ratio_pct": 3.47,
+          "false_hit_rate_pct": 2.26,
+          "precision_of_hits_pct": 60.55846422338569,
+          "net_hit_ratio_pct": 1.2100000000000004,
+          "evictions": 7427,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9562120253164558
+        }
+      }
+    },
+    "OracleTopic": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 6.48,
+          "correct_hit_ratio_pct": 5.779999999999999,
+          "false_hit_rate_pct": 0.7000000000000001,
+          "precision_of_hits_pct": 89.19753086419753,
+          "net_hit_ratio_pct": 5.079999999999999,
+          "evictions": 8852,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9929206349206348
+        },
+        "1000": {
+          "hit_ratio_pct": 8.45,
+          "correct_hit_ratio_pct": 7.3,
+          "false_hit_rate_pct": 1.15,
+          "precision_of_hits_pct": 86.3905325443787,
+          "net_hit_ratio_pct": 6.15,
+          "evictions": 8155,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9839385474860334
+        },
+        "2000": {
+          "hit_ratio_pct": 9.22,
+          "correct_hit_ratio_pct": 7.57,
+          "false_hit_rate_pct": 1.6500000000000001,
+          "precision_of_hits_pct": 82.10412147505423,
+          "net_hit_ratio_pct": 5.92,
+          "evictions": 7078,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9483449367088607
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 6.01,
+          "correct_hit_ratio_pct": 5.47,
+          "false_hit_rate_pct": 0.54,
+          "precision_of_hits_pct": 91.01497504159734,
+          "net_hit_ratio_pct": 4.93,
+          "evictions": 8899,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9921375661375662
+        },
+        "1000": {
+          "hit_ratio_pct": 7.86,
+          "correct_hit_ratio_pct": 6.81,
+          "false_hit_rate_pct": 1.05,
+          "precision_of_hits_pct": 86.6412213740458,
+          "net_hit_ratio_pct": 5.76,
+          "evictions": 8214,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.981536312849162
+        },
+        "2000": {
+          "hit_ratio_pct": 8.79,
+          "correct_hit_ratio_pct": 7.090000000000001,
+          "false_hit_rate_pct": 1.7000000000000002,
+          "precision_of_hits_pct": 80.65984072810011,
+          "net_hit_ratio_pct": 5.390000000000001,
+          "evictions": 7121,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9475727848101265
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 6.36,
+          "correct_hit_ratio_pct": 5.7299999999999995,
+          "false_hit_rate_pct": 0.63,
+          "precision_of_hits_pct": 90.09433962264151,
+          "net_hit_ratio_pct": 5.1,
+          "evictions": 8864,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9929789473684209
+        },
+        "1000": {
+          "hit_ratio_pct": 8.2,
+          "correct_hit_ratio_pct": 7.16,
+          "false_hit_rate_pct": 1.04,
+          "precision_of_hits_pct": 87.3170731707317,
+          "net_hit_ratio_pct": 6.12,
+          "evictions": 8180,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9827262569832401
+        },
+        "2000": {
+          "hit_ratio_pct": 9.13,
+          "correct_hit_ratio_pct": 7.340000000000001,
+          "false_hit_rate_pct": 1.79,
+          "precision_of_hits_pct": 80.39430449069003,
+          "net_hit_ratio_pct": 5.550000000000001,
+          "evictions": 7087,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9463955696202531
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 6.61,
+          "correct_hit_ratio_pct": 5.84,
+          "false_hit_rate_pct": 0.77,
+          "precision_of_hits_pct": 88.35098335854765,
+          "net_hit_ratio_pct": 5.07,
+          "evictions": 8839,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9941375661375661
+        },
+        "1000": {
+          "hit_ratio_pct": 8.46,
+          "correct_hit_ratio_pct": 7.24,
+          "false_hit_rate_pct": 1.22,
+          "precision_of_hits_pct": 85.57919621749409,
+          "net_hit_ratio_pct": 6.0200000000000005,
+          "evictions": 8154,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9824748603351955
+        },
+        "2000": {
+          "hit_ratio_pct": 9.17,
+          "correct_hit_ratio_pct": 7.449999999999999,
+          "false_hit_rate_pct": 1.72,
+          "precision_of_hits_pct": 81.24318429661942,
+          "net_hit_ratio_pct": 5.7299999999999995,
+          "evictions": 7083,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9466835443037974
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 6.37,
+          "correct_hit_ratio_pct": 5.56,
+          "false_hit_rate_pct": 0.8099999999999999,
+          "precision_of_hits_pct": 87.28414442700156,
+          "net_hit_ratio_pct": 4.75,
+          "evictions": 8863,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9920211640211638
+        },
+        "1000": {
+          "hit_ratio_pct": 8.12,
+          "correct_hit_ratio_pct": 6.890000000000001,
+          "false_hit_rate_pct": 1.23,
+          "precision_of_hits_pct": 84.85221674876847,
+          "net_hit_ratio_pct": 5.66,
+          "evictions": 8188,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9820446927374302
+        },
+        "2000": {
+          "hit_ratio_pct": 8.96,
+          "correct_hit_ratio_pct": 7.21,
+          "false_hit_rate_pct": 1.7500000000000002,
+          "precision_of_hits_pct": 80.46875,
+          "net_hit_ratio_pct": 5.46,
+          "evictions": 7104,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9442879746835442
+        }
+      }
+    },
+    "OracleServable": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 9.02,
+          "correct_hit_ratio_pct": 8.19,
+          "false_hit_rate_pct": 0.83,
+          "precision_of_hits_pct": 90.79822616407982,
+          "net_hit_ratio_pct": 7.359999999999999,
+          "evictions": 8598,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9872486772486772
+        },
+        "1000": {
+          "hit_ratio_pct": 9.24,
+          "correct_hit_ratio_pct": 8.16,
+          "false_hit_rate_pct": 1.08,
+          "precision_of_hits_pct": 88.31168831168831,
+          "net_hit_ratio_pct": 7.08,
+          "evictions": 8076,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9767988826815641
+        },
+        "2000": {
+          "hit_ratio_pct": 9.72,
+          "correct_hit_ratio_pct": 8.05,
+          "false_hit_rate_pct": 1.67,
+          "precision_of_hits_pct": 82.81893004115226,
+          "net_hit_ratio_pct": 6.380000000000001,
+          "evictions": 7028,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.955522151898734
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 8.55,
+          "correct_hit_ratio_pct": 7.79,
+          "false_hit_rate_pct": 0.76,
+          "precision_of_hits_pct": 91.11111111111111,
+          "net_hit_ratio_pct": 7.03,
+          "evictions": 8645,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9872804232804233
+        },
+        "1000": {
+          "hit_ratio_pct": 8.97,
+          "correct_hit_ratio_pct": 7.7700000000000005,
+          "false_hit_rate_pct": 1.2,
+          "precision_of_hits_pct": 86.62207357859532,
+          "net_hit_ratio_pct": 6.57,
+          "evictions": 8103,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9769441340782122
+        },
+        "2000": {
+          "hit_ratio_pct": 9.43,
+          "correct_hit_ratio_pct": 7.7299999999999995,
+          "false_hit_rate_pct": 1.7000000000000002,
+          "precision_of_hits_pct": 81.97242841993638,
+          "net_hit_ratio_pct": 6.029999999999999,
+          "evictions": 7057,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9566677215189873
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 8.81,
+          "correct_hit_ratio_pct": 8.05,
+          "false_hit_rate_pct": 0.76,
+          "precision_of_hits_pct": 91.37343927355278,
+          "net_hit_ratio_pct": 7.290000000000001,
+          "evictions": 8619,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9881789473684212
+        },
+        "1000": {
+          "hit_ratio_pct": 9.13,
+          "correct_hit_ratio_pct": 8.04,
+          "false_hit_rate_pct": 1.09,
+          "precision_of_hits_pct": 88.06133625410733,
+          "net_hit_ratio_pct": 6.949999999999999,
+          "evictions": 8087,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9764581005586592
+        },
+        "2000": {
+          "hit_ratio_pct": 9.71,
+          "correct_hit_ratio_pct": 7.91,
+          "false_hit_rate_pct": 1.7999999999999998,
+          "precision_of_hits_pct": 81.46240988671472,
+          "net_hit_ratio_pct": 6.11,
+          "evictions": 7029,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9549145569620253
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 9.01,
+          "correct_hit_ratio_pct": 8.110000000000001,
+          "false_hit_rate_pct": 0.8999999999999999,
+          "precision_of_hits_pct": 90.0110987791343,
+          "net_hit_ratio_pct": 7.210000000000001,
+          "evictions": 8599,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9888465608465609
+        },
+        "1000": {
+          "hit_ratio_pct": 9.26,
+          "correct_hit_ratio_pct": 8.08,
+          "false_hit_rate_pct": 1.18,
+          "precision_of_hits_pct": 87.25701943844493,
+          "net_hit_ratio_pct": 6.9,
+          "evictions": 8074,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9759162011173186
+        },
+        "2000": {
+          "hit_ratio_pct": 9.73,
+          "correct_hit_ratio_pct": 7.99,
+          "false_hit_rate_pct": 1.7399999999999998,
+          "precision_of_hits_pct": 82.11716341212744,
+          "net_hit_ratio_pct": 6.25,
+          "evictions": 7027,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9538512658227849
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 8.96,
+          "correct_hit_ratio_pct": 8.0,
+          "false_hit_rate_pct": 0.96,
+          "precision_of_hits_pct": 89.28571428571429,
+          "net_hit_ratio_pct": 7.04,
+          "evictions": 8604,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9833227513227514
+        },
+        "1000": {
+          "hit_ratio_pct": 9.19,
+          "correct_hit_ratio_pct": 7.93,
+          "false_hit_rate_pct": 1.26,
+          "precision_of_hits_pct": 86.28944504896627,
+          "net_hit_ratio_pct": 6.67,
+          "evictions": 8081,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9732681564245809
+        },
+        "2000": {
+          "hit_ratio_pct": 9.69,
+          "correct_hit_ratio_pct": 7.829999999999999,
+          "false_hit_rate_pct": 1.8599999999999999,
+          "precision_of_hits_pct": 80.80495356037152,
+          "net_hit_ratio_pct": 5.969999999999999,
+          "evictions": 7031,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9523386075949368
+        }
+      }
+    },
+    "OracleNet": {
+      "100000": {
+        "500": {
+          "hit_ratio_pct": 7.81,
+          "correct_hit_ratio_pct": 7.8,
+          "false_hit_rate_pct": 0.01,
+          "precision_of_hits_pct": 99.8719590268886,
+          "net_hit_ratio_pct": 7.79,
+          "evictions": 8719,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.988126984126984
+        },
+        "1000": {
+          "hit_ratio_pct": 7.84,
+          "correct_hit_ratio_pct": 7.79,
+          "false_hit_rate_pct": 0.05,
+          "precision_of_hits_pct": 99.36224489795919,
+          "net_hit_ratio_pct": 7.74,
+          "evictions": 8216,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9770837988826816
+        },
+        "2000": {
+          "hit_ratio_pct": 7.95,
+          "correct_hit_ratio_pct": 7.75,
+          "false_hit_rate_pct": 0.2,
+          "precision_of_hits_pct": 97.48427672955975,
+          "net_hit_ratio_pct": 7.55,
+          "evictions": 7205,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9555569620253164
+        }
+      },
+      "110000": {
+        "500": {
+          "hit_ratio_pct": 7.58,
+          "correct_hit_ratio_pct": 7.55,
+          "false_hit_rate_pct": 0.03,
+          "precision_of_hits_pct": 99.6042216358839,
+          "net_hit_ratio_pct": 7.52,
+          "evictions": 8742,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9878201058201058
+        },
+        "1000": {
+          "hit_ratio_pct": 7.66,
+          "correct_hit_ratio_pct": 7.5600000000000005,
+          "false_hit_rate_pct": 0.1,
+          "precision_of_hits_pct": 98.69451697127937,
+          "net_hit_ratio_pct": 7.460000000000001,
+          "evictions": 8234,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9768659217877096
+        },
+        "2000": {
+          "hit_ratio_pct": 7.84,
+          "correct_hit_ratio_pct": 7.580000000000001,
+          "false_hit_rate_pct": 0.26,
+          "precision_of_hits_pct": 96.68367346938776,
+          "net_hit_ratio_pct": 7.320000000000001,
+          "evictions": 7216,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9554778481012658
+        }
+      },
+      "120000": {
+        "500": {
+          "hit_ratio_pct": 7.69,
+          "correct_hit_ratio_pct": 7.6899999999999995,
+          "false_hit_rate_pct": 0.0,
+          "precision_of_hits_pct": 100.0,
+          "net_hit_ratio_pct": 7.6899999999999995,
+          "evictions": 8731,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9871263157894735
+        },
+        "1000": {
+          "hit_ratio_pct": 7.77,
+          "correct_hit_ratio_pct": 7.7,
+          "false_hit_rate_pct": 0.06999999999999999,
+          "precision_of_hits_pct": 99.09909909909909,
+          "net_hit_ratio_pct": 7.63,
+          "evictions": 8223,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9755195530726257
+        },
+        "2000": {
+          "hit_ratio_pct": 7.9,
+          "correct_hit_ratio_pct": 7.68,
+          "false_hit_rate_pct": 0.22,
+          "precision_of_hits_pct": 97.21518987341773,
+          "net_hit_ratio_pct": 7.46,
+          "evictions": 7210,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9543291139240506
+        }
+      },
+      "130000": {
+        "500": {
+          "hit_ratio_pct": 7.86,
+          "correct_hit_ratio_pct": 7.829999999999999,
+          "false_hit_rate_pct": 0.03,
+          "precision_of_hits_pct": 99.61832061068702,
+          "net_hit_ratio_pct": 7.799999999999999,
+          "evictions": 8714,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9886560846560847
+        },
+        "1000": {
+          "hit_ratio_pct": 7.92,
+          "correct_hit_ratio_pct": 7.82,
+          "false_hit_rate_pct": 0.1,
+          "precision_of_hits_pct": 98.73737373737374,
+          "net_hit_ratio_pct": 7.720000000000001,
+          "evictions": 8208,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9752569832402235
+        },
+        "2000": {
+          "hit_ratio_pct": 8.16,
+          "correct_hit_ratio_pct": 7.84,
+          "false_hit_rate_pct": 0.32,
+          "precision_of_hits_pct": 96.07843137254902,
+          "net_hit_ratio_pct": 7.52,
+          "evictions": 7184,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9533544303797468
+        }
+      },
+      "140000": {
+        "500": {
+          "hit_ratio_pct": 7.57,
+          "correct_hit_ratio_pct": 7.5600000000000005,
+          "false_hit_rate_pct": 0.01,
+          "precision_of_hits_pct": 99.86789960369882,
+          "net_hit_ratio_pct": 7.550000000000001,
+          "evictions": 8743,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9853227513227513
+        },
+        "1000": {
+          "hit_ratio_pct": 7.59,
+          "correct_hit_ratio_pct": 7.539999999999999,
+          "false_hit_rate_pct": 0.05,
+          "precision_of_hits_pct": 99.34123847167325,
+          "net_hit_ratio_pct": 7.489999999999999,
+          "evictions": 8241,
+          "cache_size_end": 1000,
+          "distinct_groups_per_slot": 0.9740558659217877
+        },
+        "2000": {
+          "hit_ratio_pct": 7.82,
+          "correct_hit_ratio_pct": 7.5600000000000005,
+          "false_hit_rate_pct": 0.26,
+          "precision_of_hits_pct": 96.67519181585678,
+          "net_hit_ratio_pct": 7.300000000000001,
+          "evictions": 7218,
+          "cache_size_end": 2000,
+          "distinct_groups_per_slot": 0.9520506329113922
+        }
+      }
+    },
+    "Unbounded": {
+      "100000": {
+        "None": {
+          "hit_ratio_pct": 11.39,
+          "correct_hit_ratio_pct": 7.779999999999999,
+          "false_hit_rate_pct": 3.61,
+          "precision_of_hits_pct": 68.30553116769096,
+          "net_hit_ratio_pct": 4.17,
+          "evictions": 0,
+          "cache_size_end": 8861,
+          "distinct_groups_per_slot": null
+        }
+      },
+      "110000": {
+        "None": {
+          "hit_ratio_pct": 11.29,
+          "correct_hit_ratio_pct": 7.61,
+          "false_hit_rate_pct": 3.6799999999999997,
+          "precision_of_hits_pct": 67.40478299379983,
+          "net_hit_ratio_pct": 3.9300000000000006,
+          "evictions": 0,
+          "cache_size_end": 8871,
+          "distinct_groups_per_slot": null
+        }
+      },
+      "120000": {
+        "None": {
+          "hit_ratio_pct": 11.47,
+          "correct_hit_ratio_pct": 7.6499999999999995,
+          "false_hit_rate_pct": 3.82,
+          "precision_of_hits_pct": 66.69572798605057,
+          "net_hit_ratio_pct": 3.8299999999999996,
+          "evictions": 0,
+          "cache_size_end": 8853,
+          "distinct_groups_per_slot": null
+        }
+      },
+      "130000": {
+        "None": {
+          "hit_ratio_pct": 11.49,
+          "correct_hit_ratio_pct": 7.76,
+          "false_hit_rate_pct": 3.73,
+          "precision_of_hits_pct": 67.53698868581375,
+          "net_hit_ratio_pct": 4.029999999999999,
+          "evictions": 0,
+          "cache_size_end": 8851,
+          "distinct_groups_per_slot": null
+        }
+      },
+      "140000": {
+        "None": {
+          "hit_ratio_pct": 11.39,
+          "correct_hit_ratio_pct": 7.5200000000000005,
+          "false_hit_rate_pct": 3.8699999999999997,
+          "precision_of_hits_pct": 66.02282704126426,
+          "net_hit_ratio_pct": 3.650000000000001,
+          "evictions": 0,
+          "cache_size_end": 8861,
+          "distinct_groups_per_slot": null
+        }
+      }
+    }
+  },
+  "summary": {
+    "LRU": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 2.1566666666666667,
+        "sd": 0.07412451985979034,
+        "ci_low": 2.064628918972625,
+        "ci_high": 2.2487044143607084
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.2013333333333331,
+        "sd": 0.037756529972384226,
+        "ci_low": 1.154452409369522,
+        "ci_high": 1.2482142572971442
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 0.9553333333333333,
+        "sd": 0.09100061049856262,
+        "ci_low": 0.8423411514627044,
+        "ci_high": 1.0683255152039621
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 64.06424955125001,
+        "sd": 1.3135643779114323,
+        "ci_low": 62.43324395387446,
+        "ci_high": 65.69525514862556
+      }
+    },
+    "LFU": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 2.492666666666666,
+        "sd": 0.11139020503517255,
+        "ci_low": 2.3543574593219563,
+        "ci_high": 2.630975874011376
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.4293333333333336,
+        "sd": 0.05122933187583512,
+        "ci_low": 1.3657237162910765,
+        "ci_high": 1.4929429503755907
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 1.0633333333333332,
+        "sd": 0.1214267040005799,
+        "ci_low": 0.9125621665552679,
+        "ci_high": 1.2141045001113986
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 63.16739652951371,
+        "sd": 1.427937114882319,
+        "ci_low": 61.394378422265376,
+        "ci_high": 64.94041463676204
+      }
+    },
+    "SphereLFU": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 2.4946666666666664,
+        "sd": 0.1150024154335706,
+        "ci_low": 2.3518723077163286,
+        "ci_high": 2.637461025617004
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.4326666666666665,
+        "sd": 0.04774934554525337,
+        "ci_low": 1.373378023365334,
+        "ci_high": 1.491955309967999
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 1.0619999999999998,
+        "sd": 0.13175313616339046,
+        "ci_low": 0.8984068741754792,
+        "ci_high": 1.2255931258245205
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 63.09238057858822,
+        "sd": 1.4994820493469867,
+        "ci_low": 61.230527701961265,
+        "ci_high": 64.95423345521517
+      }
+    },
+    "WSemDemand": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 2.6073333333333335,
+        "sd": 0.10599790354320943,
+        "ci_low": 2.475719552618655,
+        "ci_high": 2.738947114048012
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.5033333333333334,
+        "sd": 0.14296464209338225,
+        "ci_low": 1.325819284229894,
+        "ci_high": 1.680847382436773
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 1.104,
+        "sd": 0.21857365908188564,
+        "ci_low": 0.832604956562359,
+        "ci_high": 1.3753950434376412
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 63.038836537022995,
+        "sd": 2.9484693482129973,
+        "ci_low": 59.377828297539594,
+        "ci_high": 66.6998447765064
+      }
+    },
+    "WTinyLFU": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 2.298,
+        "sd": 0.0924241430699914,
+        "ci_low": 2.1832402689851578,
+        "ci_high": 2.4127597310148423
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.2993333333333335,
+        "sd": 0.08397751021685644,
+        "ci_low": 1.195061482238274,
+        "ci_high": 1.403605184428393
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 0.9986666666666666,
+        "sd": 0.17085731538983698,
+        "ci_low": 0.7865192893173597,
+        "ci_high": 1.2108140440159736
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 63.52023682146739,
+        "sd": 2.3789859119292136,
+        "ci_low": 60.566335662390934,
+        "ci_high": 66.47413798054386
+      }
+    },
+    "OracleTopic": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 6.696,
+        "sd": 0.1848482861399824,
+        "ci_low": 6.466480537970315,
+        "ci_high": 6.925519462029684
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.1833333333333333,
+        "sd": 0.06695769808866889,
+        "ci_low": 1.100194370214036,
+        "ci_high": 1.2664722964526307
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 5.512666666666666,
+        "sd": 0.17980545041794463,
+        "ci_low": 5.289408712201892,
+        "ci_high": 5.73592462113144
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 85.43949429065788,
+        "sd": 0.8025925588496706,
+        "ci_low": 84.442944005108,
+        "ci_high": 86.43604457620775
+      }
+    },
+    "OracleServable": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.975333333333334,
+        "sd": 0.14207978978963504,
+        "ci_low": 7.798917973479186,
+        "ci_high": 8.151748693187484
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 1.2526666666666668,
+        "sd": 0.06676659177895622,
+        "ci_low": 1.1697649933719694,
+        "ci_high": 1.3355683399613643
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 6.722666666666667,
+        "sd": 0.1685460701938132,
+        "ci_low": 6.5133890792682845,
+        "ci_high": 6.9319442540650495
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 86.55313583771313,
+        "sd": 0.6974853960289069,
+        "ci_low": 85.68709333219114,
+        "ci_high": 87.41917834323512
+      }
+    },
+    "OracleNet": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.683333333333333,
+        "sd": 0.12469963913339895,
+        "ci_low": 7.528498280832389,
+        "ci_high": 7.838168385834276
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 0.11400000000000002,
+        "sd": 0.02575525836277581,
+        "ci_low": 0.08202062292650482,
+        "ci_high": 0.14597937707349523
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.569333333333335,
+        "sd": 0.1242399112827903,
+        "ci_low": 7.415069108353464,
+        "ci_high": 7.723597558313205
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 98.55557582102094,
+        "sd": 0.31448662330186244,
+        "ci_low": 98.16508910295035,
+        "ci_high": 98.94606253909153
+      }
+    },
+    "Unbounded": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.664,
+        "sd": 0.1078424777163429,
+        "ci_low": 7.530095877942525,
+        "ci_high": 7.797904122057474
+      },
+      "false_hit_rate_pct": {
+        "n": 5,
+        "mean": 3.742,
+        "sd": 0.10473776778220925,
+        "ci_low": 3.6119508844926043,
+        "ci_high": 3.8720491155073957
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 3.9220000000000006,
+        "sd": 0.19728152473052277,
+        "ci_low": 3.6770426332313644,
+        "ci_high": 4.166957366768637
+      },
+      "precision_of_hits_pct": {
+        "n": 5,
+        "mean": 67.19317157492387,
+        "sd": 0.8685461866732235,
+        "ci_low": 66.11472904415456,
+        "ci_high": 68.27161410569317
+      }
+    },
+    "BestOracle": {
+      "correct_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.975333333333334,
+        "sd": 0.14207978978963504,
+        "ci_low": 7.798917973479186,
+        "ci_high": 8.151748693187484
+      },
+      "net_hit_ratio_pct": {
+        "n": 5,
+        "mean": 7.569333333333335,
+        "sd": 0.1242399112827903,
+        "ci_low": 7.415069108353464,
+        "ci_high": 7.723597558313205
+      }
+    }
+  },
+  "per_capacity": {
+    "500": {
+      "LRU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.0219999999999998,
+          "sd": 0.052153619241621235,
+          "ci_low": 0.9572427286116515,
+          "ci_high": 1.0867572713883482
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.582,
+          "sd": 0.07395944834840239,
+          "ci_low": 0.4901672156587777,
+          "ci_high": 0.6738327843412222
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.44000000000000006,
+          "sd": 0.07176350047203664,
+          "ci_low": 0.3508938450787932,
+          "ci_high": 0.5291061549212069
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 63.80705536432661,
+          "sd": 2.806658506852383,
+          "ci_low": 60.32212854111567,
+          "ci_high": 67.29198218753756
+        }
+      },
+      "LFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.2959999999999998,
+          "sd": 0.09864076236526158,
+          "ci_low": 1.1735213166156815,
+          "ci_high": 1.4184786833843182
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.788,
+          "sd": 0.06870225614927067,
+          "ci_low": 0.7026948819440773,
+          "ci_high": 0.8733051180559228
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.508,
+          "sd": 0.11432410069622248,
+          "ci_low": 0.36604788003847843,
+          "ci_high": 0.6499521199615216
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 62.181398459576926,
+          "sd": 2.6865508270272045,
+          "ci_low": 58.84560501831269,
+          "ci_high": 65.51719190084115
+        }
+      },
+      "SphereLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.2959999999999998,
+          "sd": 0.09864076236526158,
+          "ci_low": 1.1735213166156815,
+          "ci_high": 1.4184786833843182
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.794,
+          "sd": 0.05594640292279745,
+          "ci_low": 0.7245333656617605,
+          "ci_high": 0.8634666343382396
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.502,
+          "sd": 0.1116691542011491,
+          "ci_low": 0.3633444315185683,
+          "ci_high": 0.6406555684814317
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 61.980144028161604,
+          "sd": 2.4767592095732387,
+          "ci_low": 58.904841285414896,
+          "ci_high": 65.05544677090832
+        }
+      },
+      "WSemDemand": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.616,
+          "sd": 0.13794926603646723,
+          "ci_low": 1.444713362783885,
+          "ci_high": 1.7872866372161151
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.0059999999999998,
+          "sd": 0.1331540461270328,
+          "ci_low": 0.8406674147088995,
+          "ci_high": 1.1713325852911
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.61,
+          "sd": 0.2451530134426252,
+          "ci_low": 0.30560232915712826,
+          "ci_high": 0.9143976708428717
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 61.63923505636014,
+          "sd": 4.80542582099859,
+          "ci_low": 55.672510818387416,
+          "ci_high": 67.60595929433286
+        }
+      },
+      "WTinyLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.152,
+          "sd": 0.07918333157931659,
+          "ci_low": 1.053680907920131,
+          "ci_high": 1.2503190920798688
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.6880000000000001,
+          "sd": 0.07190271204899018,
+          "ci_low": 0.5987209910755568,
+          "ci_high": 0.7772790089244433
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.4640000000000001,
+          "sd": 0.14909728367747008,
+          "ci_low": 0.27887127062771144,
+          "ci_high": 0.6491287293722887
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 62.597864495363524,
+          "sd": 4.004228409149404,
+          "ci_low": 57.625958239137965,
+          "ci_high": 67.56977075158908
+        }
+      },
+      "OracleTopic": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 5.676,
+          "sd": 0.1553383404057092,
+          "ci_low": 5.48312197517751,
+          "ci_high": 5.86887802482249
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.6900000000000001,
+          "sd": 0.10839741694339397,
+          "ci_low": 0.5554068298831047,
+          "ci_high": 0.8245931701168954
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 4.986,
+          "sd": 0.14808781178746602,
+          "ci_low": 4.802124695530728,
+          "ci_high": 5.169875304469271
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 89.18839466279712,
+          "sd": 1.4564204641580727,
+          "ci_low": 87.38000980620482,
+          "ci_high": 90.99677951938942
+        }
+      },
+      "OracleServable": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 8.028,
+          "sd": 0.1507315494513342,
+          "ci_low": 7.8408420616528085,
+          "ci_high": 8.215157938347193
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.8419999999999999,
+          "sd": 0.08786353054595515,
+          "ci_low": 0.7329030173660104,
+          "ci_high": 0.9510969826339893
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.186,
+          "sd": 0.14774978849392642,
+          "ci_low": 7.00254440688487,
+          "ci_high": 7.36945559311513
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 90.51591792271846,
+          "sd": 0.8569625280625747,
+          "ci_low": 89.45185840381347,
+          "ci_high": 91.57997744162344
+        }
+      },
+      "OracleNet": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.686,
+          "sd": 0.13049904214207822,
+          "ci_low": 7.523964037572105,
+          "ci_high": 7.848035962427895
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.016,
+          "sd": 0.013416407864998738,
+          "ci_low": -0.0006586706311867904,
+          "ci_high": 0.03265867063118679
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.669999999999999,
+          "sd": 0.13095800853708764,
+          "ci_low": 7.507394155523036,
+          "ci_high": 7.832605844476962
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 99.79248017543166,
+          "sd": 0.17381188630429645,
+          "ci_low": 99.57666421374773,
+          "ci_high": 100.0082961371156
+        }
+      },
+      "BestOracle": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 8.028,
+          "sd": 0.1507315494513342,
+          "ci_low": 7.8408420616528085,
+          "ci_high": 8.215157938347193
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.669999999999999,
+          "sd": 0.13095800853708764,
+          "ci_low": 7.507394155523036,
+          "ci_high": 7.832605844476962
+        }
+      }
+    },
+    "1000": {
+      "LRU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.938,
+          "sd": 0.10940749517286269,
+          "ci_low": 1.802152652110204,
+          "ci_high": 2.073847347889796
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.1,
+          "sd": 0.05522680508593624,
+          "ci_low": 1.0314268643889763,
+          "ci_high": 1.1685731356110238
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.8380000000000001,
+          "sd": 0.12930583900195675,
+          "ci_low": 0.6774455949537379,
+          "ci_high": 0.9985544050462623
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 63.76952927454526,
+          "sd": 1.8382715059081352,
+          "ci_low": 61.48701372673531,
+          "ci_high": 66.05204482235521
+        }
+      },
+      "LFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 2.316,
+          "sd": 0.12218837915284747,
+          "ci_low": 2.1642830886070374,
+          "ci_high": 2.4677169113929622
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.3659999999999997,
+          "sd": 0.07162401831787991,
+          "ci_low": 1.2770670350480011,
+          "ci_high": 1.4549329649519982
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.95,
+          "sd": 0.10535653752852737,
+          "ci_low": 0.8191825803754235,
+          "ci_high": 1.0808174196245763
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 62.893767150805765,
+          "sd": 1.181744920282244,
+          "ci_low": 61.42643702823112,
+          "ci_high": 64.36109727338041
+        }
+      },
+      "SphereLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 2.3160000000000003,
+          "sd": 0.12739701723352864,
+          "ci_low": 2.157815710222583,
+          "ci_high": 2.4741842897774178
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.3679999999999999,
+          "sd": 0.07155417527999325,
+          "ci_low": 1.2791537566336704,
+          "ci_high": 1.4568462433663294
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.9480000000000001,
+          "sd": 0.11278297743897354,
+          "ci_low": 0.807961437303799,
+          "ci_high": 1.0880385626962013
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 62.85651543653614,
+          "sd": 1.261704439574487,
+          "ci_low": 61.289902457542645,
+          "ci_high": 64.42312841552965
+        }
+      },
+      "WSemDemand": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 2.3760000000000003,
+          "sd": 0.10478549517943768,
+          "ci_low": 2.245891623101738,
+          "ci_high": 2.5061083768982626
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.4100000000000001,
+          "sd": 0.1412444689182554,
+          "ci_low": 1.2346218279987915,
+          "ci_high": 1.5853781720012088
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.966,
+          "sd": 0.19060430215501428,
+          "ci_low": 0.7293335001113661,
+          "ci_high": 1.2026664998886338
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 62.799656175944314,
+          "sd": 2.6374253701833985,
+          "ci_low": 59.524860045838345,
+          "ci_high": 66.07445230605028
+        }
+      },
+      "WTinyLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 2.0580000000000003,
+          "sd": 0.11077003204838393,
+          "ci_low": 1.9204608391256446,
+          "ci_high": 2.195539160874356
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.1880000000000002,
+          "sd": 0.09576011695899289,
+          "ci_low": 1.0690981103082366,
+          "ci_high": 1.3069018896917637
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 0.8699999999999999,
+          "sd": 0.1854723699099141,
+          "ci_low": 0.639705635621328,
+          "ci_high": 1.1002943643786718
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 63.39818019309037,
+          "sd": 2.8112721643865246,
+          "ci_low": 59.90752475741924,
+          "ci_high": 66.8888356287615
+        }
+      },
+      "OracleTopic": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.08,
+          "sd": 0.21760055146988944,
+          "ci_low": 6.809813229250553,
+          "ci_high": 7.350186770749447
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.138,
+          "sd": 0.0903880523078133,
+          "ci_low": 1.0257684095816293,
+          "ci_high": 1.2502315904183705
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 5.942,
+          "sd": 0.22004544985070712,
+          "ci_low": 5.668777486951825,
+          "ci_high": 6.215222513048175
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 86.15604801108375,
+          "sd": 0.9580043791883572,
+          "ci_low": 84.96652846332402,
+          "ci_high": 87.34556755884348
+        }
+      },
+      "OracleServable": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.9959999999999996,
+          "sd": 0.151095995976068,
+          "ci_low": 7.808389541523775,
+          "ci_high": 8.183610458476224
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.162,
+          "sd": 0.07628892449104256,
+          "ci_low": 1.0672747889977867,
+          "ci_high": 1.2567252110022131
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 6.8340000000000005,
+          "sd": 0.2091171920239939,
+          "ci_low": 6.574346711258343,
+          "ci_high": 7.093653288741658
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 87.30831252636044,
+          "sd": 0.8782729518665308,
+          "ci_low": 86.21779262143161,
+          "ci_high": 88.39883243128926
+        }
+      },
+      "OracleNet": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.6819999999999995,
+          "sd": 0.12853015210447724,
+          "ci_low": 7.522408737448216,
+          "ci_high": 7.841591262551783
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.07400000000000001,
+          "sd": 0.025099800796022267,
+          "ci_low": 0.04283448098949292,
+          "ci_high": 0.10516551901050711
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.608000000000001,
+          "sd": 0.1287245120402483,
+          "ci_low": 7.448167407713278,
+          "ci_high": 7.767832592286725
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 99.04689463547693,
+          "sd": 0.3196805407607739,
+          "ci_low": 98.64995881708796,
+          "ci_high": 99.4438304538659
+        }
+      },
+      "BestOracle": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.9959999999999996,
+          "sd": 0.151095995976068,
+          "ci_low": 7.808389541523775,
+          "ci_high": 8.183610458476224
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.608000000000001,
+          "sd": 0.1287245120402483,
+          "ci_low": 7.448167407713278,
+          "ci_high": 7.767832592286725
+        }
+      }
+    },
+    "2000": {
+      "LRU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 3.5099999999999993,
+          "sd": 0.09354143466934851,
+          "ci_low": 3.3938529682307395,
+          "ci_high": 3.6261470317692592
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.922,
+          "sd": 0.08408329203831157,
+          "ci_low": 1.817596803425575,
+          "ci_high": 2.026403196574425
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.5879999999999999,
+          "sd": 0.16709278859364343,
+          "ci_low": 1.3805269000437999,
+          "ci_high": 1.7954730999561999
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 64.61616401487818,
+          "sd": 1.5214557529868404,
+          "ci_low": 62.72702718153442,
+          "ci_high": 66.50530084822194
+        }
+      },
+      "LFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 3.8659999999999997,
+          "sd": 0.13520355024924433,
+          "ci_low": 3.698122619226179,
+          "ci_high": 4.03387738077382
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 2.1340000000000003,
+          "sd": 0.09710818709048188,
+          "ci_low": 2.013424260158913,
+          "ci_high": 2.2545757398410875
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.732,
+          "sd": 0.20897368255356927,
+          "ci_low": 1.4725249018011706,
+          "ci_high": 1.9914750981988294
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 64.42702397815845,
+          "sd": 1.654697643559456,
+          "ci_low": 62.37244548623806,
+          "ci_high": 66.48160247007883
+        }
+      },
+      "SphereLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 3.872,
+          "sd": 0.13971399357258377,
+          "ci_low": 3.69852216413565,
+          "ci_high": 4.045477835864349
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 2.136,
+          "sd": 0.10285912696499037,
+          "ci_low": 2.0082835251609015,
+          "ci_high": 2.2637164748390988
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.736,
+          "sd": 0.22412050330123745,
+          "ci_low": 1.457717639791545,
+          "ci_high": 2.0142823602084547
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 64.44048227106694,
+          "sd": 1.78502198129911,
+          "ci_low": 62.22408474088548,
+          "ci_high": 66.65687980124841
+        }
+      },
+      "WSemDemand": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 3.8299999999999996,
+          "sd": 0.1363818169698584,
+          "ci_low": 3.660659607858911,
+          "ci_high": 3.999340392141088
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 2.094,
+          "sd": 0.19217179813906088,
+          "ci_low": 1.8553871967806463,
+          "ci_high": 2.3326128032193534
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.736,
+          "sd": 0.3095642098176076,
+          "ci_low": 1.3516252655370797,
+          "ci_high": 2.1203747344629202
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 64.6776183787645,
+          "sd": 2.7158276215164374,
+          "ci_low": 61.30547299580018,
+          "ci_high": 68.04976376172883
+        }
+      },
+      "WTinyLFU": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 3.6839999999999997,
+          "sd": 0.14205632685663813,
+          "ci_low": 3.5076137732250454,
+          "ci_high": 3.860386226774954
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 2.022,
+          "sd": 0.14007141035914494,
+          "ci_low": 1.8480783725794234,
+          "ci_high": 2.195921627420576
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 1.6620000000000001,
+          "sd": 0.2739890508761253,
+          "ci_low": 1.321797659625095,
+          "ci_high": 2.002202340374905
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 64.5646657759483,
+          "sd": 2.390464145136766,
+          "ci_low": 61.59651250793503,
+          "ci_high": 67.53281904396157
+        }
+      },
+      "OracleTopic": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.331999999999999,
+          "sd": 0.18978935691971746,
+          "ci_low": 7.0963453882705405,
+          "ci_high": 7.567654611729457
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.7220000000000002,
+          "sd": 0.05263078946776305,
+          "ci_low": 1.6566502435208368,
+          "ci_high": 1.7873497564791636
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 5.61,
+          "sd": 0.21505813167606538,
+          "ci_low": 5.342970060376865,
+          "ci_high": 5.877029939623136
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 80.97404019809275,
+          "sd": 0.7140824917298797,
+          "ci_low": 80.08738967636413,
+          "ci_high": 81.86069071982138
+        }
+      },
+      "OracleServable": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.901999999999999,
+          "sd": 0.12696456198483155,
+          "ci_low": 7.744352674335723,
+          "ci_high": 8.059647325664276
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 1.754,
+          "sd": 0.07668115805072319,
+          "ci_low": 1.6587877667078441,
+          "ci_high": 1.849212233292156
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 6.148,
+          "sd": 0.1667932852365473,
+          "ci_low": 5.940898782579647,
+          "ci_high": 6.355101217420352
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 81.83517706406047,
+          "sd": 0.7527350116711615,
+          "ci_low": 80.9005330998809,
+          "ci_high": 82.76982102824005
+        }
+      },
+      "OracleNet": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.682,
+          "sd": 0.11713240371477018,
+          "ci_low": 7.536560911284301,
+          "ci_high": 7.8274390887157
+        },
+        "false_hit_rate_pct": {
+          "n": 5,
+          "mean": 0.252,
+          "sd": 0.04604345773288535,
+          "ci_low": 0.19482949618025946,
+          "ci_high": 0.30917050381974054
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.4300000000000015,
+          "sd": 0.11445523142259535,
+          "ci_low": 7.287885059736484,
+          "ci_high": 7.572114940263519
+        },
+        "precision_of_hits_pct": {
+          "n": 5,
+          "mean": 96.82735265215419,
+          "sd": 0.5446665641429572,
+          "ci_low": 96.15105978843253,
+          "ci_high": 97.50364551587585
+        }
+      },
+      "BestOracle": {
+        "correct_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.901999999999999,
+          "sd": 0.12696456198483155,
+          "ci_low": 7.744352674335723,
+          "ci_high": 8.059647325664276
+        },
+        "net_hit_ratio_pct": {
+          "n": 5,
+          "mean": 7.4300000000000015,
+          "sd": 0.11445523142259535,
+          "ci_low": 7.287885059736484,
+          "ci_high": 7.572114940263519
+        }
+      }
+    }
+  },
+  "headroom": {
+    "net_over_wtinylfu": {
+      "n": 5,
+      "delta_mean": 6.570666666666668,
+      "delta_sd": 0.13002991108886333,
+      "delta_ci_low": 6.40921320737799,
+      "delta_ci_high": 6.732120125955346,
+      "t_p": 3.678915581511224e-08,
+      "wilcoxon_p": 0.0625
+    },
+    "correct_over_wtinylfu": {
+      "n": 5,
+      "delta_mean": 5.677333333333333,
+      "delta_sd": 0.11275341827782147,
+      "delta_ci_low": 5.537331473183352,
+      "delta_ci_high": 5.817335193483315,
+      "t_p": 3.7318499268180326e-08,
+      "wilcoxon_p": 0.0625
+    },
+    "wsemdemand_net_over_wtinylfu": {
+      "n": 5,
+      "delta_mean": 0.1053333333333333,
+      "delta_sd": 0.0978831502921269,
+      "delta_ci_low": -0.016204650415169136,
+      "delta_ci_high": 0.22687131708183575,
+      "t_p": 0.07385326537825666,
+      "wilcoxon_p": 0.125
+    },
+    "net_over_wtinylfu_per_capacity": {
+      "500": {
+        "n": 5,
+        "delta_mean": 7.205999999999999,
+        "delta_sd": 0.19603571103245418,
+        "delta_ci_low": 6.962589515248723,
+        "delta_ci_high": 7.449410484751274,
+        "t_p": 1.3132473939712425e-07,
+        "wilcoxon_p": 0.0625
+      },
+      "1000": {
+        "n": 5,
+        "delta_mean": 6.738000000000001,
+        "delta_sd": 0.13881642554107207,
+        "delta_ci_low": 6.565636642046318,
+        "delta_ci_high": 6.910363357953685,
+        "t_p": 4.321205364492434e-08,
+        "wilcoxon_p": 0.0625
+      },
+      "2000": {
+        "n": 5,
+        "delta_mean": 5.768,
+        "delta_sd": 0.19473058311420913,
+        "delta_ci_low": 5.52621004559786,
+        "delta_ci_high": 6.009789954402139,
+        "t_p": 3.1130578054297416e-07,
+        "wilcoxon_p": 0.0625
+      }
+    }
+  },
+  "decision": {
+    "primary_net_headroom_over_wtinylfu_pts": 6.570666666666668,
+    "ci": [
+      6.40921320737799,
+      6.732120125955346
+    ],
+    "threshold_pts": 1.0,
+    "pursue": true,
+    "share_of_headroom_taken_by_wsemdemand": 0.01603084415584415,
+    "correct_hit_component_pts": 5.677333333333333,
+    "false_hit_component_pts": 0.8933333333333344
+  }
+}

@@ -31,6 +31,20 @@ for _d in (DATA_DIR, RESULTS_DIR, RAW_DIR, TABLES_DIR, FIGURES_DIR,
            EMB_CACHE_DIR, LLM_CACHE_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
+
+def _load_dotenv(path: Path) -> None:
+    """Minimal .env reader: KEY=VALUE lines; never overrides the environment."""
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv(ROOT / ".env")
+
 # --------------------------------------------------------------------------
 # Reproducibility
 # --------------------------------------------------------------------------
@@ -77,6 +91,8 @@ BatchRegime = Literal["online", "offline"]
 ONLINE_BATCH = 1
 OFFLINE_BATCH = 32
 TORCH_THREADS = int(os.environ.get("SEMCACHE_TORCH_THREADS", "0")) or None
+# Threads for meta-classifier inference while serving (training keeps n_jobs=-1).
+META_INFER_THREADS = int(os.environ.get("SEMCACHE_META_THREADS", "1"))
 
 
 def preferred_torch_device() -> str:
@@ -93,6 +109,22 @@ def preferred_torch_device() -> str:
     return "cpu"
 
 
+def _host_cpu_name() -> str:
+    """CPU model of the host; LightGBM and feature arithmetic run here even
+    when the encoders run on a GPU."""
+    try:
+        if platform.system() == "Darwin":
+            import subprocess
+            return subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"],
+                                  capture_output=True, text=True).stdout.strip()
+        for line in open("/proc/cpuinfo"):
+            if line.startswith("model name"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return platform.processor() or platform.machine()
+
+
 @dataclass(frozen=True)
 class HardwareProfile:
     """Recorded alongside every timing result so tables cannot be mixed."""
@@ -101,6 +133,8 @@ class HardwareProfile:
     cpu: str
     platform: str
     torch_version: str
+    host_cpu: str = ""
+    host_cpu_count: int = 0
 
     @staticmethod
     def capture() -> "HardwareProfile":
@@ -118,6 +152,8 @@ class HardwareProfile:
             cpu=cpu,
             platform=platform.platform(),
             torch_version=torch.__version__,
+            host_cpu=_host_cpu_name(),
+            host_cpu_count=os.cpu_count() or 0,
         )
 
     def as_dict(self) -> dict:
@@ -157,11 +193,16 @@ SD_FREQ_TOP_K = 20
 # --------------------------------------------------------------------------
 # Decision thresholds
 # --------------------------------------------------------------------------
+# Fixed operating points. The two encoder thresholds are the F1-maximising
+# validation thresholds of the selected models in the individual-model
+# evaluation (exp4); they are constants at serving time, and every serving
+# entry point accepts an override for threshold sweeps.
 META_PROB_THRESHOLD = 0.50
-# Static bi-encoder cosine threshold; overwritten per fold by the tuner and
-# persisted to results/raw/thresholds.json.
 BI_COSINE_THRESHOLD = 0.726
 CROSS_THRESHOLD = 0.557
+# Selective cross-encoder gate: the C2 meta-classifier decides on its own
+# outside this probability band and defers to the cross-encoder inside it.
+GATE_BAND = (0.30, 0.70)
 
 
 # --------------------------------------------------------------------------
@@ -184,6 +225,9 @@ class ServingConfig:
     decision: Literal["threshold", "meta"]
     paper_name: str = ""
     note: str = ""
+    # Selective cross-encoder: the meta-classifier runs on the cheap features
+    # and the cross-encoder is called only for probabilities inside GATE_BAND.
+    gated: bool = False
 
     @property
     def feature_groups(self) -> tuple[str, ...]:
@@ -231,6 +275,14 @@ CONFIGS: dict[str, ServingConfig] = {
         paper_name="stacking ensemble caching",
     ),
 }
+CONFIGS["C5_gated"] = ServingConfig(
+    key="C5_gated",
+    label="Cheap-feature stacking with a selective cross-encoder",
+    use_bi=True, use_cross=False, use_geometric=True, use_text=True,
+    use_meta_clf=True, decision="meta", gated=True,
+    paper_name="gated stacking",
+    note="C2's meta-classifier; uncertain cases defer to the cross-encoder.",
+)
 CONFIG_ORDER = ("C1_bi_only", "C2_bi_geo_lgb", "C3_bi_cross", "C4_full_stacking")
 
 NO_CACHE_KEY = "C0_no_cache"

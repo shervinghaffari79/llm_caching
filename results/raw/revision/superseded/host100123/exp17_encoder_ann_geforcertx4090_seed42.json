@@ -1,0 +1,350 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 1,
+      "cpu": "NVIDIA GeForce RTX 4090",
+      "platform": "Linux-6.6.0-hiveos-x86_64-with-glibc2.39",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "AMD Ryzen 9 7950X3D 16-Core Processor",
+      "host_cpu_count": 32
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "n_stream": 2000,
+    "stream_params": {},
+    "virtual_time": true
+  },
+  "workload": {
+    "generator": "QQP positive-edge components + Zipf popularity",
+    "seed_params": {
+      "seed": 42,
+      "duplicate_rate": 0.5,
+      "hard_negative_rate": 0.35,
+      "exact_repeat_rate": 0.25,
+      "zipf_s": 1.1,
+      "max_topic_size": 12,
+      "min_topic_size": 2,
+      "mean_session_len": 4.0,
+      "fresh_hard_negatives": true,
+      "label_version": 2
+    },
+    "n_topics_available": 38574,
+    "n_events": 2000,
+    "n_unique_queries": 1208,
+    "n_topics": 1007,
+    "repeat_rate_pct": 49.65,
+    "exact_repeat_rate_pct": 39.6,
+    "paraphrase_repeat_rate_pct": 10.05,
+    "hard_negative_rate_pct": 7.5,
+    "n_sessions": 495,
+    "mean_session_len": 4.040404040404041,
+    "top10_topic_share_pct": 26.150000000000002,
+    "prefix_of": 2000
+  },
+  "pool": {
+    "unique": 1208,
+    "missing_before": 0,
+    "missing_after": 0
+  },
+  "encoders": [
+    {
+      "encoder": "sentence-transformers/all-mpnet-base-v2",
+      "bi_threshold": 0.726,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.25,
+      "precision_of_hits_pct": 92.11267605633803,
+      "false_discovery_rate_pct": 7.887323943661972,
+      "token_saving_correct_only_pct": 51.27662757974695,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 3.7262177080265246,
+      "p95_overhead_ms": 3.9181470521725714,
+      "avg_response_time_s": 1.215528463442798,
+      "stage_ms_per_request": {
+        "bi_encode": 3.687049991276581,
+        "vector_search": 0.024169706040993333,
+        "threshold_decide": 0.0008066121372394264
+      }
+    },
+    {
+      "encoder": "sentence-transformers/all-mpnet-base-v2",
+      "bi_threshold": 0.726,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.81409001956948,
+      "false_discovery_rate_pct": 5.185909980430528,
+      "token_saving_correct_only_pct": 50.678743233576625,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 5.959325538075063,
+      "p95_overhead_ms": 5.940142017789185,
+      "avg_response_time_s": 1.2673706473864814,
+      "stage_ms_per_request": {
+        "bi_encode": 4.114751454733778,
+        "vector_search": 0.02908840822055936,
+        "feat_bi_cosine": 0.0036157139111310244,
+        "feat_distance": 0.013135054497979581,
+        "feat_elementwise": 0.0058157400926575065,
+        "feat_text": 0.012287144898436964,
+        "meta_infer": 1.7454081736505032
+      }
+    },
+    {
+      "encoder": "sentence-transformers/all-distilroberta-v1",
+      "bi_threshold": 0.712,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.35,
+      "precision_of_hits_pct": 91.75257731958763,
+      "false_discovery_rate_pct": 8.24742268041237,
+      "token_saving_correct_only_pct": 51.184188141926306,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 2.297634840651881,
+      "p95_overhead_ms": 2.3510439437814057,
+      "avg_response_time_s": 1.212159600963587,
+      "stage_ms_per_request": {
+        "bi_encode": 2.254030431213323,
+        "vector_search": 0.02741223102202639,
+        "threshold_decide": 0.0008599989232607186
+      }
+    },
+    {
+      "encoder": "sentence-transformers/all-distilroberta-v1",
+      "bi_threshold": 0.712,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.12915851272015,
+      "false_discovery_rate_pct": 5.870841487279844,
+      "token_saving_correct_only_pct": 50.388717059483035,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 4.138178123277612,
+      "p95_overhead_ms": 4.108555428683758,
+      "avg_response_time_s": 1.263422132968826,
+      "stage_ms_per_request": {
+        "bi_encode": 2.301559372630436,
+        "vector_search": 0.0296861594542861,
+        "feat_bi_cosine": 0.00365207192953676,
+        "feat_distance": 0.012851029983721673,
+        "feat_elementwise": 0.005836416035890579,
+        "feat_text": 0.01003984030103311,
+        "meta_infer": 1.739748556399718
+      }
+    },
+    {
+      "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+      "bi_threshold": 0.712,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 54.1,
+      "precision_of_hits_pct": 90.94269870609982,
+      "false_discovery_rate_pct": 9.057301293900185,
+      "token_saving_correct_only_pct": 51.48302783226444,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 2.217107162810862,
+      "p95_overhead_ms": 2.304970601107925,
+      "avg_response_time_s": 1.1995868327750059,
+      "stage_ms_per_request": {
+        "bi_encode": 2.182103376253508,
+        "vector_search": 0.018931790720671415,
+        "threshold_decide": 0.0008797196787782013
+      }
+    },
+    {
+      "encoder": "sentence-transformers/all-MiniLM-L6-v2",
+      "bi_threshold": 0.712,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.45,
+      "precision_of_hits_pct": 94.26627793974733,
+      "false_discovery_rate_pct": 5.733722060252672,
+      "token_saving_correct_only_pct": 50.775691912266566,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 3.4213842946919613,
+      "p95_overhead_ms": 3.4930142457596958,
+      "avg_response_time_s": 1.2611013108995217,
+      "stage_ms_per_request": {
+        "bi_encode": 2.219970360165462,
+        "vector_search": 0.019528461911249906,
+        "feat_bi_cosine": 0.0035752328112721443,
+        "feat_distance": 0.012591670034453273,
+        "feat_elementwise": 0.005327599938027561,
+        "feat_text": 0.010109564929734915,
+        "meta_infer": 1.1157205467461608
+      }
+    }
+  ],
+  "index": [
+    {
+      "index": "flat",
+      "ef_search": null,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.25,
+      "precision_of_hits_pct": 92.11267605633803,
+      "false_discovery_rate_pct": 7.887323943661972,
+      "token_saving_correct_only_pct": 51.27662757974695,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 4.104388227744494,
+      "p95_overhead_ms": 4.156989022158086,
+      "avg_response_time_s": 1.2159070074865477,
+      "stage_ms_per_request": {
+        "bi_encode": 4.060609991254751,
+        "vector_search": 0.027326440962497145,
+        "threshold_decide": 0.0008874053601175547
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 8,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.25,
+      "precision_of_hits_pct": 92.11267605633803,
+      "false_discovery_rate_pct": 7.887323943661972,
+      "token_saving_correct_only_pct": 51.27662757974695,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 4.101983235159423,
+      "p95_overhead_ms": 4.151846095919609,
+      "avg_response_time_s": 1.2159264364177242,
+      "stage_ms_per_request": {
+        "bi_encode": 4.061553733772598,
+        "vector_search": 0.023902277345769107,
+        "threshold_decide": 0.0008984022424556315
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 16,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.25,
+      "precision_of_hits_pct": 92.11267605633803,
+      "false_discovery_rate_pct": 7.887323943661972,
+      "token_saving_correct_only_pct": 51.27662757974695,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 4.120116930746008,
+      "p95_overhead_ms": 4.175584018230438,
+      "avg_response_time_s": 1.2159436687247245,
+      "stage_ms_per_request": {
+        "bi_encode": 4.075538166274782,
+        "vector_search": 0.02799012407194823,
+        "threshold_decide": 0.0008905410068109632
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 64,
+      "config": "C1_bi_only",
+      "hit_ratio_pct": 53.25,
+      "precision_of_hits_pct": 92.11267605633803,
+      "false_discovery_rate_pct": 7.887323943661972,
+      "token_saving_correct_only_pct": 51.27662757974695,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 4.113549968460575,
+      "p95_overhead_ms": 4.1702101298142225,
+      "avg_response_time_s": 1.2159376249835359,
+      "stage_ms_per_request": {
+        "bi_encode": 4.054114599421155,
+        "vector_search": 0.04281636461382732,
+        "threshold_decide": 0.0008858463261276484
+      }
+    },
+    {
+      "index": "flat",
+      "ef_search": null,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.81409001956948,
+      "false_discovery_rate_pct": 5.185909980430528,
+      "token_saving_correct_only_pct": 50.678743233576625,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 5.918678674730472,
+      "p95_overhead_ms": 5.89492337894626,
+      "avg_response_time_s": 1.2673298053239788,
+      "stage_ms_per_request": {
+        "bi_encode": 4.104169843601994,
+        "vector_search": 0.02931046998128295,
+        "feat_bi_cosine": 0.0036398222437128425,
+        "feat_distance": 0.012926832656376064,
+        "feat_elementwise": 0.005708976415917277,
+        "feat_text": 0.01011088042287156,
+        "meta_infer": 1.717643580865115
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 8,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.81409001956948,
+      "false_discovery_rate_pct": 5.185909980430528,
+      "token_saving_correct_only_pct": 50.678743233576625,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 5.903942447912414,
+      "p95_overhead_ms": 5.90292825945653,
+      "avg_response_time_s": 1.2673407094930962,
+      "stage_ms_per_request": {
+        "bi_encode": 4.1095072404132225,
+        "vector_search": 0.024282723374199122,
+        "feat_bi_cosine": 0.003653957275673747,
+        "feat_distance": 0.012948458665050566,
+        "feat_elementwise": 0.005695102037861943,
+        "feat_text": 0.010135887714568526,
+        "meta_infer": 1.7025834337691776
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 16,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.81409001956948,
+      "false_discovery_rate_pct": 5.185909980430528,
+      "token_saving_correct_only_pct": 50.678743233576625,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 5.9402566718054,
+      "p95_overhead_ms": 5.922549357637763,
+      "avg_response_time_s": 1.2673759762963828,
+      "stage_ms_per_request": {
+        "bi_encode": 4.114634637197014,
+        "vector_search": 0.028723939962219447,
+        "feat_bi_cosine": 0.003663724986836314,
+        "feat_distance": 0.01298053952632472,
+        "feat_elementwise": 0.005711257690563798,
+        "feat_text": 0.010042241774499416,
+        "meta_infer": 1.7291621521580964
+      }
+    },
+    {
+      "index": "hnsw",
+      "ef_search": 64,
+      "config": "C2_bi_geo_lgb",
+      "hit_ratio_pct": 51.1,
+      "precision_of_hits_pct": 94.81409001956948,
+      "false_discovery_rate_pct": 5.185909980430528,
+      "token_saving_correct_only_pct": 50.678743233576625,
+      "correct_miss_ratio_on_hard_negatives_pct": null,
+      "hit_ratio_on_servable_repeats_pct": null,
+      "avg_overhead_ms": 5.9596761395805515,
+      "p95_overhead_ms": 5.936635012039915,
+      "avg_response_time_s": 1.2673963864515034,
+      "stage_ms_per_request": {
+        "bi_encode": 4.110157267248724,
+        "vector_search": 0.044405074208043516,
+        "feat_bi_cosine": 0.0036736634792760015,
+        "feat_distance": 0.012963854300323874,
+        "feat_elementwise": 0.005695461586583406,
+        "feat_text": 0.010074922873172909,
+        "meta_infer": 1.7372208203887567
+      }
+    }
+  ]
+}

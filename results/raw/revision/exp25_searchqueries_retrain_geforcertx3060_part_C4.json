@@ -1,0 +1,133 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 3,
+      "cpu": "NVIDIA GeForce RTX 3060",
+      "platform": "Linux-5.15.0-194-generic-x86_64-with-glibc2.39",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "11th Gen Intel(R) Core(TM) i5-11600K @ 3.90GHz",
+      "host_cpu_count": 12
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "dataset": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_stream": 50000,
+    "systems": [
+      "C4"
+    ],
+    "latency_valid": false,
+    "token_counts_valid": false,
+    "training": {
+      "c1_threshold": 0.895,
+      "c1_train_f1": 0.28634361233480177,
+      "n_pairs": 120757,
+      "positive_pct": 4.205967355929677
+    },
+    "k_neighbours": 5,
+    "max_train_queries": 40000,
+    "block": 5000
+  },
+  "workload": {
+    "source": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_events": 50000,
+    "n_unique_queries": 50000,
+    "n_topics": 24192,
+    "repeat_rate_pct": 51.616,
+    "exact_repeat_rate_pct": 0.0,
+    "paraphrase_repeat_rate_pct": 51.616,
+    "hard_negative_rate_pct": null,
+    "order": "dataset order"
+  },
+  "results": {
+    "C4_adapted": {
+      "stats": {
+        "hit_ratio_pct": 0.982,
+        "precision_of_hits_pct": 90.63136456211812,
+        "false_discovery_rate_pct": 9.368635437881874,
+        "false_hit_rate_pct": 0.092,
+        "hit_ratio_vs_oracle_pct": 1.724538831188963,
+        "oracle_hit_ratio_pct": 51.608,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.04,
+          "precision_of_hits_pct": 50.0,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 0.34,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 0.68,
+          "precision_of_hits_pct": 85.29411764705883,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 0.68,
+          "precision_of_hits_pct": 88.23529411764706,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 1.02,
+          "precision_of_hits_pct": 86.27450980392157,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 90.9090909090909,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 1.02,
+          "precision_of_hits_pct": 92.15686274509804,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 1.38,
+          "precision_of_hits_pct": 89.85507246376811,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 1.8,
+          "precision_of_hits_pct": 92.22222222222223,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 1.76,
+          "precision_of_hits_pct": 93.18181818181817,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    }
+  }
+}

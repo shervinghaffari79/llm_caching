@@ -1,0 +1,237 @@
+{
+ "manifest": {
+  "hardware": {
+   "device": "cpu",
+   "torch_threads": 32,
+   "cpu": "x86_64",
+   "platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+   "torch_version": "2.8.0+cu128",
+   "host_cpu": "unknown",
+   "host_cpu_count": 48
+  },
+  "seed": 42,
+  "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+  "cross_encoder": "cross-encoder/stsb-roberta-large",
+  "meta_infer_threads": 1,
+  "sites": [
+   "askubuntu",
+   "unix",
+   "superuser",
+   "serverfault"
+  ]
+ },
+ "sites": {
+  "askubuntu": {
+   "site": "askubuntu",
+   "questions": 414451,
+   "classes": 374556,
+   "classes_gt1": 10087,
+   "questions_in_gt1": 49982,
+   "repeat_rate_pct": 9.625987149264937,
+   "first": "2009-01-08 07:47:55.393000",
+   "last": "2024-03-31 23:33:06.157000",
+   "mean_title_chars": 52.07735293195094,
+   "diagnostic_oldest_20000": {
+    "pairs_same_class": 249720,
+    "dup_cosine_quantiles_10_25_50_75_90": [
+     -0.046,
+     -0.001,
+     0.058,
+     0.133,
+     0.227
+    ],
+    "at_threshold": {
+     "0.7": {
+      "pairs": 9796,
+      "pair_precision": 0.07717435688035933,
+      "recall_of_duplicates": 0.003027390677558866
+     },
+     "0.8": {
+      "pairs": 1904,
+      "pair_precision": 0.15021008403361344,
+      "recall_of_duplicates": 0.0011452827166426398
+     },
+     "0.85": {
+      "pairs": 789,
+      "pair_precision": 0.22306717363751585,
+      "recall_of_duplicates": 0.0007047893640877783
+     },
+     "0.895": {
+      "pairs": 336,
+      "pair_precision": 0.2708333333333333,
+      "recall_of_duplicates": 0.0003644081371135672
+     },
+     "0.93": {
+      "pairs": 165,
+      "pair_precision": 0.3212121212121212,
+      "recall_of_duplicates": 0.0002122377062309787
+     },
+     "0.95": {
+      "pairs": 83,
+      "pair_precision": 0.37349397590361444,
+      "recall_of_duplicates": 0.0001241390357200064
+     }
+    }
+   }
+  },
+  "unix": {
+   "site": "unix",
+   "questions": 238249,
+   "classes": 228362,
+   "classes_gt1": 4884,
+   "questions_in_gt1": 14771,
+   "repeat_rate_pct": 4.149860020398821,
+   "first": "2008-08-27 14:42:40.877000",
+   "last": "2024-03-31 23:04:56.747000",
+   "mean_title_chars": 53.50850580694987,
+   "diagnostic_oldest_20000": {
+    "pairs_same_class": 2233,
+    "dup_cosine_quantiles_10_25_50_75_90": [
+     0.089,
+     0.182,
+     0.365,
+     0.563,
+     0.723
+    ],
+    "at_threshold": {
+     "0.7": {
+      "pairs": 7261,
+      "pair_precision": 0.0371849607492081,
+      "recall_of_duplicates": 0.12091356918943126
+     },
+     "0.8": {
+      "pairs": 1083,
+      "pair_precision": 0.09233610341643583,
+      "recall_of_duplicates": 0.04478280340349306
+     },
+     "0.85": {
+      "pairs": 390,
+      "pair_precision": 0.1282051282051282,
+      "recall_of_duplicates": 0.02239140170174653
+     },
+     "0.895": {
+      "pairs": 131,
+      "pair_precision": 0.17557251908396945,
+      "recall_of_duplicates": 0.010300044782803403
+     },
+     "0.93": {
+      "pairs": 60,
+      "pair_precision": 0.25,
+      "recall_of_duplicates": 0.006717420510523959
+     },
+     "0.95": {
+      "pairs": 38,
+      "pair_precision": 0.2631578947368421,
+      "recall_of_duplicates": 0.0044782803403493054
+     }
+    }
+   }
+  },
+  "superuser": {
+   "site": "superuser",
+   "questions": 505136,
+   "classes": 490803,
+   "classes_gt1": 7966,
+   "questions_in_gt1": 22299,
+   "repeat_rate_pct": 2.83745367584175,
+   "first": "2008-08-01 21:22:13.110000",
+   "last": "2024-03-31 23:56:52.950000",
+   "mean_title_chars": 55.509791422507995,
+   "diagnostic_oldest_20000": {
+    "pairs_same_class": 1142,
+    "dup_cosine_quantiles_10_25_50_75_90": [
+     0.31,
+     0.419,
+     0.547,
+     0.683,
+     0.792
+    ],
+    "at_threshold": {
+     "0.7": {
+      "pairs": 6698,
+      "pair_precision": 0.038518960883845925,
+      "recall_of_duplicates": 0.22591943957968477
+     },
+     "0.8": {
+      "pairs": 1113,
+      "pair_precision": 0.09613656783468104,
+      "recall_of_duplicates": 0.09369527145359019
+     },
+     "0.85": {
+      "pairs": 419,
+      "pair_precision": 0.14081145584725538,
+      "recall_of_duplicates": 0.05166374781085814
+     },
+     "0.895": {
+      "pairs": 155,
+      "pair_precision": 0.1935483870967742,
+      "recall_of_duplicates": 0.02626970227670753
+     },
+     "0.93": {
+      "pairs": 66,
+      "pair_precision": 0.2878787878787879,
+      "recall_of_duplicates": 0.016637478108581436
+     },
+     "0.95": {
+      "pairs": 41,
+      "pair_precision": 0.36585365853658536,
+      "recall_of_duplicates": 0.013134851138353765
+     }
+    }
+   }
+  },
+  "serverfault": {
+   "site": "serverfault",
+   "questions": 325169,
+   "classes": 320234,
+   "classes_gt1": 2018,
+   "questions_in_gt1": 6953,
+   "repeat_rate_pct": 1.5176723488401378,
+   "first": "2008-08-01 16:37:51.513000",
+   "last": "2024-03-31 19:53:00.057000",
+   "mean_title_chars": 53.831084759002245,
+   "diagnostic_oldest_20000": {
+    "pairs_same_class": 4316,
+    "dup_cosine_quantiles_10_25_50_75_90": [
+     0.023,
+     0.112,
+     0.243,
+     0.408,
+     0.539
+    ],
+    "at_threshold": {
+     "0.7": {
+      "pairs": 7666,
+      "pair_precision": 0.012783720323506392,
+      "recall_of_duplicates": 0.022706209453197405
+     },
+     "0.8": {
+      "pairs": 1175,
+      "pair_precision": 0.028085106382978724,
+      "recall_of_duplicates": 0.007645968489341983
+     },
+     "0.85": {
+      "pairs": 448,
+      "pair_precision": 0.04241071428571429,
+      "recall_of_duplicates": 0.004402224281742354
+     },
+     "0.895": {
+      "pairs": 172,
+      "pair_precision": 0.06395348837209303,
+      "recall_of_duplicates": 0.0025486561631139944
+     },
+     "0.93": {
+      "pairs": 91,
+      "pair_precision": 0.0989010989010989,
+      "recall_of_duplicates": 0.0020852641334569047
+     },
+     "0.95": {
+      "pairs": 53,
+      "pair_precision": 0.1320754716981132,
+      "recall_of_duplicates": 0.0016218721037998146
+     }
+    }
+   }
+  }
+ }
+}

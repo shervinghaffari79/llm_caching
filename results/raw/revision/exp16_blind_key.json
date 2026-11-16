@@ -1,0 +1,276 @@
+{
+ "source": "results/raw/revision/exp16_judgements_seed42_calib.jsonl",
+ "shuffle_seed": 20261005,
+ "items": {
+  "P01": {
+   "jsonl_line": 29,
+   "query": "What are 5 scientific challenges faced by big cities due to urbanization?",
+   "cached_query": "What are 5 scientific challenges faced by big cities due to the urban congestion?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P02": {
+   "jsonl_line": 5,
+   "query": "What is the best tanning lotion for tanning beds?",
+   "cached_query": "What are the best lotions for tanning beds?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P03": {
+   "jsonl_line": 1,
+   "query": "Why do indian girls wear shorts like boys?",
+   "cached_query": "Why do Indian girls wear shorts?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P04": {
+   "jsonl_line": 25,
+   "query": "What are The best Air conditioner Service center in Hyderabad?",
+   "cached_query": "Where is the best Videocon refrigerator repair center in hyderabad?",
+   "qqp_label_correct": false,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "not_substitutable"
+  },
+  "P05": {
+   "jsonl_line": 15,
+   "query": "What's the best way to treat a painful pimple in your ear?",
+   "cached_query": "How do you treat a pimple in the ear?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P06": {
+   "jsonl_line": 26,
+   "query": "What is the relationship like between China and Singapore?",
+   "cached_query": "What kind of relationship do China and Singapore have?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P07": {
+   "jsonl_line": 7,
+   "query": "I'm not attracted to black girls. Am I racist?",
+   "cached_query": "I am rarely attracted to black girls. Does that make me a racist?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P08": {
+   "jsonl_line": 20,
+   "query": "What are the functions of stock exchange?",
+   "cached_query": "How do stock exchanges function?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P09": {
+   "jsonl_line": 21,
+   "query": "Why does the military use 24 hour time?",
+   "cached_query": "Why does the military use a 24-hour time system?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P10": {
+   "jsonl_line": 19,
+   "query": "What is the use of toothpaste?",
+   "cached_query": "What is the point of toothpaste?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P11": {
+   "jsonl_line": 13,
+   "query": "How will Japan pay its soaring sovereign debt?",
+   "cached_query": "How will Japan pay its national debt?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P12": {
+   "jsonl_line": 11,
+   "query": "What kind of laptop should an engineering student get?",
+   "cached_query": "What is the best laptop for an electrical engineering student?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P13": {
+   "jsonl_line": 22,
+   "query": "Is there any need of reservation in education based on caste reservation?",
+   "cached_query": "What is the need of caste based reservation in the education system of India?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P14": {
+   "jsonl_line": 6,
+   "query": "What are the benefits and disadvantages of drinking red wine daily?",
+   "cached_query": "What effects does red wine have on the body?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P15": {
+   "jsonl_line": 10,
+   "query": "Is there a reliable way to measure neurotransmitters in the brain?",
+   "cached_query": "Can the neurotransmitters be detected in the brain?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P16": {
+   "jsonl_line": 14,
+   "query": "I find Iranian women the most beautiful in the world. I am an atheist American - what chance is there of me marrying one?",
+   "cached_query": "I find Iranian women the most beautiful in the world. I am an atheist European - what chance is there of me marrying one?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "not_substitutable"
+  },
+  "P17": {
+   "jsonl_line": 18,
+   "query": "How would the world be different today if Hitler had never born?",
+   "cached_query": "How different would the world be if Hitler never existed?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P18": {
+   "jsonl_line": 23,
+   "query": "What would happen on earth if a meteor hit the moon?",
+   "cached_query": "What would happen if moon falls on earth?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "not_substitutable"
+  },
+  "P19": {
+   "jsonl_line": 27,
+   "query": "Why does geographic tongue sometimes hurt?",
+   "cached_query": "What is geographic tongue? Does it hurt?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P20": {
+   "jsonl_line": 24,
+   "query": "How do I know if my husband has a mistress?",
+   "cached_query": "How do I know my husband is cheating on me?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P21": {
+   "jsonl_line": 2,
+   "query": "What is the best email marketing software which is free to use?",
+   "cached_query": "Which is the best email marketing online tool or software?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "not_substitutable"
+  },
+  "P22": {
+   "jsonl_line": 0,
+   "query": "Do gay men secretly hate women?",
+   "cached_query": "Do gay men secretly hate women, or do they hate girls?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P23": {
+   "jsonl_line": 16,
+   "query": "Which company makes better phones: Apple or Samsung?",
+   "cached_query": "Are Samsung devices better than Apple devices?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P24": {
+   "jsonl_line": 28,
+   "query": "How can someone improve their self-esteem?",
+   "cached_query": "How do you raise your self-esteem?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P25": {
+   "jsonl_line": 3,
+   "query": "What is the best laptop for an electrical engineering student?",
+   "cached_query": "What is the best laptop for mechanical engineering students?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "not_substitutable"
+  },
+  "P26": {
+   "jsonl_line": 4,
+   "query": "What is the funniest incident between you and your friends?",
+   "cached_query": "What are funniest incidents you had with your friends?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P27": {
+   "jsonl_line": 12,
+   "query": "Did you understand the ending of 2001 A Space Odyssey?",
+   "cached_query": "What was meant by the final scene in 2001: A Space Odyssey?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P28": {
+   "jsonl_line": 9,
+   "query": "How can I study at night?",
+   "cached_query": "How do I study at night?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "not_substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P29": {
+   "jsonl_line": 17,
+   "query": "What will be the impact of FED rate hike on BSE and NSE? What are various reasons for such impact?",
+   "cached_query": "What is the impact of US Fed rates hike on the Indian stock market?",
+   "qqp_label_correct": false,
+   "is_hard_negative": true,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  },
+  "P30": {
+   "jsonl_line": 8,
+   "query": "Have you ever been in an interracial relationship? What were some of the challenges that you faced?",
+   "cached_query": "Have ever been in a long term interracial/intercultural relationship? What are some of the problems you've faced?",
+   "qqp_label_correct": true,
+   "is_hard_negative": false,
+   "judge_v1": "substitutable",
+   "judge_v2": "substitutable"
+  }
+ }
+}

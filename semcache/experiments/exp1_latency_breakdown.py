@@ -33,7 +33,7 @@ from ..features import (distance_features, elementwise_features,
                         text_features_one)
 from ..metaclf import fit_final
 from ..reporting import save_json, save_latex, table_latency_breakdown
-from ._common import banner, encode_frame, hardware_manifest
+from ._common import banner, encode_frame, hardware_manifest, save_result
 
 
 def _percentiles(v: list[float]) -> dict:
@@ -52,7 +52,7 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
 
     bi = get_bi()
     ce = get_cross()
-    warmup()
+    warmup(include_cross=True)
 
     # Build a realistic index to search against.
     corpus = abl["question2"].tolist()[:index_size]
@@ -75,7 +75,7 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
     X = enc.bundle.matrix(("bi_cosine", "cross_score", "distance",
                            "elementwise", "text"))
     meta = fit_final(X, enc.y, ("bi_cosine", "cross_score", "distance",
-                                "elementwise", "text"))
+                                "elementwise", "text")).set_inference_threads()
 
     for q in queries:
         t = StageTimer()
@@ -84,7 +84,7 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
         cand = corpus[int(ids[0])]
         ec = corpus_emb[int(ids[0])]
 
-        ce.score_one(q, cand, timer=t, stage="cross_encode")
+        cs = ce.score_one(q, cand, timer=t, stage="cross_encode")
 
         with t.stage("feat_bi_cosine"):
             _ = float(np.dot(eq, ec))
@@ -97,7 +97,7 @@ def measure_online(n_queries: int, index_size: int, seed: int = C.SEED) -> dict:
 
         x = np.concatenate([
             np.array([float(np.dot(eq, ec))], dtype=np.float32),
-            np.array([0.5], dtype=np.float32),
+            np.array([cs], dtype=np.float32),
             distance_features(eq, ec),
             elementwise_features(eq, ec),
             text_features_one(q, cand)]).reshape(1, -1)
@@ -210,6 +210,7 @@ def main(n_queries: int = 300, index_size: int = 2000) -> dict:
                  "is paid on misses too."),
     }
     save_json(out, "exp1_latency_breakdown")
+    save_result(out, "exp1_latency_breakdown")
     save_latex(table_latency_breakdown(rows, hw.as_dict(), "online"),
                "table_latency_breakdown")
     return out

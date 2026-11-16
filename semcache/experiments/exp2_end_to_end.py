@@ -29,6 +29,7 @@ Run:
 from __future__ import annotations
 
 import argparse
+import os
 
 import numpy as np
 
@@ -42,40 +43,21 @@ from ..reporting import (check_run_consistency, fig_response_time,
                          fig_token_savings, save_json, save_latex,
                          table_end_to_end)
 from ..workload import build_workloads
-from ._common import banner, encode_frame, hardware_manifest
-
-META_GROUPS = {
-    "C2_bi_geo_lgb": ("bi_cosine", "distance", "elementwise", "text"),
-    "C4_full_stacking": ("bi_cosine", "cross_score", "distance", "elementwise", "text"),
-}
-
-
-def train_metas(n_train: int | None = None) -> dict:
-    """Train the meta-classifiers the serving configurations need.
-
-    Trained on the 30,000-pair meta set, which is component-disjoint from the
-    stream pool, so nothing in the stream was seen during training.
-    """
-    splits = build_splits()
-    df = splits.meta if n_train is None else splits.meta.iloc[:n_train]
-    enc = encode_frame(df, f"meta{len(df)}", with_cross=True)
-    out = {}
-    for key, groups in META_GROUPS.items():
-        X = enc.bundle.matrix(groups)
-        out[key] = fit_final(X, enc.y, groups)
-        print(f"  trained meta for {key}: {X.shape[1]} features, {len(enc.y)} rows")
-    return out
-
+from ._common import (META_GROUPS, banner, encode_frame, hardware_manifest,
+                      save_result, train_metas)
 
 def main(n_stream: int = 2000, llm_mode: str = "replay", capacity: int | None = None,
-         verify_live: int = 0, prefetch: bool = True) -> dict:
+         verify_live: int = 0, prefetch: bool = True, seed: int = C.SEED,
+         stream_kw: dict | None = None, virtual_time: bool = False,
+         tag: str = "", legacy_output: bool = False) -> dict:
     banner("EXP 2 | End-to-end response time and token savings by configuration")
     hw = C.HardwareProfile.capture()
     print(f"  device={hw.device}  llm={C.LLM_MODEL} "
           f"(reasoning_effort={C.LLM_REASONING_EFFORT})  mode={llm_mode}")
 
     splits = build_splits()
-    wl = build_workloads(splits.stream_pool, lengths=(n_stream,))[n_stream]
+    wl = build_workloads(splits.stream_pool, lengths=(n_stream,), seed=seed,
+                         **(stream_kw or {}))[n_stream]
     print(f"  stream: {wl.meta['n_events']} events, "
           f"{wl.meta['n_unique_queries']} unique, "
           f"{wl.meta['repeat_rate_pct']:.1f}% repeats "
@@ -83,11 +65,13 @@ def main(n_stream: int = 2000, llm_mode: str = "replay", capacity: int | None = 
           f"{wl.meta['hard_negative_rate_pct']:.1f}% near-duplicate distractors")
 
     pool = AnswerPool()
-    backend = LLMBackend(mode=llm_mode, pool=pool)
+    backend = LLMBackend(mode=llm_mode, pool=pool, seed=seed,
+                         virtual_time=virtual_time)
+    has_key = bool(os.environ.get("OPENAI_API_KEY"))
 
     # ---- Phase A -------------------------------------------------------
     calib = {}
-    if llm_mode in ("replay", "live") and prefetch:
+    if llm_mode in ("replay", "live") and prefetch and has_key:
         uq = wl.unique_queries()
         print(f"\n  [A] prefetching {len(uq)} unique queries "
               f"(pool already holds {len(pool)})")
@@ -98,11 +82,11 @@ def main(n_stream: int = 2000, llm_mode: str = "replay", capacity: int | None = 
         print("     ", calib)
 
     # ---- Phase C -------------------------------------------------------
-    warmup()
-    metas = train_metas()
+    warmup(include_cross=True)
+    metas = train_metas(seed=seed)
 
     rows, raw = [], {}
-    for key in C.CONFIG_ORDER:
+    for key in (*C.CONFIG_ORDER, "C5_gated"):
         cfg = C.CONFIGS[key]
         print(f"\n  [C] serving {n_stream} requests | {cfg.label}")
         cache = SemanticCache(cfg, meta=metas.get(key), capacity=capacity,
@@ -160,7 +144,9 @@ def main(n_stream: int = 2000, llm_mode: str = "replay", capacity: int | None = 
             "batch_regime": "online", "batch_size": C.ONLINE_BATCH,
             "llm_model": C.LLM_MODEL, "llm_mode": llm_mode,
             "reasoning_effort": C.LLM_REASONING_EFFORT,
-            "capacity": capacity, "n_stream": n_stream}),
+            "capacity": capacity, "n_stream": n_stream,
+            "virtual_time": virtual_time, "stream_params": stream_kw or {},
+            "llm_pool_misses": backend.pool_misses}, seed=seed),
         "workload": wl.meta,
         "llm_pool": {"size": len(pool), **pool.latency_stats(),
                      **pool.token_stats()},
@@ -177,10 +163,12 @@ def main(n_stream: int = 2000, llm_mode: str = "replay", capacity: int | None = 
             for k in C.CONFIG_ORDER},
         "raw": raw,
     }
-    save_json(out, "exp2_end_to_end")
-    save_latex(table_end_to_end(rows, nc), "table_end_to_end")
-    fig_response_time(rows, nc)
-    fig_token_savings(rows)
+    save_result(out, "exp2_end_to_end", seed=seed, tag=tag)
+    if legacy_output:
+        save_json(out, "exp2_end_to_end")
+        save_latex(table_end_to_end(rows, nc), "table_end_to_end")
+        fig_response_time(rows, nc)
+        fig_token_savings(rows)
 
     banner("EXP 2 | summary")
     print(f"  {'configuration':32s} {'overhead':>10s} {'avg resp':>10s} "
@@ -200,5 +188,13 @@ if __name__ == "__main__":
     ap.add_argument("--capacity", type=int, default=None)
     ap.add_argument("--verify-live", type=int, default=0)
     ap.add_argument("--no-prefetch", action="store_true")
+    ap.add_argument("--seed", type=int, default=C.SEED)
+    ap.add_argument("--recycled-hn", action="store_true")
+    ap.add_argument("--virtual-time", action="store_true")
+    ap.add_argument("--tag", default="")
+    ap.add_argument("--legacy-output", action="store_true",
+                    help="also overwrite results/raw/exp2_end_to_end.json and its table")
     a = ap.parse_args()
-    main(a.n, a.llm_mode, a.capacity, a.verify_live, prefetch=not a.no_prefetch)
+    main(a.n, a.llm_mode, a.capacity, a.verify_live, prefetch=not a.no_prefetch,
+         seed=a.seed, stream_kw={"fresh_hard_negatives": False} if a.recycled_hn else {},
+         virtual_time=a.virtual_time, tag=a.tag, legacy_output=a.legacy_output)

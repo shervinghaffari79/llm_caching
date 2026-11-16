@@ -1,0 +1,661 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 3,
+      "cpu": "NVIDIA GeForce RTX 3060",
+      "platform": "Linux-5.15.0-194-generic-x86_64-with-glibc2.39",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "11th Gen Intel(R) Core(TM) i5-11600K @ 3.90GHz",
+      "host_cpu_count": 12
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "dataset": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_stream": 50000,
+    "systems": [
+      "C1",
+      "C5"
+    ],
+    "latency_valid": false,
+    "token_counts_valid": false,
+    "training": {
+      "c1_threshold": 0.895,
+      "c1_train_f1": 0.28634361233480177,
+      "n_pairs": 120757,
+      "positive_pct": 4.205967355929677
+    },
+    "k_neighbours": 5,
+    "max_train_queries": 40000,
+    "block": 5000,
+    "merged_from": [
+      "results/raw/revision/exp25_searchqueries_retrain_geforcertx3060_part_C1-C5.json",
+      "results/raw/revision/exp25_searchqueries_retrain_geforcertx3060_part_C2.json",
+      "results/raw/revision/exp25_searchqueries_retrain_geforcertx3060_part_C4.json"
+    ]
+  },
+  "workload": {
+    "source": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_events": 50000,
+    "n_unique_queries": 50000,
+    "n_topics": 24192,
+    "repeat_rate_pct": 51.616,
+    "exact_repeat_rate_pct": 0.0,
+    "paraphrase_repeat_rate_pct": 51.616,
+    "hard_negative_rate_pct": null,
+    "order": "dataset order"
+  },
+  "results": {
+    "C1_adapted_t0.895": {
+      "stats": {
+        "hit_ratio_pct": 29.668,
+        "precision_of_hits_pct": 69.00364028582985,
+        "false_discovery_rate_pct": 30.99635971417015,
+        "false_hit_rate_pct": 9.196,
+        "hit_ratio_vs_oracle_pct": 40.839451005426106,
+        "oracle_hit_ratio_pct": 50.128,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 6.48,
+          "precision_of_hits_pct": 65.12345679012346,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 15.16,
+          "precision_of_hits_pct": 64.90765171503958,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 22.08,
+          "precision_of_hits_pct": 68.11594202898551,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 27.62,
+          "precision_of_hits_pct": 69.87690079652425,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 31.64,
+          "precision_of_hits_pct": 67.69911504424779,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 33.72,
+          "precision_of_hits_pct": 70.69988137603796,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 35.44,
+          "precision_of_hits_pct": 67.94582392776523,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 39.34,
+          "precision_of_hits_pct": 71.22521606507371,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 41.58,
+          "precision_of_hits_pct": 68.63876863876864,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 43.62,
+          "precision_of_hits_pct": 69.73865199449793,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C5_adapted": {
+      "stats": {
+        "hit_ratio_pct": 3.964,
+        "precision_of_hits_pct": 87.84056508577194,
+        "false_discovery_rate_pct": 12.159434914228052,
+        "false_hit_rate_pct": 0.482,
+        "hit_ratio_vs_oracle_pct": 6.749893381925329,
+        "oracle_hit_ratio_pct": 51.586,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.64,
+          "precision_of_hits_pct": 93.75,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 1.6,
+          "precision_of_hits_pct": 83.75,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 2.42,
+          "precision_of_hits_pct": 87.60330578512396,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 3.12,
+          "precision_of_hits_pct": 88.46153846153845,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 3.64,
+          "precision_of_hits_pct": 90.10989010989012,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 4.58,
+          "precision_of_hits_pct": 86.46288209606988,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 4.72,
+          "precision_of_hits_pct": 85.59322033898306,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 5.9,
+          "precision_of_hits_pct": 88.13559322033898,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 6.28,
+          "precision_of_hits_pct": 88.53503184713377,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 6.74,
+          "precision_of_hits_pct": 88.4272997032641,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C2_adapted_p0.3": {
+      "stats": {
+        "hit_ratio_pct": 3.996,
+        "precision_of_hits_pct": 87.33733733733733,
+        "false_discovery_rate_pct": 12.662662662662663,
+        "false_hit_rate_pct": 0.506,
+        "hit_ratio_vs_oracle_pct": 6.766450812361859,
+        "oracle_hit_ratio_pct": 51.578,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.64,
+          "precision_of_hits_pct": 93.75,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 1.62,
+          "precision_of_hits_pct": 82.71604938271605,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 2.44,
+          "precision_of_hits_pct": 87.70491803278688,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 3.16,
+          "precision_of_hits_pct": 87.9746835443038,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 3.68,
+          "precision_of_hits_pct": 89.67391304347827,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 4.6,
+          "precision_of_hits_pct": 86.08695652173914,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 4.76,
+          "precision_of_hits_pct": 84.87394957983193,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 5.98,
+          "precision_of_hits_pct": 86.95652173913044,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 6.32,
+          "precision_of_hits_pct": 88.29113924050634,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 6.76,
+          "precision_of_hits_pct": 88.16568047337277,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C2_adapted_p0.5": {
+      "stats": {
+        "hit_ratio_pct": 0.802,
+        "precision_of_hits_pct": 89.52618453865337,
+        "false_discovery_rate_pct": 10.473815461346634,
+        "false_hit_rate_pct": 0.084,
+        "hit_ratio_vs_oracle_pct": 1.391203255183104,
+        "oracle_hit_ratio_pct": 51.61,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.1,
+          "precision_of_hits_pct": 80.0,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 0.38,
+          "precision_of_hits_pct": 84.21052631578947,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 0.44,
+          "precision_of_hits_pct": 90.9090909090909,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 0.64,
+          "precision_of_hits_pct": 96.875,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 0.76,
+          "precision_of_hits_pct": 86.8421052631579,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 0.74,
+          "precision_of_hits_pct": 81.08108108108108,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 0.94,
+          "precision_of_hits_pct": 91.48936170212765,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 83.63636363636363,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 1.54,
+          "precision_of_hits_pct": 89.6103896103896,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 1.38,
+          "precision_of_hits_pct": 97.10144927536231,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C2_adapted_p0.7": {
+      "stats": {
+        "hit_ratio_pct": 0.07,
+        "precision_of_hits_pct": 91.42857142857143,
+        "false_discovery_rate_pct": 8.571428571428571,
+        "false_hit_rate_pct": 0.006,
+        "hit_ratio_vs_oracle_pct": 0.12399256044637322,
+        "oracle_hit_ratio_pct": 51.616,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 0.02,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 0.02,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 0.08,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 0.04,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 0.12,
+          "precision_of_hits_pct": 83.33333333333334,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 0.12,
+          "precision_of_hits_pct": 83.33333333333334,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 0.16,
+          "precision_of_hits_pct": 87.5,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 0.14,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C2_adapted_p0.9": {
+      "stats": {
+        "hit_ratio_pct": 0.002,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "hit_ratio_vs_oracle_pct": 0.003874767513949163,
+        "oracle_hit_ratio_pct": 51.616,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 0.02,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 0.0,
+          "precision_of_hits_pct": null,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C4_adapted": {
+      "stats": {
+        "hit_ratio_pct": 0.982,
+        "precision_of_hits_pct": 90.63136456211812,
+        "false_discovery_rate_pct": 9.368635437881874,
+        "false_hit_rate_pct": 0.092,
+        "hit_ratio_vs_oracle_pct": 1.724538831188963,
+        "oracle_hit_ratio_pct": 51.608,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.04,
+          "precision_of_hits_pct": 50.0,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 0.34,
+          "precision_of_hits_pct": 100.0,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 0.68,
+          "precision_of_hits_pct": 85.29411764705883,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 0.68,
+          "precision_of_hits_pct": 88.23529411764706,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 1.02,
+          "precision_of_hits_pct": 86.27450980392157,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 90.9090909090909,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 1.02,
+          "precision_of_hits_pct": 92.15686274509804,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 1.38,
+          "precision_of_hits_pct": 89.85507246376811,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 1.8,
+          "precision_of_hits_pct": 92.22222222222223,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 1.76,
+          "precision_of_hits_pct": 93.18181818181817,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    }
+  }
+}

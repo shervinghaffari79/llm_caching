@@ -1,0 +1,230 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 4,
+      "cpu": "NVIDIA GeForce RTX 5060 Ti",
+      "platform": "Linux-6.12.0-hiveos-x86_64-with-glibc2.39",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "AMD Ryzen 9 5950X 16-Core Processor",
+      "host_cpu_count": 32
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "dataset": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_stream": 50000,
+    "systems": [
+      "none"
+    ],
+    "latency_valid": false,
+    "token_counts_valid": false,
+    "training": {
+      "c1_threshold": 0.895,
+      "c1_train_f1": 0.28634361233480177,
+      "n_pairs": 120757,
+      "positive_pct": 4.205967355929677
+    },
+    "k_neighbours": 5,
+    "bi_grid": [
+      0.97,
+      0.98
+    ],
+    "meta_grid": [
+      0.3,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "max_train_queries": 40000,
+    "block": 5000
+  },
+  "workload": {
+    "source": "https://huggingface.co/datasets/vCache/SemBenchmarkSearchQueries",
+    "n_events": 50000,
+    "n_unique_queries": 50000,
+    "n_topics": 24192,
+    "repeat_rate_pct": 51.616,
+    "exact_repeat_rate_pct": 0.0,
+    "paraphrase_repeat_rate_pct": 51.616,
+    "hard_negative_rate_pct": null,
+    "order": "dataset order"
+  },
+  "results": {
+    "C1_t0.97": {
+      "stats": {
+        "hit_ratio_pct": 9.684,
+        "precision_of_hits_pct": 85.43990086741016,
+        "false_discovery_rate_pct": 14.560099132589839,
+        "false_hit_rate_pct": 1.41,
+        "hit_ratio_vs_oracle_pct": 16.05915919413066,
+        "oracle_hit_ratio_pct": 51.522,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 1.46,
+          "precision_of_hits_pct": 89.04109589041096,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 3.44,
+          "precision_of_hits_pct": 81.97674418604652,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 5.84,
+          "precision_of_hits_pct": 86.64383561643835,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 8.02,
+          "precision_of_hits_pct": 85.53615960099751,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 9.92,
+          "precision_of_hits_pct": 84.07258064516128,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 11.04,
+          "precision_of_hits_pct": 86.77536231884058,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 10.92,
+          "precision_of_hits_pct": 87.54578754578755,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 13.78,
+          "precision_of_hits_pct": 85.48621190130625,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 16.02,
+          "precision_of_hits_pct": 84.76903870162296,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 16.4,
+          "precision_of_hits_pct": 84.51219512195122,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    },
+    "C1_t0.98": {
+      "stats": {
+        "hit_ratio_pct": 6.434,
+        "precision_of_hits_pct": 87.34846129934722,
+        "false_discovery_rate_pct": 12.651538700652782,
+        "false_hit_rate_pct": 0.814,
+        "hit_ratio_vs_oracle_pct": 10.897808803567965,
+        "oracle_hit_ratio_pct": 51.57,
+        "explores": null,
+        "exploits": null,
+        "cold_start_explores": null,
+        "judge_calls_per_request": null,
+        "cache_entries": null
+      },
+      "blocks": [
+        {
+          "start": 0,
+          "n": 5000,
+          "hit_ratio_pct": 0.8,
+          "precision_of_hits_pct": 90.0,
+          "repeat_rate_pct": 14.02
+        },
+        {
+          "start": 5000,
+          "n": 5000,
+          "hit_ratio_pct": 2.0,
+          "precision_of_hits_pct": 83.0,
+          "repeat_rate_pct": 32.58
+        },
+        {
+          "start": 10000,
+          "n": 5000,
+          "hit_ratio_pct": 3.92,
+          "precision_of_hits_pct": 87.75510204081633,
+          "repeat_rate_pct": 45.32
+        },
+        {
+          "start": 15000,
+          "n": 5000,
+          "hit_ratio_pct": 5.28,
+          "precision_of_hits_pct": 87.87878787878788,
+          "repeat_rate_pct": 53.28000000000001
+        },
+        {
+          "start": 20000,
+          "n": 5000,
+          "hit_ratio_pct": 6.26,
+          "precision_of_hits_pct": 87.8594249201278,
+          "repeat_rate_pct": 55.74
+        },
+        {
+          "start": 25000,
+          "n": 5000,
+          "hit_ratio_pct": 7.36,
+          "precision_of_hits_pct": 87.22826086956522,
+          "repeat_rate_pct": 60.72
+        },
+        {
+          "start": 30000,
+          "n": 5000,
+          "hit_ratio_pct": 7.2,
+          "precision_of_hits_pct": 89.16666666666667,
+          "repeat_rate_pct": 61.1
+        },
+        {
+          "start": 35000,
+          "n": 5000,
+          "hit_ratio_pct": 9.36,
+          "precision_of_hits_pct": 86.75213675213675,
+          "repeat_rate_pct": 63.4
+        },
+        {
+          "start": 40000,
+          "n": 5000,
+          "hit_ratio_pct": 10.54,
+          "precision_of_hits_pct": 87.28652751423151,
+          "repeat_rate_pct": 65.14
+        },
+        {
+          "start": 45000,
+          "n": 5000,
+          "hit_ratio_pct": 11.62,
+          "precision_of_hits_pct": 86.74698795180723,
+          "repeat_rate_pct": 64.86
+        }
+      ]
+    }
+  }
+}

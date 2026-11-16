@@ -1,0 +1,53 @@
+% ---- Table: ReuseGate against baselines (log columns computed from the rotation results) ----
+LRU & 2.52 & 1.19 & 0.56 & 0.09 & $-$0.46 & 45.11 & 2.53 & \textbf{46.48} \\
+LFU & 2.77 & 1.28 & 0.60 & 0.10 & $-$0.47 & 46.00 & 2.53 & 45.53 \\
+SphereLFU & 2.78 & 1.28 & 0.64 & 0.11 & $-$0.52 & 45.74 & 2.52 & 46.16 \\
+LeCaR & 2.52 & 1.19 & 0.56 & 0.09 & $-$0.46 & 45.13 & 2.53 & \textbf{46.48} \\
+W-TinyLFU & 2.61 & 1.20 & 0.57 & 0.11 & $-$0.41 & \textbf{46.94} & 2.44 & 43.30 \\
+ReuseGate & 4.44 & 2.13 & 1.10 & 0.27 & $-$0.67 & 46.81 & \textbf{2.31} & 43.02 \\
+ReuseGate-R & \textbf{4.48} & \textbf{2.53} & \textbf{1.53} & \textbf{0.62} & \textbf{0.25} & -- & -- & -- \\
+
+% ---- Pooled tests, rotations, reference 50,000 and cold start ----
+rot ref=50000 Learned[match] lam=0 vs WTinyLFU: per-rotation [1.84, 1.87, 1.79] pooled n=15 +1.83 p=6.2e-18 holm=3.1e-17
+rot ref=50000 Learned[match] lam=1 vs WTinyLFU: per-rotation [0.97, 0.98, 0.85] pooled n=15 +0.94 p=1.1e-12 holm=4.5e-12
+rot ref=50000 Learned[match] lam=2 vs WTinyLFU: per-rotation [0.53, 0.55, 0.53] pooled n=15 +0.54 p=5.2e-10 holm=1.6e-09
+rot ref=50000 Learned[match] lam=5 vs WTinyLFU: per-rotation [0.11, 0.18, 0.17] pooled n=15 +0.15 p=0.00036 holm=0.00072
+rot ref=50000 Learned[match] lam=10 vs WTinyLFU: per-rotation [-0.37, -0.23, -0.18] pooled n=15 -0.26 p=0.0018 holm=0.0018
+rot ref=50000 Learned[group] lam=0 vs WTinyLFU: per-rotation [1.85, 1.92, 1.86] pooled n=15 +1.88 p=9.2e-18 holm=4.6e-17
+rot ref=50000 Learned[group] lam=1 vs WTinyLFU: per-rotation [1.33, 1.35, 1.32] pooled n=15 +1.33 p=1.2e-14 holm=4.8e-14
+rot ref=50000 Learned[group] lam=2 vs WTinyLFU: per-rotation [0.86, 1.08, 0.95] pooled n=15 +0.96 p=2.9e-11 holm=8.8e-11
+rot ref=50000 Learned[group] lam=5 vs WTinyLFU: per-rotation [0.48, 0.44, 0.61] pooled n=15 +0.51 p=2.2e-09 holm=4.4e-09
+rot ref=50000 Learned[group] lam=10 vs WTinyLFU: per-rotation [0.58, 0.72, 0.69] pooled n=15 +0.66 p=7.9e-08 holm=7.9e-08
+rot ref=50000 Learned[match] lam=1 vs LRU: pooled +0.94 p=1e-13
+rot ref=50000 Learned[match] lam=1 vs LFU: pooled +0.86 p=2.8e-14
+rot ref=50000 Learned[match] lam=1 vs SphereLFU: pooled +0.85 p=4.4e-14
+rot ref=0 Learned[match] lam=0 vs WTinyLFU: per-rotation [0.71, 0.73, 0.67] pooled n=15 +0.70 p=3.7e-13 holm=1.8e-12
+rot ref=0 Learned[match] lam=1 vs WTinyLFU: per-rotation [0.31, 0.33, 0.26] pooled n=15 +0.30 p=1.1e-06 holm=4.4e-06
+rot ref=0 Learned[match] lam=2 vs WTinyLFU: per-rotation [0.28, 0.25, 0.12] pooled n=15 +0.22 p=6.2e-05 holm=0.00019
+rot ref=0 Learned[match] lam=5 vs WTinyLFU: per-rotation [-0.02, 0.04, 0.04] pooled n=15 +0.02 p=0.44 holm=0.44
+rot ref=0 Learned[match] lam=10 vs WTinyLFU: per-rotation [-0.3, -0.22, -0.17] pooled n=15 -0.23 p=0.0018 holm=0.0036
+rot ref=0 Learned[match] lam=1 vs LRU: pooled +0.31 p=7e-10
+rot ref=0 Learned[match] lam=1 vs LFU: pooled +0.22 p=3.2e-07
+rot ref=0 Learned[match] lam=1 vs SphereLFU: pooled +0.22 p=1.6e-07
+
+% ---- Pooled tests, topic folds ----
+fold ref=25000 lam=0 vs WTinyLFU: per-fold [0.95, 1.01, 0.72] pooled n=12 +0.89 p=6.8e-08 holm=3.4e-07
+fold ref=25000 lam=1 vs WTinyLFU: per-fold [0.67, 0.84, 0.67] pooled n=12 +0.73 p=3.5e-07 holm=1.4e-06
+fold ref=25000 lam=2 vs WTinyLFU: per-fold [0.3, 0.68, 0.58] pooled n=12 +0.52 p=0.00027 holm=0.00081
+fold ref=25000 lam=5 vs WTinyLFU: per-fold [0.14, 0.34, 0.37] pooled n=12 +0.29 p=0.013 holm=0.027
+fold ref=25000 lam=10 vs WTinyLFU: per-fold [-0.32, -0.17, 0.02] pooled n=12 -0.16 p=0.33 holm=0.33
+fold ref=25000 lam=1 vs LRU: pooled +1.12 p=2.3e-09
+fold ref=25000 lam=1 vs LFU: pooled +0.47 p=3.4e-06
+fold ref=0 lam=0 vs WTinyLFU: per-fold [1.07, 1.45, 0.95] pooled n=12 +1.16 p=2.6e-08 holm=1.3e-07
+fold ref=0 lam=1 vs WTinyLFU: per-fold [0.63, 1.02, 0.5] pooled n=12 +0.72 p=9.7e-06 holm=3.9e-05
+fold ref=0 lam=2 vs WTinyLFU: per-fold [0.23, 0.83, 0.6] pooled n=12 +0.56 p=0.00016 holm=0.00047
+fold ref=0 lam=5 vs WTinyLFU: per-fold [0.07, 0.39, 0.17] pooled n=12 +0.21 p=0.051 holm=0.051
+fold ref=0 lam=10 vs WTinyLFU: per-fold [-0.53, -0.27, -0.54] pooled n=12 -0.45 p=0.0099 holm=0.02
+fold ref=0 lam=1 vs LRU: pooled +1.11 p=1.4e-07
+fold ref=0 lam=1 vs LFU: pooled +0.46 p=0.0003
+
+% ---- AUC ----
+rot [0.844, 0.845, 0.846]
+rot cold [0.705, 0.705, 0.705]
+fold [0.709, 0.709, 0.686]
+fold cold [0.725, 0.733, 0.733]

@@ -1,0 +1,195 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\title{Response to the Reviewers \\ Manuscript ESWA-D-26-XXXXX}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{Title:} Cheap Features, Expensive Encoders: Rethinking Semantic Cache Decisions for LLM Systems
+
+\bigskip
+\noindent \textbf{Dear Editor and Reviewers,\\
+Expert Systems with Applications}
+
+We thank you for the careful and constructive reports and for the opportunity to revise the manuscript. The comments led us to re-run the full evaluation, to price false hits explicitly, to re-measure every cost on GPU hardware with real generation waits, to add a real search-query log, to evaluate capacity management against a wider set of policies, including a learned admission policy, and to restructure the Related Work section. Below we answer each comment in turn and reproduce the corresponding passage of the revised manuscript in blue.
+
+One correction affects every stream result and should be stated at the outset. While re-running the experiments we found that the stream generator of the submitted version could attach different topic labels to the same distinct question in different requests, and that distractors could recur verbatim. To measure the effect, we served C1--C4 on the seed-42 stream of the submitted version and scored the same decisions under the old and the corrected labels. The old labels treated 248 of the 2,000 requests, nearly all of them verbatim recurrences of a distractor, as different from an earlier copy of the same question. Under the corrected labels hit ratio and token saving are unchanged, hit precision rises from 76.2--77.4\% to 88.6--93.6\%, and the four configurations keep the same order by precision, so the low precision reported in the submitted version came largely from the labels. Each distinct question now carries a single label throughout a stream, and distractors are drawn only from strings that have not yet appeared. All stream results are reported as means over five independent streams (seeds 42--46), with streams of seeds 1042--1044 reserved for tuning, and all timings were re-measured on an NVIDIA RTX 4090 using the recorded generation times of \texttt{gpt-5.4-nano}. Section, table, figure and equation numbers refer to the revised manuscript.
+
+%=====================================================================
+\section*{Reviewer 1}
+
+\begin{enumerate}[leftmargin=*, itemsep=1.2em]
+
+\item \textbf{Why C2 rather than C1 as the default? The criterion is left implicit.}
+
+The reviewer is right that the criterion was left implicit, and the revised evaluation makes it explicit. Over the five streams, C1 serves 2.25 points more hits than C2, saves 0.63 points more tokens through correct hits and decides 2.9~ms faster, while C2 is 2.7 points more precise (94.9\% against 92.2\%); all four differences remain significant after Holm adjustment (Table~<<tab:c1_c2_paired>>). C1 thus wins on coverage and cost and C2 on precision, as the reviewer observed. Sweeping the thresholds shows where this trade comes from. At equal served-hit ratio the configurations reach the same precision within 0.4 points (Table~<<tab:matched_precision>>), and when each threshold is chosen for the cost $\lambda$ of a false hit, no configuration is significantly better than C1 (Table~<<tab:best_per_lambda>>). The criterion is therefore the operating point once a false hit carries a price. When that price is known and labeled traffic is available, a calibrated C1 threshold is sufficient; when it is not, the default threshold of C2 keeps far more of the attainable saving, at less than half the decision cost of the full model. The underlying mechanism is the rejection of near-duplicate distractors, of which C2 rejects 18.2 points more than C1, and the recommendation is now stated in these terms, independently of the stacking framework. Please see the following (Section~<<subsubsec:pricing_false_hits>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:pricing_false_hits>>. <<title:subsubsec:pricing_false_hits>>}\\
+...\\
+<<EXC:r1_1>>}
+
+\item \textbf{False hits are identified but not priced; report FDR, a risk-adjusted saving, threshold sweeps, and abstention or selective verification.}
+
+We adopted this proposal in full. With the corrected labels hit precision lies between 92\% and 95\%, so between one in 13 and one in 21 served hits is wrong; the 75--77\% reported in the submitted version largely reflected the label inconsistency described above. Section~3.5.3 now defines the false-discovery rate and false-hit rate (Eq.~(<<eq:false_rates>>)), the risk-adjusted saving $\mathrm{RAS}(\lambda)=(T_c-\lambda T_f)/T$, in which each false hit costs $\lambda$ times the tokens of the call it replaced (Eq.~(<<eq:ras>>)), and the break-even cost $\lambda^{*}=T_c/T_f$ (Eq.~(<<eq:breakeven>>)). Section~<<subsubsec:pricing_false_hits>> prices every configuration at its default threshold (Table~<<tab:risk_adjusted>>), and full threshold sweeps of C1 to C4 trace precision, correct-only saving and risk-adjusted saving along each curve (Tables~<<tab:matched_precision>> and <<tab:best_per_lambda>>). For the practical side, Section~<<subsec:topk_gating>> evaluates abstention near the threshold and a new configuration, C5, that calls the cross-encoder only for uncertain candidates (Table~<<tab:gating>>). Abstention with a margin of 0.2 raises precision from 94.8\% to 96.2\% for 1.6 points of served hits at no added cost, while C5 calls the cross-encoder on at most 14\% of requests and does not raise precision on this workload. Please see the following (Section~<<subsubsec:pricing_false_hits>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:pricing_false_hits>>. <<title:subsubsec:pricing_false_hits>>}\\
+<<EXC:r1_2>>\\
+...}
+
+\item \textbf{The 60~ms cross-encoder cost is not general; discuss top-$k$ re-ranking, GPU batching and latency under concurrency, and scope the recommendation.}
+
+We re-measured every latency on an NVIDIA RTX 4090 and added each of the analyses the reviewer lists (Section~<<subsubsec:latency_breakdown>>). At batch size 1 the cross-encoder adds 11.50~ms per request, 61\% of the decision cost of C3 and 53\% of that of C4, against 2.93~ms for the cheap features and LightGBM together (Table~<<tab:latency_breakdown>>). Batching lowers its cost per pair by a factor of 8.5, to 1.3~ms at batch size 16 (Table~<<tab:cross_batching>>), which benefits offline revalidation and multi-candidate scoring but not an online request with a single candidate to verify. Scoring the ten nearest candidates raises the cost of C3 from 17.9 to 20.6~ms, while C2 stays near 10~ms (Table~<<tab:topk>>). Under concurrency, with 16 clients sharing one serving process, the 95th-percentile decision time reaches 487~ms for C4 against 248~ms for C2, and C4 serves 38 requests per second against 87 (Table~<<tab:latency_distribution>>). The absolute cost of the cross-encoder is therefore far below the 60~ms measured on the Apple M2 in the submitted version, but its share of the decision path, and its effect under load, remain. End-to-end speed-ups are 2.00 to 2.13$\times$, since every miss waits for the recorded generation time of the served model and about half of all requests are answered from the cache within a few milliseconds. The recommendation is now scoped explicitly to online serving with one request decided at a time on the measured hardware. Please see the following (Section~<<subsubsec:latency_breakdown>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:latency_breakdown>>. <<title:subsubsec:latency_breakdown>>}\\
+...\\
+<<EXC:r1_3>>}
+
+\item \textbf{Semantic Decay is exploratory, not a validated gain; test more capacities and streams against LRU/LFU, consider a two-term version, and acknowledge tuning leakage.}
+
+We agree, and the paper now presents Semantic Decay as an exploratory policy. Its three terms are introduced as the semantic counterparts of the classical replacement signals, recency, residence time and frequency, and its weights are selected on a dedicated tuning stream (seed 1042), disjoint from the five evaluation streams, by maximizing the correct-hit ratio averaged over capacities 300, 500 and 800 across the 21 settings of the weight simplex. We acknowledge that the weights of the submitted version (0.28, 0.38, 0.34) were set by hand and evaluated on the same workload family; selecting them on a separate stream removes this leakage. The selection places all weight on the frequency counterpart, $(0,0,1)$, and the two-term variant suggested by the reviewer arrives at the same weights, so on this workload neither the age term nor freshness adds anything. Across nine capacities and five streams, with Holm correction over the comparisons with LRU and LFU, Semantic Decay is not significantly better than LRU at any capacity and falls below LFU at small capacities, significantly so at capacity 200 (Table~<<tab:eviction_capacity>>). Please see the following (Sections~<<subsec:semantic_decay>> and <<subsubsec:eviction_policy_impact>>):
+
+\textcolor{blue}{\textbf{<<subsec:semantic_decay>>. <<title:subsec:semantic_decay>>}\\
+...\\
+<<EXC:r1_4a>>\\
+\textbf{<<subsubsec:eviction_policy_impact>>. <<title:subsubsec:eviction_policy_impact>>}\\
+...\\
+<<EXC:r1_4b>>\\
+...\\
+<<EXC:r1_4c>>}
+
+\item \textbf{The workload is still synthetic; add a semi-real query log, a multi-turn scenario, or a sensitivity analysis, and mention privacy and cross-user isolation.}
+
+We added the sensitivity analysis, a real query log and the requested discussion. Section~<<subsubsec:workload_sensitivity>> varies the Zipf exponent, the repeat rate and the hard-negative rate one at a time, over three streams each (Table~<<tab:workload_sensitivity>>). The repeat rate has by far the largest effect, the ordering of the configurations never changes, and the precision advantage of C2 over C1 grows as the workload becomes harder. Sections~<<subsubsec:searchqueries_data>> and <<subsec:real_query_log>> add SemBenchmarkSearchQueries, real search-engine queries drawn from ORCAS and grouped into equivalence classes, of which we serve the first 50,000. On this log the operating point again matters more than the configuration and must be calibrated on in-domain labels, which supports the central conclusion of the paper, and the same log carries the evaluation of the learned admission policy ReuseGate (Section~<<subsubsec:learned_admission>>). We found no public multi-turn trace with equivalence labels, so multi-turn traffic is stated as a limitation, together with a new paragraph on privacy and cross-user isolation (Section~<<sec:limitations>>). Please see the following (Sections~<<subsubsec:workload_sensitivity>> and <<sec:limitations>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:workload_sensitivity>>. <<title:subsubsec:workload_sensitivity>>}\\
+...\\
+<<EXC:r1_5a>>\\
+\textbf{<<sec:limitations>>. <<title:sec:limitations>>}\\
+...\\
+<<EXC:r1_5b>>\\
+...\\
+<<EXC:r1_5c>>}
+
+\end{enumerate}
+
+%=====================================================================
+\section*{Reviewer 2}
+
+\begin{enumerate}[leftmargin=*, itemsep=1.2em]
+
+\item \textbf{The organization and logical structure of the Related Work section need improvement; classify and synthesize prior work, and clarify its limitations and the distinctions of the proposed method.}
+
+We restructured Section~<<sec:related_work>> around the three decisions that every semantic cache makes: whether a resident entry may answer a new request, what context a match must respect, and which entries to keep under a capacity limit. Each part ends with the limitation that prior work leaves open and with the way the paper addresses it. A new comparison table (Table~<<tab:related_work>>) classifies the published methods by the signal that drives their decision, by whether they add a neural model to the request path, by the supervision they need at deployment and by whether they manage capacity, and it places the configuration C2 and the admission policy ReuseGate within the same frame. In restructuring the section we also checked every reference against its published record and corrected the entries whose details were wrong. Please see the following (Section~<<sec:related_work>>):
+
+\textcolor{blue}{\textbf{<<sec:related_work>>. <<title:sec:related_work>>}\\
+<<EXC:r2_1a>>\\
+...\\
+<<EXC:r2_1b>>}
+
+\item \textbf{Figure~1 is inconsistent with its caption: the dashed cross-encoder module and the distinction between C3 and C4 are not clearly shown.}
+
+We thank the reviewer for noticing this inconsistency. Figure~<<fig:system_overview>> has been redrawn so that the cross-encoder is dashed and dashed paths show where its score enters each configuration: the meta-classifier in C4, and the acceptance test in C3 and C5, where C5 calls it only for uncertain candidates. Each stage is annotated with its batch-size-1 cost, Table~<<tab:component_activation>> lists the components that each configuration uses, and the capacity-policy box shows the eviction and admission policies evaluated in the paper. The caption now describes exactly what the figure shows. Please see the following (Fig.~<<fig:system_overview>>):
+
+\textcolor{blue}{\textbf{Fig.~<<fig:system_overview>> caption.} <<EXC:r2_2>>}
+
+\item \textbf{The overhead of the Full mode in the incremental ablation (Table~9 of the submitted version, now Table~<<tab:ablation_incremental>>) requires further explanation; analyze the cost of each component and the trade-off between added cost and performance.}
+
+Table~<<tab:latency_breakdown>> now separates the decision path into its stages, measured on the GPU at batch size 1: bi-encoding takes 6.89~ms, the FAISS lookup 0.32~ms, the cheap features and LightGBM together 2.93~ms, and the cross-encoder 11.50~ms. The cross-encoder is the largest single stage and accounts for 53\% of the cost of the Full mode (C4), which therefore costs 3.0 times as much as C1 and 2.1 times as much as C2. Against this cost, the 11.5~ms that C4 adds to C2 raises hit precision by 0.3 points at the default thresholds, a difference that is not significant, and at equal served-hit ratio the two configurations reach the same precision (Table~<<tab:matched_precision>>). The feature-group ablation shows the same balance on classification accuracy (Section~<<subsec:ablation>>, Table~<<tab:cheap_vs_expensive>> and Fig.~<<fig:latency_accuracy>>): the cheap features add 0.0163 F1 for 2.93~ms, and the cross-encoder adds 0.0045 F1 for 11.50~ms. Please see the following (Section~<<subsubsec:latency_breakdown>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:latency_breakdown>>. <<title:subsubsec:latency_breakdown>>}\\
+<<EXC:r2_3>>}
+
+\item \textbf{Strengthen the comparison with methods published in 2026 under consistent experimental settings.}
+
+We added vCache (ICLR 2026), which learns a per-entry threshold under a user-set error bound, as a decision baseline that runs on the same encoder, index, streams, answers and hardware as our configurations (Section~<<subsec:baseline_comparison>>, Table~<<tab:baseline_comparison>>). For capacity management we added SphereLFU (2026), together with the learning-augmented policy LeCaR and the admission policy W-TinyLFU (Sections~<<subsubsec:eviction_policy_impact>> and <<subsubsec:learned_admission>>, Tables~<<tab:eviction_capacity>>, <<tab:eviction_shift>> and <<tab:learned_admission>>). vCache is the most precise system we evaluated, but it serves 10--28\% of requests from the cache, against 51--54\% for the threshold-based systems, and it consults its correctness check on 72--90\% of requests, each of which a deployment would have to pay for. The remaining 2026 methods are classified in Section~<<sec:related_work>> and Table~<<tab:related_work>>. They were not run because each depends on a component outside the decision rules compared here: MVR-cache requires a trained reinforcement-learned prompt segmenter, LaCache decodes response tokens with an LLM at every lookup to guard against collision attacks, Krites needs a curated static tier and an LLM judge, and RAC is designed for topic-structured dialogue workloads. Please see the following (Section~<<subsec:baseline_comparison>>):
+
+\textcolor{blue}{\textbf{<<subsec:baseline_comparison>>. <<title:subsec:baseline_comparison>>}\\
+...\\
+<<EXC:r2_4>>}
+
+\item \textbf{The manuscript requires further English language polishing.}
+
+We revised the language of the entire manuscript. Fragmented passages were rewritten as continuous prose, terminology was unified throughout (for example ``served hit'', ``false hit'' and ``operating point''), spelling was normalized to American English, transitions were added between paragraphs, and statements repeated across sections were removed. We also checked the mathematical notation for consistency, so that each symbol has a single meaning and every equation is introduced and referenced in the same way.
+
+\end{enumerate}
+
+%=====================================================================
+\section*{Reviewer 3}
+
+\begin{enumerate}[leftmargin=*, itemsep=1.2em]
+
+\item \textbf{The cache decision uses only the top-1 candidate; consider top-$k$ candidates and selective cross-encoder gating on uncertain cases.}
+
+The pipeline now retrieves the $k$ nearest candidates, scores each with the configuration's decision rule and serves the best accepted one (Section~3.6). On our streams, $k>1$ raises the served-hit ratio by at most 0.1 points and lowers precision by 0.3 to 0.8 points, because the additional candidates are almost never equivalent to the request (Table~<<tab:topk>>). Selective gating is implemented as the new configuration C5 (Table~<<tab:gating>>): the meta-classifier decides alone outside an uncertainty band chosen on out-of-fold predictions, and the cross-encoder decides inside it, so that an empty band reproduces C2 exactly. Please see the following (Section~<<subsec:topk_gating>>):
+
+\textcolor{blue}{\textbf{<<subsec:topk_gating>>. <<title:subsec:topk_gating>>}\\
+<<EXC:r3_1a>>\\
+...\\
+<<EXC:r3_1b>>}
+
+\item \textbf{Semantic Decay gives limited improvements, only at a single capacity; the policy has fixed parameters and does not adapt to workload shift, which contrasts with learning-augmented eviction and admission designs.}
+
+We agree, and our response to Reviewer~1, comment~4, describes the extended evaluation: across nine capacities and five streams Semantic Decay is not significantly better than LRU, and the paper presents it as exploratory. To address adaptivity, we added five shifted streams in which the popular topics change abruptly at the midpoint (Table~<<tab:eviction_shift>>). Semantic Decay recovers far more slowly than LRU there, because its selected score keeps only the frequency counterpart, which continues to favor the old topics, and the learning-augmented baseline LeCaR settles on LRU-like behavior. Following the reviewer's pointer to learning-augmented admission, Section~<<subsubsec:learned_admission>> introduces ReuseGate, a learned admission policy that predicts from cheap features whether an arriving query will be repeated. On the real query log it exceeds W-TinyLFU, LRU and LFU (Holm $p\leq 0.002$), and its false-hit-priced variant exceeds W-TinyLFU at every false-hit cost. Like frequency-based admission, it adapts more slowly than LRU after an abrupt shift, and we report this as a limitation. Please see the following (Sections~<<subsubsec:eviction_policy_impact>> and <<subsubsec:learned_admission>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:eviction_policy_impact>>. <<title:subsubsec:eviction_policy_impact>>}\\
+...\\
+<<EXC:r3_2a>>\\
+...\\
+\textbf{<<subsubsec:learned_admission>>. <<title:subsubsec:learned_admission>>}\\
+...\\
+<<EXC:r3_2b>>\\
+...\\
+<<EXC:r3_2c>>}
+
+\item \textbf{Baseline reimplementations are mentioned without quantitative comparisons; mapping conversation- or pattern-aware methods onto QQP may be unfair without protocol alignment.}
+
+Table~<<tab:baseline_comparison>> now reports the quantitative comparison over the five evaluation streams, with the served-hit ratio, hit precision and a paired test against C2. On protocol alignment, every baseline is a reimplementation of its published decision rule on the substrate shared by our configurations, so the systems differ only in how they accept a candidate and which entries they keep, and each rule uses the same validation threshold as C1. VectorQ receives the ground-truth label as its feedback and is therefore an upper bound on that method. For ContextCache, whose rule needs dialogue context, we synthesize sessions with their true boundaries, and the text states that this tests the rule on the present traffic and leaves the multi-turn setting it was designed for untested. Full threshold sweeps place all threshold-based rules on the precision--coverage curve of C1, so their differences from C2 come from the operating point. Please see the following (Section~<<subsec:baseline_comparison>>):
+
+\textcolor{blue}{\textbf{<<subsec:baseline_comparison>>. <<title:subsec:baseline_comparison>>}\\
+<<EXC:r3_3a>> ... <<EXC:r3_3c>>\\
+...\\
+<<EXC:r3_3b>>}
+
+\item \textbf{Report cache-density or redundancy statistics at eviction time to explain why Semantic Decay helps or not.}
+
+Table~<<tab:eviction_density>> reports, at every eviction, the number of live entries within the hit radius of the victim, the share of victims whose topic is still covered by another live entry, and the share of victims that were never hit. Redundancy is low under every policy, which explains why semantic retention gains little, and the same observation motivates the learned admission policy of Section~<<subsubsec:learned_admission>>. Please see the following (Section~<<subsubsec:eviction_policy_impact>>):
+
+\textcolor{blue}{\textbf{<<subsubsec:eviction_policy_impact>>. <<title:subsubsec:eviction_policy_impact>>}\\
+...\\
+To see why semantic retention gains little, Table~<<tab:eviction_density>> records the cache contents at every eviction at capacity 400: the number of live entries within the hit radius of the victim, the share of victims whose topic is still covered by another live entry, and the share of victims that were never hit. <<EXC:r3_4>>}
+
+\item \textbf{Strengthen the paper with additional experiments: quality-adjusted hit audits, selective cross-encoder gating, top-$k$ retrieval, encoder/ANN sensitivity, and stronger baselines.}
+
+All five are now part of the paper: the quality-adjusted hit audit (Section~<<subsec:answer_audit>>, Table~<<tab:answer_audit>>; see our response to comment~6), selective gating (C5, Table~<<tab:gating>>), top-$k$ retrieval (Table~<<tab:topk>>), encoder and ANN sensitivity (Section~<<subsec:encoder_index>>, Tables~<<tab:encoders>> and <<tab:index>>), and stronger baselines (vCache, SphereLFU, LeCaR and W-TinyLFU; see our response to Reviewer~2, comment~4). With each of three bi-encoders at its own threshold, C2 is more precise than C1 by 2.3 to 3.4 points, and HNSW search yields the same served-hit ratio and precision as exact search. Please see the following (Section~<<subsec:encoder_index>>):
+
+\textcolor{blue}{\textbf{<<subsec:encoder_index>>. <<title:subsec:encoder_index>>}\\
+<<EXC:r3_5a>>\\
+...\\
+<<EXC:r3_5b>>}
+
+\item \textbf{Answer substitutability can differ from paraphrase similarity; it is unclear how answer correctness is adjudicated beyond QQP labels.}
+
+Section~3.5.3 now states how correctness is adjudicated: a served hit is correct when the cached entry and the request belong to the same QQP topic. Section~<<subsec:answer_audit>> then audits this criterion at the level of answers. For the served hits of C1, C2 and C4 on one stream, an LLM judge receives the request, the cached answer and a freshly generated reference answer, and decides whether returning the cached answer is as acceptable as generating a new one. Judge-based precision lies within 1.5 points of label precision for every configuration, with C2 again the most precise, while agreement on individual pairs is only moderate, which the Limitations section states. Please see the following (Section~<<subsec:answer_audit>>):
+
+\textcolor{blue}{\textbf{<<subsec:answer_audit>>. <<title:subsec:answer_audit>>}\\
+...\\
+<<EXC:r3_6>>}
+
+\end{enumerate}
+
+\bigskip
+\noindent We are grateful to the reviewers for comments that made the paper's claims narrower and considerably better supported, and we hope the revised manuscript now meets the standard of the journal.
+
+\bigskip
+\noindent Sincerely, \\
+{The authors}
+
+\end{document}

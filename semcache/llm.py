@@ -139,11 +139,22 @@ class LLMBackend:
     mode="replay"  -- reproduce the recorded latency/tokens from the pool
     mode="sim"     -- no API at all; synthesise latency from a fitted lognormal
                       (used for smoke tests and for machines without a key)
+
+    virtual_time   replay/sim only. Generation latency is returned but not
+                   slept; the serving loop adds it to the measured wall-clock
+                   of the request. Cache-side work is still timed for real, so
+                   response time = measured overhead and bookkeeping + recorded
+                   generation latency, without waiting ~3 s per miss.
     """
 
     def __init__(self, mode: str = "replay", pool: AnswerPool | None = None,
                  model: str = C.LLM_MODEL, sim_mean_s: float = 0.854,
-                 sim_sigma: float = 0.35, seed: int = C.SEED):
+                 sim_sigma: float = 0.35, seed: int = C.SEED,
+                 virtual_time: bool = False):
+        if virtual_time and mode == "live":
+            raise ValueError("virtual_time applies to replay and sim only")
+        self.virtual_time = virtual_time
+        self.pool_misses = 0
         self.mode = mode
         self.model = model
         self.pool = pool or AnswerPool()
@@ -205,8 +216,10 @@ class LLMBackend:
             if g is None:
                 # Not prefetched (should not happen for a prefetched stream):
                 # fall back to simulation rather than silently reporting 0 ms.
+                self.pool_misses += 1
                 return self._simulate(query)
-            time.sleep(g.latency_s)                 # reproduce the real cost
+            if not self.virtual_time:
+                time.sleep(g.latency_s)             # reproduce the real cost
             return g
 
         return self._simulate(query)
@@ -216,7 +229,8 @@ class LLMBackend:
         mean = stats.get("mean_s", self.sim_mean_s)
         lat = float(self._rng.lognormal(np.log(max(mean, 1e-3)), self.sim_sigma))
         lat = min(lat, 10.0)
-        time.sleep(lat)
+        if not self.virtual_time:
+            time.sleep(lat)
         pt = count_tokens(C.LLM_SYSTEM_PROMPT) + count_tokens(query)
         return Generation(query=query, answer=f"[simulated answer] {query[:60]}",
                           prompt_tokens=pt, completion_tokens=64,

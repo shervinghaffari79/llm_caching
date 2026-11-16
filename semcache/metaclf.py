@@ -270,8 +270,21 @@ class TrainedMeta:
     train_rows: int
     threshold: float = C.META_PROB_THRESHOLD
 
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        """Positive-class probabilities for a batch of feature rows."""
+        return self.pipeline.predict_proba(X)[:, 1]
+
     def predict_proba_one(self, x: np.ndarray) -> float:
-        return float(self.pipeline.predict_proba(x)[0, 1])
+        return float(self.predict_proba(x)[0])
+
+    def set_inference_threads(self, n: int = C.META_INFER_THREADS) -> "TrainedMeta":
+        """Serving scores one request (k rows) at a time; a multi-threaded
+        predict on so few rows spends its time in thread start-up and
+        contends with the encoders, so serving uses a fixed thread count."""
+        est = self.pipeline.steps[-1][1] if hasattr(self.pipeline, "steps") else self.pipeline
+        if "n_jobs" in est.get_params():
+            est.set_params(n_jobs=n)
+        return self
 
 
 def fit_final(X: np.ndarray, y: np.ndarray, groups: tuple[str, ...],

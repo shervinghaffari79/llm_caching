@@ -1,0 +1,38 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "mps",
+      "torch_threads": 4,
+      "cpu": "Apple MPS (arm)",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch_version": "2.8.0",
+      "host_cpu": "Apple M2",
+      "host_cpu_count": 8
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "judge_model": "gpt-6-luna",
+    "judge_prompt_version": 2,
+    "rejudged_from": "results/raw/revision/exp16_judgements_seed42_calib.jsonl"
+  },
+  "agreement_previous_prompt": {
+    "n": 30,
+    "agreement_pct": 66.66666666666666,
+    "cohen_kappa": 0.28571428571428564,
+    "label_false_but_substitutable": 4,
+    "label_correct_but_not_substitutable": 6
+  },
+  "agreement": {
+    "n": 30,
+    "agreement_pct": 76.66666666666667,
+    "cohen_kappa": 0.4000000000000001,
+    "label_false_but_substitutable": 6,
+    "label_correct_but_not_substitutable": 1
+  },
+  "verdicts_changed": 7,
+  "judge_tokens": {
+    "prompt": 21237,
+    "completion": 4711
+  }
+}

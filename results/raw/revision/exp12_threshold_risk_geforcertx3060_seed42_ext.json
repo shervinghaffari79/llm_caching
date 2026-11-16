@@ -1,0 +1,2276 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cuda",
+      "torch_threads": 1,
+      "cpu": "NVIDIA GeForce RTX 3060",
+      "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.39",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz",
+      "host_cpu_count": 4
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "n_stream": 2000,
+    "stream_params": {},
+    "latency_valid": false,
+    "risk_lambdas": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      5.0,
+      10.0
+    ],
+    "bi_grid": [
+      0.6,
+      0.625,
+      0.65,
+      0.675,
+      0.7,
+      0.725,
+      0.75,
+      0.775,
+      0.8,
+      0.825,
+      0.85,
+      0.875,
+      0.9,
+      0.925,
+      0.95,
+      0.96,
+      0.97,
+      0.98,
+      0.99
+    ],
+    "prob_grid": [
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.97,
+      0.98,
+      0.99,
+      0.995
+    ],
+    "configs_only": true
+  },
+  "workload": {
+    "generator": "QQP positive-edge components + Zipf popularity",
+    "seed_params": {
+      "seed": 42,
+      "duplicate_rate": 0.5,
+      "hard_negative_rate": 0.35,
+      "exact_repeat_rate": 0.25,
+      "zipf_s": 1.1,
+      "max_topic_size": 12,
+      "min_topic_size": 2,
+      "mean_session_len": 4.0,
+      "fresh_hard_negatives": true,
+      "label_version": 2
+    },
+    "n_topics_available": 38574,
+    "n_events": 2000,
+    "n_unique_queries": 1208,
+    "n_topics": 1007,
+    "repeat_rate_pct": 49.65,
+    "exact_repeat_rate_pct": 39.6,
+    "paraphrase_repeat_rate_pct": 10.05,
+    "hard_negative_rate_pct": 7.5,
+    "n_sessions": 495,
+    "mean_session_len": 4.040404040404041,
+    "top10_topic_share_pct": 26.150000000000002,
+    "prefix_of": 2000
+  },
+  "pool": {
+    "unique": 1208,
+    "missing_before": 0,
+    "missing_after": 0
+  },
+  "curves": {
+    "C1_bi_only": [
+      {
+        "threshold": 0.6,
+        "hit_ratio_pct": 57.85,
+        "precision_of_hits_pct": 84.44252376836647,
+        "false_discovery_rate_pct": 15.557476231633535,
+        "false_hit_rate_pct": 9.0,
+        "token_saving_pct": 59.727969796284796,
+        "token_saving_correct_only_pct": 51.11040056406504,
+        "risk_adjusted_saving_pct": {
+          "0": 51.11040056406504,
+          "0.5": 46.80161594795516,
+          "1": 42.49283133184528,
+          "2": 33.87526209962553,
+          "5": 8.02255440296626,
+          "10": -35.06529175813252
+        },
+        "break_even_false_hit_cost": 5.930953287032633,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.625,
+        "hit_ratio_pct": 57.25,
+        "precision_of_hits_pct": 85.41484716157206,
+        "false_discovery_rate_pct": 14.585152838427948,
+        "false_hit_rate_pct": 8.35,
+        "token_saving_pct": 59.10671938379174,
+        "token_saving_correct_only_pct": 51.175989522163945,
+        "risk_adjusted_saving_pct": {
+          "0": 51.175989522163945,
+          "0.5": 47.21062459135005,
+          "1": 43.24525966053615,
+          "2": 35.31452979890835,
+          "5": 11.522340214024968,
+          "10": -28.131309094114005
+        },
+        "break_even_false_hit_cost": 6.452872612617269,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.65,
+        "hit_ratio_pct": 56.45,
+        "precision_of_hits_pct": 86.89105403011514,
+        "false_discovery_rate_pct": 13.108945969884854,
+        "false_hit_rate_pct": 7.4,
+        "token_saving_pct": 58.31903699012271,
+        "token_saving_correct_only_pct": 51.30306812848057,
+        "risk_adjusted_saving_pct": {
+          "0": 51.30306812848057,
+          "0.5": 47.7950836976595,
+          "1": 44.287099266838425,
+          "2": 37.27113040519629,
+          "5": 16.223223820269858,
+          "10": -18.856620487940855
+        },
+        "break_even_false_hit_cost": 7.312328366929594,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.675,
+        "hit_ratio_pct": 55.55,
+        "precision_of_hits_pct": 88.56885688568858,
+        "false_discovery_rate_pct": 11.431143114311432,
+        "false_hit_rate_pct": 6.35,
+        "token_saving_pct": 57.45961667353301,
+        "token_saving_correct_only_pct": 51.44859362926251,
+        "risk_adjusted_saving_pct": {
+          "0": 51.44859362926251,
+          "0.5": 48.44308210712727,
+          "1": 45.43757058499202,
+          "2": 39.42654754072152,
+          "5": 21.393478407910028,
+          "10": -8.661636813442456
+        },
+        "break_even_false_hit_cost": 8.55904115661336,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.7,
+        "hit_ratio_pct": 54.4,
+        "precision_of_hits_pct": 90.25735294117646,
+        "false_discovery_rate_pct": 9.742647058823529,
+        "false_hit_rate_pct": 5.3,
+        "token_saving_pct": 56.46553402734649,
+        "token_saving_correct_only_pct": 51.31762067855877,
+        "risk_adjusted_saving_pct": {
+          "0": 51.31762067855877,
+          "0.5": 48.7436640041649,
+          "1": 46.169707329771036,
+          "2": 41.021793980983304,
+          "5": 25.578053934620108,
+          "10": -0.16151280931855122
+        },
+        "break_even_false_hit_cost": 9.96862557732123,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.725,
+        "hit_ratio_pct": 53.3,
+        "precision_of_hits_pct": 92.12007504690432,
+        "false_discovery_rate_pct": 7.879924953095685,
+        "false_hit_rate_pct": 4.2,
+        "token_saving_pct": 55.481904621356996,
+        "token_saving_correct_only_pct": 51.33524771104784,
+        "risk_adjusted_saving_pct": {
+          "0": 51.33524771104784,
+          "0.5": 49.26191925589327,
+          "1": 47.188590800738694,
+          "2": 43.04193389042955,
+          "5": 30.601963159502098,
+          "10": 9.868678607956351
+        },
+        "break_even_false_hit_cost": 12.379912016212742,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.75,
+        "hit_ratio_pct": 52.65,
+        "precision_of_hits_pct": 92.9724596391263,
+        "false_discovery_rate_pct": 7.027540360873695,
+        "false_hit_rate_pct": 3.7,
+        "token_saving_pct": 54.80059931910463,
+        "token_saving_correct_only_pct": 51.16041214461546,
+        "risk_adjusted_saving_pct": {
+          "0": 51.16041214461546,
+          "0.5": 49.340318557370864,
+          "1": 47.52022497012628,
+          "2": 43.88003779563711,
+          "5": 32.95947627216958,
+          "10": 14.758540399723707
+        },
+        "break_even_false_hit_cost": 14.054335585585585,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.775,
+        "hit_ratio_pct": 51.35,
+        "precision_of_hits_pct": 94.54722492697177,
+        "false_discovery_rate_pct": 5.452775073028238,
+        "false_hit_rate_pct": 2.8,
+        "token_saving_pct": 53.495379052936435,
+        "token_saving_correct_only_pct": 50.74576695013395,
+        "risk_adjusted_saving_pct": {
+          "0": 50.74576695013395,
+          "0.5": 49.3709608987327,
+          "1": 47.996154847331454,
+          "2": 45.24654274452896,
+          "5": 36.997706436121476,
+          "10": 23.249645922109014
+        },
+        "break_even_false_hit_cost": 18.455609392471114,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.8,
+        "hit_ratio_pct": 50.8,
+        "precision_of_hits_pct": 95.3740157480315,
+        "false_discovery_rate_pct": 4.625984251968504,
+        "false_hit_rate_pct": 2.35,
+        "token_saving_pct": 52.975176629014506,
+        "token_saving_correct_only_pct": 50.60311096626883,
+        "risk_adjusted_saving_pct": {
+          "0": 50.60311096626883,
+          "0.5": 49.41707813489599,
+          "1": 48.23104530352315,
+          "2": 45.85897964077748,
+          "5": 38.74278265254044,
+          "10": 26.88245433881206
+        },
+        "break_even_false_hit_cost": 21.3329300959129,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.825,
+        "hit_ratio_pct": 49.75,
+        "precision_of_hits_pct": 96.48241206030151,
+        "false_discovery_rate_pct": 3.5175879396984926,
+        "false_hit_rate_pct": 1.75,
+        "token_saving_pct": 51.86200903077967,
+        "token_saving_correct_only_pct": 50.16837915336953,
+        "risk_adjusted_saving_pct": {
+          "0": 50.16837915336953,
+          "0.5": 49.32156421466446,
+          "1": 48.47474927595939,
+          "2": 46.78111939854925,
+          "5": 41.70022976631884,
+          "10": 33.23208037926815
+        },
+        "break_even_false_hit_cost": 29.621808060026623,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.85,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 97.13993871297242,
+        "false_discovery_rate_pct": 2.860061287027579,
+        "false_hit_rate_pct": 1.4,
+        "token_saving_pct": 51.13458649236401,
+        "token_saving_correct_only_pct": 49.7227841692851,
+        "risk_adjusted_saving_pct": {
+          "0": 49.7227841692851,
+          "0.5": 49.01688300774565,
+          "1": 48.31098184620619,
+          "2": 46.89917952312728,
+          "5": 42.66377255389055,
+          "10": 35.60476093849601
+        },
+        "break_even_false_hit_cost": 35.219367015098726,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.875,
+        "hit_ratio_pct": 47.35,
+        "precision_of_hits_pct": 97.78247096092925,
+        "false_discovery_rate_pct": 2.2175290390707496,
+        "false_hit_rate_pct": 1.05,
+        "token_saving_pct": 49.46596240522908,
+        "token_saving_correct_only_pct": 48.45732720896437,
+        "risk_adjusted_saving_pct": {
+          "0": 48.45732720896437,
+          "0.5": 47.95300961083202,
+          "1": 47.44869201269966,
+          "2": 46.440056816434954,
+          "5": 43.41415122764083,
+          "10": 38.37097524631728
+        },
+        "break_even_false_hit_cost": 48.04247104247104,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.9,
+        "hit_ratio_pct": 46.6,
+        "precision_of_hits_pct": 98.28326180257511,
+        "false_discovery_rate_pct": 1.7167381974248928,
+        "false_hit_rate_pct": 0.8,
+        "token_saving_pct": 48.74161434922431,
+        "token_saving_correct_only_pct": 47.97668312539584,
+        "risk_adjusted_saving_pct": {
+          "0": 47.97668312539584,
+          "0.5": 47.5942175134816,
+          "1": 47.21175190156737,
+          "2": 46.446820677738906,
+          "5": 44.1520270062535,
+          "10": 40.32737088711116
+        },
+        "break_even_false_hit_cost": 62.72025723472669,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.925,
+        "hit_ratio_pct": 45.15,
+        "precision_of_hits_pct": 99.1140642303433,
+        "false_discovery_rate_pct": 0.8859357696566998,
+        "false_hit_rate_pct": 0.4,
+        "token_saving_pct": 47.34088016282459,
+        "token_saving_correct_only_pct": 47.00514668355582,
+        "risk_adjusted_saving_pct": {
+          "0": 47.00514668355582,
+          "0.5": 46.83727994392144,
+          "1": 46.66941320428706,
+          "2": 46.33367972501829,
+          "5": 45.326479287211995,
+          "10": 43.64781189086817
+        },
+        "break_even_false_hit_cost": 140.00732600732601,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.95,
+        "hit_ratio_pct": 42.95,
+        "precision_of_hits_pct": 99.53434225844005,
+        "false_discovery_rate_pct": 0.46565774155995343,
+        "false_hit_rate_pct": 0.2,
+        "token_saving_pct": 45.311311840651626,
+        "token_saving_correct_only_pct": 45.12499820655193,
+        "risk_adjusted_saving_pct": {
+          "0": 45.12499820655193,
+          "0.5": 45.03184138950208,
+          "1": 44.938684572452225,
+          "2": 44.75237093835253,
+          "5": 44.19343003605343,
+          "10": 43.261861865554934
+        },
+        "break_even_false_hit_cost": 242.1991199119912,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.96,
+        "hit_ratio_pct": 42.05,
+        "precision_of_hits_pct": 99.88109393579073,
+        "false_discovery_rate_pct": 0.11890606420927467,
+        "false_hit_rate_pct": 0.05,
+        "token_saving_pct": 44.442258145841144,
+        "token_saving_correct_only_pct": 44.38363801454025,
+        "risk_adjusted_saving_pct": {
+          "0": 44.38363801454025,
+          "0.5": 44.354327948889804,
+          "1": 44.325017883239354,
+          "2": 44.26639775193846,
+          "5": 44.090537358035775,
+          "10": 43.797436701531296
+        },
+        "break_even_false_hit_cost": 757.1398601398602,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.97,
+        "hit_ratio_pct": 41.45,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 43.96653323413003,
+        "token_saving_correct_only_pct": 43.96653323413003,
+        "risk_adjusted_saving_pct": {
+          "0": 43.96653323413003,
+          "0.5": 43.96653323413003,
+          "1": 43.96653323413003,
+          "2": 43.96653323413003,
+          "5": 43.96653323413003,
+          "10": 43.96653323413003
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.98,
+        "hit_ratio_pct": 40.75,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 43.3401586842855,
+        "token_saving_correct_only_pct": 43.3401586842855,
+        "risk_adjusted_saving_pct": {
+          "0": 43.3401586842855,
+          "0.5": 43.3401586842855,
+          "1": 43.3401586842855,
+          "2": 43.3401586842855,
+          "5": 43.3401586842855,
+          "10": 43.3401586842855
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.99,
+        "hit_ratio_pct": 39.95,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 42.57030828859961,
+        "token_saving_correct_only_pct": 42.57030828859961,
+        "risk_adjusted_saving_pct": {
+          "0": 42.57030828859961,
+          "0.5": 42.57030828859961,
+          "1": 42.57030828859961,
+          "2": 42.57030828859961,
+          "5": 42.57030828859961,
+          "10": 42.57030828859961
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      }
+    ],
+    "C2_bi_geo_lgb": [
+      {
+        "threshold": 0.1,
+        "hit_ratio_pct": 55.05,
+        "precision_of_hits_pct": 88.91916439600364,
+        "false_discovery_rate_pct": 11.080835603996366,
+        "false_hit_rate_pct": 6.1,
+        "token_saving_pct": 57.25854552386106,
+        "token_saving_correct_only_pct": 51.21595779350546,
+        "risk_adjusted_saving_pct": {
+          "0": 51.21595779350546,
+          "0.5": 48.194663928327664,
+          "1": 45.17337006314987,
+          "2": 39.130782332794276,
+          "5": 21.00301914172749,
+          "10": -9.209919510050483
+        },
+        "break_even_false_hit_cost": 8.475831891726875,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.15,
+        "hit_ratio_pct": 54.2,
+        "precision_of_hits_pct": 90.31365313653137,
+        "false_discovery_rate_pct": 9.686346863468634,
+        "false_hit_rate_pct": 5.25,
+        "token_saving_pct": 56.36817541766843,
+        "token_saving_correct_only_pct": 51.183778210938186,
+        "risk_adjusted_saving_pct": {
+          "0": 51.183778210938186,
+          "0.5": 48.59157960757307,
+          "1": 45.99938100420794,
+          "2": 40.814983797477694,
+          "5": 25.261792177286953,
+          "10": -0.6601938563642811
+        },
+        "break_even_false_hit_cost": 9.872657547244406,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.2,
+        "hit_ratio_pct": 53.6,
+        "precision_of_hits_pct": 91.32462686567165,
+        "false_discovery_rate_pct": 8.675373134328359,
+        "false_hit_rate_pct": 4.65,
+        "token_saving_pct": 55.87646319742071,
+        "token_saving_correct_only_pct": 51.23399475698266,
+        "risk_adjusted_saving_pct": {
+          "0": 51.23399475698266,
+          "0.5": 48.912760536763635,
+          "1": 46.59152631654461,
+          "2": 41.94905787610656,
+          "5": 28.0216525547924,
+          "10": 4.8093103526021395
+        },
+        "break_even_false_hit_cost": 11.035938189845474,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.25,
+        "hit_ratio_pct": 52.95,
+        "precision_of_hits_pct": 92.63456090651557,
+        "false_discovery_rate_pct": 7.36543909348442,
+        "false_hit_rate_pct": 3.9,
+        "token_saving_pct": 55.15641941679118,
+        "token_saving_correct_only_pct": 51.347545640691386,
+        "risk_adjusted_saving_pct": {
+          "0": 51.347545640691386,
+          "0.5": 49.44310875264149,
+          "1": 47.5386718645916,
+          "2": 43.729798088491805,
+          "5": 32.30317676019242,
+          "10": 13.258807879693453
+        },
+        "break_even_false_hit_cost": 13.481031049884303,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.3,
+        "hit_ratio_pct": 52.45,
+        "precision_of_hits_pct": 93.23164918970448,
+        "false_discovery_rate_pct": 6.768350810295519,
+        "false_hit_rate_pct": 3.55,
+        "token_saving_pct": 54.59911823844456,
+        "token_saving_correct_only_pct": 51.17803917710454,
+        "risk_adjusted_saving_pct": {
+          "0": 51.17803917710454,
+          "0.5": 49.467499646434526,
+          "1": 47.756960115764514,
+          "2": 44.33588105442449,
+          "5": 34.07264387040442,
+          "10": 16.9672485637043
+        },
+        "break_even_false_hit_cost": 14.959618956323768,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.35,
+        "hit_ratio_pct": 52.0,
+        "precision_of_hits_pct": 93.84615384615384,
+        "false_discovery_rate_pct": 6.153846153846154,
+        "false_hit_rate_pct": 3.2,
+        "token_saving_pct": 54.19226173273729,
+        "token_saving_correct_only_pct": 51.06612801734828,
+        "risk_adjusted_saving_pct": {
+          "0": 51.06612801734828,
+          "0.5": 49.503061159653775,
+          "1": 47.93999430195927,
+          "2": 44.81386058657025,
+          "5": 35.43545944040321,
+          "10": 19.804790863458138
+        },
+        "break_even_false_hit_cost": 16.335234723314976,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.4,
+        "hit_ratio_pct": 51.55,
+        "precision_of_hits_pct": 94.27740058195926,
+        "false_discovery_rate_pct": 5.722599418040737,
+        "false_hit_rate_pct": 2.95,
+        "token_saving_pct": 53.687021789881676,
+        "token_saving_correct_only_pct": 50.854603627479314,
+        "risk_adjusted_saving_pct": {
+          "0": 50.854603627479314,
+          "0.5": 49.43839454627813,
+          "1": 48.02218546507695,
+          "2": 45.189767302674596,
+          "5": 36.692512815467516,
+          "10": 22.53042200345572
+        },
+        "break_even_false_hit_cost": 17.954482958245894,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.45,
+        "hit_ratio_pct": 51.25,
+        "precision_of_hits_pct": 94.63414634146342,
+        "false_discovery_rate_pct": 5.365853658536586,
+        "false_hit_rate_pct": 2.75,
+        "token_saving_pct": 53.382852996698006,
+        "token_saving_correct_only_pct": 50.73879812333594,
+        "risk_adjusted_saving_pct": {
+          "0": 50.73879812333594,
+          "0.5": 49.4167706866549,
+          "1": 48.09474324997387,
+          "2": 45.4506883766118,
+          "5": 37.51852375652559,
+          "10": 24.29824938971524
+        },
+        "break_even_false_hit_cost": 19.189767441860464,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.5,
+        "hit_ratio_pct": 51.1,
+        "precision_of_hits_pct": 94.81409001956948,
+        "false_discovery_rate_pct": 5.185909980430528,
+        "false_hit_rate_pct": 2.65,
+        "token_saving_pct": 53.24224666777348,
+        "token_saving_correct_only_pct": 50.678743233576625,
+        "risk_adjusted_saving_pct": {
+          "0": 50.678743233576625,
+          "0.5": 49.3969915164782,
+          "1": 48.11523979937977,
+          "2": 45.55173636518292,
+          "5": 37.861226062592365,
+          "10": 25.043708891608098
+        },
+        "break_even_false_hit_cost": 19.76932917566163,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.55,
+        "hit_ratio_pct": 50.8,
+        "precision_of_hits_pct": 94.88188976377953,
+        "false_discovery_rate_pct": 5.118110236220472,
+        "false_hit_rate_pct": 2.6,
+        "token_saving_pct": 52.98050573186004,
+        "token_saving_correct_only_pct": 50.40449940252559,
+        "risk_adjusted_saving_pct": {
+          "0": 50.40449940252559,
+          "0.5": 49.11649623785836,
+          "1": 47.828493073191126,
+          "2": 45.25248674385667,
+          "5": 37.5244677558533,
+          "10": 24.64443610918102
+        },
+        "break_even_false_hit_cost": 19.56691597708466,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.6,
+        "hit_ratio_pct": 50.4,
+        "precision_of_hits_pct": 95.33730158730158,
+        "false_discovery_rate_pct": 4.662698412698413,
+        "false_hit_rate_pct": 2.35,
+        "token_saving_pct": 52.605418877731935,
+        "token_saving_correct_only_pct": 50.29238327727527,
+        "risk_adjusted_saving_pct": {
+          "0": 50.29238327727527,
+          "0.5": 49.13586547704694,
+          "1": 47.979347676818605,
+          "2": 45.66631207636195,
+          "5": 38.72720527499195,
+          "10": 27.162027272708638
+        },
+        "break_even_false_hit_cost": 21.743021710234824,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.65,
+        "hit_ratio_pct": 49.9,
+        "precision_of_hits_pct": 95.69138276553106,
+        "false_discovery_rate_pct": 4.3086172344689375,
+        "false_hit_rate_pct": 2.15,
+        "token_saving_pct": 52.09628459048919,
+        "token_saving_correct_only_pct": 49.9882144840916,
+        "risk_adjusted_saving_pct": {
+          "0": 49.9882144840916,
+          "0.5": 48.93417943089281,
+          "1": 47.880144377694016,
+          "2": 45.772074271296425,
+          "5": 39.44786395210366,
+          "10": 28.907513420115723
+        },
+        "break_even_false_hit_cost": 23.712785610111812,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.7,
+        "hit_ratio_pct": 49.45,
+        "precision_of_hits_pct": 96.1577350859454,
+        "false_discovery_rate_pct": 3.8422649140546006,
+        "false_hit_rate_pct": 1.9,
+        "token_saving_pct": 51.6920926362047,
+        "token_saving_correct_only_pct": 49.82526691631464,
+        "risk_adjusted_saving_pct": {
+          "0": 49.82526691631464,
+          "0.5": 48.89185405636961,
+          "1": 47.95844119642458,
+          "2": 46.09161547653453,
+          "5": 40.49113831686436,
+          "10": 31.157009717414073
+        },
+        "break_even_false_hit_cost": 26.689833113746158,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.75,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 96.8335035750766,
+        "false_discovery_rate_pct": 3.166496424923391,
+        "false_hit_rate_pct": 1.55,
+        "token_saving_pct": 51.22497627524406,
+        "token_saving_correct_only_pct": 49.67318251972281,
+        "risk_adjusted_saving_pct": {
+          "0": 49.67318251972281,
+          "0.5": 48.89728564196218,
+          "1": 48.12138876420155,
+          "2": 46.56959500868029,
+          "5": 41.914213742116516,
+          "10": 34.155244964510224
+        },
+        "break_even_false_hit_cost": 32.010170387003036,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.8,
+        "hit_ratio_pct": 48.3,
+        "precision_of_hits_pct": 97.20496894409938,
+        "false_discovery_rate_pct": 2.7950310559006213,
+        "false_hit_rate_pct": 1.35,
+        "token_saving_pct": 50.59819179441141,
+        "token_saving_correct_only_pct": 49.25320822239576,
+        "risk_adjusted_saving_pct": {
+          "0": 49.25320822239576,
+          "0.5": 48.58071643638793,
+          "1": 47.908224650380106,
+          "2": 46.563241078364456,
+          "5": 42.528290362317506,
+          "10": 35.80337250223925
+        },
+        "break_even_false_hit_cost": 36.619932947272176,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.85,
+        "hit_ratio_pct": 47.6,
+        "precision_of_hits_pct": 97.47899159663865,
+        "false_discovery_rate_pct": 2.5210084033613445,
+        "false_hit_rate_pct": 1.2,
+        "token_saving_pct": 49.88122249619276,
+        "token_saving_correct_only_pct": 48.67561546013729,
+        "risk_adjusted_saving_pct": {
+          "0": 48.67561546013729,
+          "0.5": 48.072811942109546,
+          "1": 47.470008424081804,
+          "2": 46.26440138802633,
+          "5": 42.64758027985989,
+          "10": 36.61954509958249
+        },
+        "break_even_false_hit_cost": 40.37436246174771,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.9,
+        "hit_ratio_pct": 46.5,
+        "precision_of_hits_pct": 97.95698924731182,
+        "false_discovery_rate_pct": 2.043010752688172,
+        "false_hit_rate_pct": 0.95,
+        "token_saving_pct": 48.9039470205191,
+        "token_saving_correct_only_pct": 47.93466519911373,
+        "risk_adjusted_saving_pct": {
+          "0": 47.93466519911373,
+          "0.5": 47.45002428841104,
+          "1": 46.96538337770836,
+          "2": 45.996101556302996,
+          "5": 43.088256092086894,
+          "10": 38.241846985060064
+        },
+        "break_even_false_hit_cost": 49.453795728483826,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.95,
+        "hit_ratio_pct": 44.5,
+        "precision_of_hits_pct": 98.87640449438203,
+        "false_discovery_rate_pct": 1.1235955056179776,
+        "false_hit_rate_pct": 0.5,
+        "token_saving_pct": 46.90553345344311,
+        "token_saving_correct_only_pct": 46.43288302414289,
+        "risk_adjusted_saving_pct": {
+          "0": 46.43288302414289,
+          "0.5": 46.196557809492774,
+          "1": 45.96023259484266,
+          "2": 45.48758216554243,
+          "5": 44.06963087764175,
+          "10": 41.70637873114061
+        },
+        "break_even_false_hit_cost": 98.23937554206418,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.97,
+        "hit_ratio_pct": 42.45,
+        "precision_of_hits_pct": 99.52885747938751,
+        "false_discovery_rate_pct": 0.4711425206124853,
+        "false_hit_rate_pct": 0.2,
+        "token_saving_pct": 44.98398194663928,
+        "token_saving_correct_only_pct": 44.7495014214357,
+        "risk_adjusted_saving_pct": {
+          "0": 44.7495014214357,
+          "0.5": 44.63226115883391,
+          "1": 44.515020896232116,
+          "2": 44.280540371028536,
+          "5": 43.57709879541779,
+          "10": 42.404696169399884
+        },
+        "break_even_false_hit_cost": 190.84527972027973,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.98,
+        "hit_ratio_pct": 40.45,
+        "precision_of_hits_pct": 99.87639060568603,
+        "false_discovery_rate_pct": 0.12360939431396786,
+        "false_hit_rate_pct": 0.05,
+        "token_saving_pct": 43.01897775509493,
+        "token_saving_correct_only_pct": 42.96035762379403,
+        "risk_adjusted_saving_pct": {
+          "0": 42.96035762379403,
+          "0.5": 42.93104755814359,
+          "1": 42.90173749249314,
+          "2": 42.84311736119224,
+          "5": 42.66725696728955,
+          "10": 42.37415631078508
+        },
+        "break_even_false_hit_cost": 732.8601398601398,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.99,
+        "hit_ratio_pct": 23.8,
+        "precision_of_hits_pct": 99.78991596638656,
+        "false_discovery_rate_pct": 0.21008403361344538,
+        "false_hit_rate_pct": 0.05,
+        "token_saving_pct": 25.32676623890368,
+        "token_saving_correct_only_pct": 25.268146107602785,
+        "risk_adjusted_saving_pct": {
+          "0": 25.268146107602785,
+          "0.5": 25.238836041952336,
+          "1": 25.20952597630189,
+          "2": 25.150905845000995,
+          "5": 24.975045451098307,
+          "10": 24.68194479459383
+        },
+        "break_even_false_hit_cost": 431.04895104895104,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.995,
+        "hit_ratio_pct": 4.4,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 4.69391477944688,
+        "token_saving_correct_only_pct": 4.69391477944688,
+        "risk_adjusted_saving_pct": {
+          "0": 4.69391477944688,
+          "0.5": 4.69391477944688,
+          "1": 4.69391477944688,
+          "2": 4.69391477944688,
+          "5": 4.69391477944688,
+          "10": 4.69391477944688
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      }
+    ],
+    "C3_bi_cross": [
+      {
+        "threshold": 0.1,
+        "hit_ratio_pct": 53.25,
+        "precision_of_hits_pct": 92.11267605633803,
+        "false_discovery_rate_pct": 7.887323943661972,
+        "false_hit_rate_pct": 4.2,
+        "token_saving_pct": 55.4232844900561,
+        "token_saving_correct_only_pct": 51.27662757974695,
+        "risk_adjusted_saving_pct": {
+          "0": 51.27662757974695,
+          "0.5": 49.20329912459238,
+          "1": 47.1299706694378,
+          "2": 42.98331375912865,
+          "5": 30.543343028201203,
+          "10": 9.810058476655454
+        },
+        "break_even_false_hit_cost": 12.365775295338837,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.15,
+        "hit_ratio_pct": 53.25,
+        "precision_of_hits_pct": 92.11267605633803,
+        "false_discovery_rate_pct": 7.887323943661972,
+        "false_hit_rate_pct": 4.2,
+        "token_saving_pct": 55.4232844900561,
+        "token_saving_correct_only_pct": 51.27662757974695,
+        "risk_adjusted_saving_pct": {
+          "0": 51.27662757974695,
+          "0.5": 49.20329912459238,
+          "1": 47.1299706694378,
+          "2": 42.98331375912865,
+          "5": 30.543343028201203,
+          "10": 9.810058476655454
+        },
+        "break_even_false_hit_cost": 12.365775295338837,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.2,
+        "hit_ratio_pct": 53.25,
+        "precision_of_hits_pct": 92.11267605633803,
+        "false_discovery_rate_pct": 7.887323943661972,
+        "false_hit_rate_pct": 4.2,
+        "token_saving_pct": 55.4232844900561,
+        "token_saving_correct_only_pct": 51.27662757974695,
+        "risk_adjusted_saving_pct": {
+          "0": 51.27662757974695,
+          "0.5": 49.20329912459238,
+          "1": 47.1299706694378,
+          "2": 42.98331375912865,
+          "5": 30.543343028201203,
+          "10": 9.810058476655454
+        },
+        "break_even_false_hit_cost": 12.365775295338837,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.25,
+        "hit_ratio_pct": 53.2,
+        "precision_of_hits_pct": 92.19924812030075,
+        "false_discovery_rate_pct": 7.8007518796992485,
+        "false_hit_rate_pct": 4.15,
+        "token_saving_pct": 55.364664358755206,
+        "token_saving_correct_only_pct": 51.27662757974695,
+        "risk_adjusted_saving_pct": {
+          "0": 51.27662757974695,
+          "0.5": 49.232609190242826,
+          "1": 47.188590800738694,
+          "2": 43.10055402173044,
+          "5": 30.83644368470568,
+          "10": 10.39625978966441
+        },
+        "break_even_false_hit_cost": 12.543093507144647,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.3,
+        "hit_ratio_pct": 53.2,
+        "precision_of_hits_pct": 92.19924812030075,
+        "false_discovery_rate_pct": 7.8007518796992485,
+        "false_hit_rate_pct": 4.15,
+        "token_saving_pct": 55.364664358755206,
+        "token_saving_correct_only_pct": 51.27662757974695,
+        "risk_adjusted_saving_pct": {
+          "0": 51.27662757974695,
+          "0.5": 49.232609190242826,
+          "1": 47.188590800738694,
+          "2": 43.10055402173044,
+          "5": 30.83644368470568,
+          "10": 10.39625978966441
+        },
+        "break_even_false_hit_cost": 12.543093507144647,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.35,
+        "hit_ratio_pct": 53.1,
+        "precision_of_hits_pct": 92.27871939736346,
+        "false_discovery_rate_pct": 7.721280602636535,
+        "false_hit_rate_pct": 4.1,
+        "token_saving_pct": 55.29723071120977,
+        "token_saving_correct_only_pct": 51.26596937405588,
+        "risk_adjusted_saving_pct": {
+          "0": 51.26596937405588,
+          "0.5": 49.25033870547893,
+          "1": 47.234708036901985,
+          "2": 43.2034466997481,
+          "5": 31.109662688286427,
+          "10": 10.953356002516976
+        },
+        "break_even_false_hit_cost": 12.717103925157616,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.4,
+        "hit_ratio_pct": 53.05,
+        "precision_of_hits_pct": 92.27144203581527,
+        "false_discovery_rate_pct": 7.7285579641847315,
+        "false_hit_rate_pct": 4.1,
+        "token_saving_pct": 55.25459788844548,
+        "token_saving_correct_only_pct": 51.20755420824904,
+        "risk_adjusted_saving_pct": {
+          "0": 51.20755420824904,
+          "0.5": 49.184032368150824,
+          "1": 47.160510528052605,
+          "2": 43.11346684785617,
+          "5": 30.972335807266848,
+          "10": 10.737117406284652
+        },
+        "break_even_false_hit_cost": 12.653076728285642,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.45,
+        "hit_ratio_pct": 52.8,
+        "precision_of_hits_pct": 92.61363636363636,
+        "false_discovery_rate_pct": 7.386363636363637,
+        "false_hit_rate_pct": 3.9,
+        "token_saving_pct": 54.97789447146573,
+        "token_saving_correct_only_pct": 51.147499318489736,
+        "risk_adjusted_saving_pct": {
+          "0": 51.147499318489736,
+          "0.5": 49.23230174200173,
+          "1": 47.31710416551373,
+          "2": 43.48670901253774,
+          "5": 31.99552355360975,
+          "10": 12.843547788729767
+        },
+        "break_even_false_hit_cost": 13.353060787671232,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.5,
+        "hit_ratio_pct": 52.35,
+        "precision_of_hits_pct": 93.3142311365807,
+        "false_discovery_rate_pct": 6.685768863419293,
+        "false_hit_rate_pct": 3.5,
+        "token_saving_pct": 54.54049810714366,
+        "token_saving_correct_only_pct": 51.109170771100686,
+        "risk_adjusted_saving_pct": {
+          "0": 51.109170771100686,
+          "0.5": 49.393507103079195,
+          "1": 47.67784343505771,
+          "2": 44.246516099014734,
+          "5": 33.9525340908858,
+          "10": 16.795897410670914
+        },
+        "break_even_false_hit_cost": 14.894868884773908,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.55,
+        "hit_ratio_pct": 51.85,
+        "precision_of_hits_pct": 94.0212150433944,
+        "false_discovery_rate_pct": 5.978784956605593,
+        "false_hit_rate_pct": 3.1,
+        "token_saving_pct": 54.03361844033557,
+        "token_saving_correct_only_pct": 50.96180058087221,
+        "risk_adjusted_saving_pct": {
+          "0": 50.96180058087221,
+          "0.5": 49.42589165114053,
+          "1": 47.88998272140885,
+          "2": 44.81816486194549,
+          "5": 35.602711283555415,
+          "10": 20.243621986238615
+        },
+        "break_even_false_hit_cost": 16.590111429905917,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.6,
+        "hit_ratio_pct": 51.3,
+        "precision_of_hits_pct": 94.83430799220272,
+        "false_discovery_rate_pct": 5.165692007797271,
+        "false_hit_rate_pct": 2.65,
+        "token_saving_pct": 53.57306097518483,
+        "token_saving_correct_only_pct": 50.91752803415545,
+        "risk_adjusted_saving_pct": {
+          "0": 50.91752803415545,
+          "0.5": 49.589761563640764,
+          "1": 48.261995093126075,
+          "2": 45.6064621520967,
+          "5": 37.63986332900856,
+          "10": 24.362198623861673
+        },
+        "break_even_false_hit_cost": 19.17412781722754,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.65,
+        "hit_ratio_pct": 50.85,
+        "precision_of_hits_pct": 95.18190757128811,
+        "false_discovery_rate_pct": 4.818092428711898,
+        "false_hit_rate_pct": 2.45,
+        "token_saving_pct": 53.11721771639744,
+        "token_saving_correct_only_pct": 50.65127785737271,
+        "risk_adjusted_saving_pct": {
+          "0": 50.65127785737271,
+          "0.5": 49.41830792786035,
+          "1": 48.185337998347975,
+          "2": 45.719398139323246,
+          "5": 38.321578562249044,
+          "10": 25.99187926712538
+        },
+        "break_even_false_hit_cost": 20.540354085279695,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.7,
+        "hit_ratio_pct": 50.2,
+        "precision_of_hits_pct": 95.81673306772909,
+        "false_discovery_rate_pct": 4.183266932270916,
+        "false_hit_rate_pct": 2.1,
+        "token_saving_pct": 52.390410074463965,
+        "token_saving_correct_only_pct": 50.32558768731284,
+        "risk_adjusted_saving_pct": {
+          "0": 50.32558768731284,
+          "0.5": 49.29317649373728,
+          "1": 48.260765300161715,
+          "2": 46.1959429130106,
+          "5": 40.00147575155722,
+          "10": 29.67736381580161
+        },
+        "break_even_false_hit_cost": 24.372840976771887,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.75,
+        "hit_ratio_pct": 49.05,
+        "precision_of_hits_pct": 96.43221202854231,
+        "false_discovery_rate_pct": 3.567787971457696,
+        "false_hit_rate_pct": 1.75,
+        "token_saving_pct": 51.285031165003375,
+        "token_saving_correct_only_pct": 49.593245977039764,
+        "risk_adjusted_saving_pct": {
+          "0": 49.593245977039764,
+          "0.5": 48.74735338305796,
+          "1": 47.90146078907616,
+          "2": 46.20967560111255,
+          "5": 41.134320037221734,
+          "10": 32.675394097403704
+        },
+        "break_even_false_hit_cost": 29.314150714804942,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.8,
+        "hit_ratio_pct": 47.95,
+        "precision_of_hits_pct": 97.49739311783108,
+        "false_discovery_rate_pct": 2.502606882168926,
+        "false_hit_rate_pct": 1.2,
+        "token_saving_pct": 50.20793749372293,
+        "token_saving_correct_only_pct": 49.05008741778322,
+        "risk_adjusted_saving_pct": {
+          "0": 49.05008741778322,
+          "0.5": 48.47116237981336,
+          "1": 47.8922373418435,
+          "2": 46.734387265903784,
+          "5": 43.26083703808464,
+          "10": 37.47158665838606
+        },
+        "break_even_false_hit_cost": 42.36307311028501,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.85,
+        "hit_ratio_pct": 46.55,
+        "precision_of_hits_pct": 98.06659505907626,
+        "false_discovery_rate_pct": 1.933404940923738,
+        "false_hit_rate_pct": 0.9,
+        "token_saving_pct": 48.880375988702305,
+        "token_saving_correct_only_pct": 48.01972587914825,
+        "risk_adjusted_saving_pct": {
+          "0": 48.01972587914825,
+          "0.5": 47.58940082437122,
+          "1": 47.15907576959419,
+          "2": 46.29842566004013,
+          "5": 43.716475331377964,
+          "10": 39.41322478360768
+        },
+        "break_even_false_hit_cost": 55.79471302691117,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.9,
+        "hit_ratio_pct": 44.75,
+        "precision_of_hits_pct": 99.21787709497207,
+        "false_discovery_rate_pct": 0.7821229050279329,
+        "false_hit_rate_pct": 0.35,
+        "token_saving_pct": 47.106194672126946,
+        "token_saving_correct_only_pct": 46.78152932953737,
+        "risk_adjusted_saving_pct": {
+          "0": 46.78152932953737,
+          "0.5": 46.619196658242586,
+          "1": 46.456863986947795,
+          "2": 46.13219864435822,
+          "5": 45.1582026165895,
+          "10": 43.53487590364162
+        },
+        "break_even_false_hit_cost": 144.09154040404042,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.95,
+        "hit_ratio_pct": 42.0,
+        "precision_of_hits_pct": 99.64285714285714,
+        "false_discovery_rate_pct": 0.35714285714285715,
+        "false_hit_rate_pct": 0.15,
+        "token_saving_pct": 44.557243788008286,
+        "token_saving_correct_only_pct": 44.423196354893655,
+        "risk_adjusted_saving_pct": {
+          "0": 44.423196354893655,
+          "0.5": 44.35617263833634,
+          "1": 44.28914892177902,
+          "2": 44.155101488664386,
+          "5": 43.75295918932048,
+          "10": 43.0827220237473
+        },
+        "break_even_false_hit_cost": 331.39908256880733,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.97,
+        "hit_ratio_pct": 11.3,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 11.67073523172374,
+        "token_saving_correct_only_pct": 11.67073523172374,
+        "risk_adjusted_saving_pct": {
+          "0": 11.67073523172374,
+          "0.5": 11.67073523172374,
+          "1": 11.67073523172374,
+          "2": 11.67073523172374,
+          "5": 11.67073523172374,
+          "10": 11.67073523172374
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.98,
+        "hit_ratio_pct": 0.0,
+        "precision_of_hits_pct": 0.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 0.0,
+        "token_saving_correct_only_pct": 0.0,
+        "risk_adjusted_saving_pct": {
+          "0": 0.0,
+          "0.5": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "5": 0.0,
+          "10": 0.0
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.99,
+        "hit_ratio_pct": 0.0,
+        "precision_of_hits_pct": 0.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 0.0,
+        "token_saving_correct_only_pct": 0.0,
+        "risk_adjusted_saving_pct": {
+          "0": 0.0,
+          "0.5": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "5": 0.0,
+          "10": 0.0
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.995,
+        "hit_ratio_pct": 0.0,
+        "precision_of_hits_pct": 0.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 0.0,
+        "token_saving_correct_only_pct": 0.0,
+        "risk_adjusted_saving_pct": {
+          "0": 0.0,
+          "0.5": 0.0,
+          "1": 0.0,
+          "2": 0.0,
+          "5": 0.0,
+          "10": 0.0
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      }
+    ],
+    "C4_full_stacking": [
+      {
+        "threshold": 0.1,
+        "hit_ratio_pct": 54.75,
+        "precision_of_hits_pct": 89.86301369863014,
+        "false_discovery_rate_pct": 10.136986301369863,
+        "false_hit_rate_pct": 5.55,
+        "token_saving_pct": 56.83590667511125,
+        "token_saving_correct_only_pct": 51.44920852574469,
+        "risk_adjusted_saving_pct": {
+          "0": 51.44920852574469,
+          "0.5": 48.75585945106141,
+          "1": 46.062510376378135,
+          "2": 40.67581222701158,
+          "5": 24.51571777891192,
+          "10": -2.4177729679208504
+        },
+        "break_even_false_hit_cost": 9.551158631711122,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.15,
+        "hit_ratio_pct": 53.95,
+        "precision_of_hits_pct": 90.91751621872103,
+        "false_discovery_rate_pct": 9.082483781278961,
+        "false_hit_rate_pct": 4.9,
+        "token_saving_pct": 56.09106206970056,
+        "token_saving_correct_only_pct": 51.35471943298346,
+        "risk_adjusted_saving_pct": {
+          "0": 51.35471943298346,
+          "0.5": 48.9865481146249,
+          "1": 46.61837679626635,
+          "2": 41.88203415954924,
+          "5": 27.673006249397915,
+          "10": 3.9912930658123704
+        },
+        "break_even_false_hit_cost": 10.842695170503722,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.2,
+        "hit_ratio_pct": 53.0,
+        "precision_of_hits_pct": 92.26415094339623,
+        "false_discovery_rate_pct": 7.735849056603773,
+        "false_hit_rate_pct": 4.1,
+        "token_saving_pct": 55.111736939086306,
+        "token_saving_correct_only_pct": 51.18111365951542,
+        "risk_adjusted_saving_pct": {
+          "0": 51.18111365951542,
+          "0.5": 49.21580201972998,
+          "1": 47.25049037994454,
+          "2": 43.31986710037365,
+          "5": 31.527997261661,
+          "10": 11.874880863806577
+        },
+        "break_even_false_hit_cost": 13.021119048860614,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.25,
+        "hit_ratio_pct": 52.55,
+        "precision_of_hits_pct": 93.05423406279733,
+        "false_discovery_rate_pct": 6.9457659372026646,
+        "false_hit_rate_pct": 3.65,
+        "token_saving_pct": 54.77559352882942,
+        "token_saving_correct_only_pct": 51.19484634761738,
+        "risk_adjusted_saving_pct": {
+          "0": 51.19484634761738,
+          "0.5": 49.404472757011355,
+          "1": 47.61409916640534,
+          "2": 44.03335198519329,
+          "5": 33.291110441557166,
+          "10": 15.38737453549695
+        },
+        "break_even_false_hit_cost": 14.297252432741843,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.3,
+        "hit_ratio_pct": 52.25,
+        "precision_of_hits_pct": 93.77990430622009,
+        "false_discovery_rate_pct": 6.220095693779904,
+        "false_hit_rate_pct": 3.25,
+        "token_saving_pct": 54.45646225457944,
+        "token_saving_correct_only_pct": 51.31167667923105,
+        "risk_adjusted_saving_pct": {
+          "0": 51.31167667923105,
+          "0.5": 49.73928389155686,
+          "1": 48.16689110388266,
+          "2": 45.02210552853427,
+          "5": 35.5877488024891,
+          "10": 19.86382092574715
+        },
+        "break_even_false_hit_cost": 16.31643094570814,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.35,
+        "hit_ratio_pct": 51.9,
+        "precision_of_hits_pct": 94.21965317919076,
+        "false_discovery_rate_pct": 5.780346820809249,
+        "false_hit_rate_pct": 3.0,
+        "token_saving_pct": 54.11314505203049,
+        "token_saving_correct_only_pct": 51.20898896670745,
+        "risk_adjusted_saving_pct": {
+          "0": 51.20898896670745,
+          "0.5": 49.75691092404594,
+          "1": 48.30483288138442,
+          "2": 45.40067679606138,
+          "5": 36.688208540092276,
+          "10": 22.167428113477097
+        },
+        "break_even_false_hit_cost": 17.63300162326205,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.4,
+        "hit_ratio_pct": 51.65,
+        "precision_of_hits_pct": 94.48209099709584,
+        "false_discovery_rate_pct": 5.517909002904163,
+        "false_hit_rate_pct": 2.85,
+        "token_saving_pct": 53.90756466148924,
+        "token_saving_correct_only_pct": 51.091133807623486,
+        "risk_adjusted_saving_pct": {
+          "0": 51.091133807623486,
+          "0.5": 49.68291838069061,
+          "1": 48.27470295375773,
+          "2": 45.458272099891985,
+          "5": 37.00897953829473,
+          "10": 22.92682526896597
+        },
+        "break_even_false_hit_cost": 18.140382796011934,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.45,
+        "hit_ratio_pct": 51.55,
+        "precision_of_hits_pct": 94.66537342386033,
+        "false_discovery_rate_pct": 5.33462657613967,
+        "false_hit_rate_pct": 2.75,
+        "token_saving_pct": 53.824553636395315,
+        "token_saving_correct_only_pct": 51.091133807623486,
+        "risk_adjusted_saving_pct": {
+          "0": 51.091133807623486,
+          "0.5": 49.72442389323757,
+          "1": 48.35771397885166,
+          "2": 45.624294150079834,
+          "5": 37.42403466376435,
+          "10": 23.756935519905223
+        },
+        "break_even_false_hit_cost": 18.69128674265147,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.5,
+        "hit_ratio_pct": 51.3,
+        "precision_of_hits_pct": 95.02923976608187,
+        "false_discovery_rate_pct": 4.970760233918129,
+        "false_hit_rate_pct": 2.55,
+        "token_saving_pct": 53.62225269375901,
+        "token_saving_correct_only_pct": 51.06797270679481,
+        "risk_adjusted_saving_pct": {
+          "0": 51.06797270679481,
+          "0.5": 49.79083271331272,
+          "1": 48.513692719830615,
+          "2": 45.95941273286642,
+          "5": 38.296572771973835,
+          "10": 25.525172837152866
+        },
+        "break_even_false_hit_cost": 19.993099021023912,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.55,
+        "hit_ratio_pct": 51.0,
+        "precision_of_hits_pct": 95.3921568627451,
+        "false_discovery_rate_pct": 4.607843137254902,
+        "false_hit_rate_pct": 2.35,
+        "token_saving_pct": 53.299227075121905,
+        "token_saving_correct_only_pct": 50.94786292727619,
+        "risk_adjusted_saving_pct": {
+          "0": 50.94786292727619,
+          "0.5": 49.77218085335334,
+          "1": 48.59649877943048,
+          "2": 46.245134631584776,
+          "5": 39.19104218804764,
+          "10": 27.43422144881909
+        },
+        "break_even_false_hit_cost": 21.667364016736403,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.6,
+        "hit_ratio_pct": 50.7,
+        "precision_of_hits_pct": 95.56213017751479,
+        "false_discovery_rate_pct": 4.437869822485207,
+        "false_hit_rate_pct": 2.25,
+        "token_saving_pct": 53.00817607355802,
+        "token_saving_correct_only_pct": 50.74576695013395,
+        "risk_adjusted_saving_pct": {
+          "0": 50.74576695013395,
+          "0.5": 49.61456238842191,
+          "1": 48.48335782670987,
+          "2": 46.2209487032858,
+          "5": 39.43372133301359,
+          "10": 28.12167571589323
+        },
+        "break_even_false_hit_cost": 22.429969197318353,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.65,
+        "hit_ratio_pct": 50.35,
+        "precision_of_hits_pct": 95.8291956305859,
+        "false_discovery_rate_pct": 4.1708043694141015,
+        "false_hit_rate_pct": 2.1,
+        "token_saving_pct": 52.600294740380455,
+        "token_saving_correct_only_pct": 50.505957322084825,
+        "risk_adjusted_saving_pct": {
+          "0": 50.505957322084825,
+          "0.5": 49.45878861293701,
+          "1": 48.411619903789195,
+          "2": 46.317282485493564,
+          "5": 40.03427023060668,
+          "10": 29.562583139128527
+        },
+        "break_even_false_hit_cost": 24.115482481894695,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.7,
+        "hit_ratio_pct": 49.9,
+        "precision_of_hits_pct": 96.29258517034069,
+        "false_discovery_rate_pct": 3.7074148296593186,
+        "false_hit_rate_pct": 1.85,
+        "token_saving_pct": 52.13850748226536,
+        "token_saving_correct_only_pct": 50.27783072719708,
+        "risk_adjusted_saving_pct": {
+          "0": 50.27783072719708,
+          "0.5": 49.347492349662936,
+          "1": 48.417153972128794,
+          "2": 46.55647721706051,
+          "5": 40.974446951855654,
+          "10": 31.671063176514235
+        },
+        "break_even_false_hit_cost": 27.021260189469047,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.75,
+        "hit_ratio_pct": 49.5,
+        "precision_of_hits_pct": 96.66666666666667,
+        "false_discovery_rate_pct": 3.3333333333333335,
+        "false_hit_rate_pct": 1.65,
+        "token_saving_pct": 51.7396446308264,
+        "token_saving_correct_only_pct": 50.109554056574574,
+        "risk_adjusted_saving_pct": {
+          "0": 50.109554056574574,
+          "0.5": 49.29450876944866,
+          "1": 48.47946348232275,
+          "2": 46.849372908070926,
+          "5": 41.959101185315454,
+          "10": 33.80864831405633
+        },
+        "break_even_false_hit_cost": 30.740349553627563,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.8,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 97.2420837589377,
+        "false_discovery_rate_pct": 2.7579162410623086,
+        "false_hit_rate_pct": 1.35,
+        "token_saving_pct": 51.2042747603441,
+        "token_saving_correct_only_pct": 49.829981122678,
+        "risk_adjusted_saving_pct": {
+          "0": 49.829981122678,
+          "0.5": 49.14283430384495,
+          "1": 48.4556874850119,
+          "2": 47.0813938473458,
+          "5": 42.9585129343475,
+          "10": 36.08704474601701
+        },
+        "break_even_false_hit_cost": 36.2586129753915,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.85,
+        "hit_ratio_pct": 48.0,
+        "precision_of_hits_pct": 97.5,
+        "false_discovery_rate_pct": 2.5,
+        "false_hit_rate_pct": 1.2,
+        "token_saving_pct": 50.29012865684062,
+        "token_saving_correct_only_pct": 49.09169541307721,
+        "risk_adjusted_saving_pct": {
+          "0": 49.09169541307721,
+          "0.5": 48.4924787911955,
+          "1": 47.89326216931379,
+          "2": 46.69482892555038,
+          "5": 43.09952919426015,
+          "10": 37.10736297544308
+        },
+        "break_even_false_hit_cost": 40.96322900632803,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.9,
+        "hit_ratio_pct": 46.7,
+        "precision_of_hits_pct": 98.28693790149893,
+        "false_discovery_rate_pct": 1.7130620985010707,
+        "false_hit_rate_pct": 0.8,
+        "token_saving_pct": 49.04250369450303,
+        "token_saving_correct_only_pct": 48.23678433735681,
+        "risk_adjusted_saving_pct": {
+          "0": 48.23678433735681,
+          "0.5": 47.833924658783694,
+          "1": 47.43106498021058,
+          "2": 46.625345623064355,
+          "5": 44.208187551625684,
+          "10": 40.17959076589456
+        },
+        "break_even_false_hit_cost": 59.86797252607479,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.95,
+        "hit_ratio_pct": 45.2,
+        "precision_of_hits_pct": 98.78318584070796,
+        "false_discovery_rate_pct": 1.2168141592920354,
+        "false_hit_rate_pct": 0.55,
+        "token_saving_pct": 47.59831682336279,
+        "token_saving_correct_only_pct": 47.01498502727066,
+        "risk_adjusted_saving_pct": {
+          "0": 47.01498502727066,
+          "0.5": 46.72331912922459,
+          "1": 46.43165323117853,
+          "2": 45.848321435086405,
+          "5": 44.09832604681002,
+          "10": 41.18166706634938
+        },
+        "break_even_false_hit_cost": 80.597329585383,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.97,
+        "hit_ratio_pct": 42.85,
+        "precision_of_hits_pct": 99.41656942823803,
+        "false_discovery_rate_pct": 0.5834305717619603,
+        "false_hit_rate_pct": 0.25,
+        "token_saving_pct": 45.393298038275255,
+        "token_saving_correct_only_pct": 45.14528979046378,
+        "risk_adjusted_saving_pct": {
+          "0": 45.14528979046378,
+          "0.5": 45.021285666558036,
+          "1": 44.897281542652294,
+          "2": 44.64927329484081,
+          "5": 43.90524855140637,
+          "10": 42.66520731234897
+        },
+        "break_even_false_hit_cost": 182.03140495867768,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.98,
+        "hit_ratio_pct": 38.7,
+        "precision_of_hits_pct": 99.48320413436693,
+        "false_discovery_rate_pct": 0.5167958656330749,
+        "false_hit_rate_pct": 0.2,
+        "token_saving_pct": 41.2091324425533,
+        "token_saving_correct_only_pct": 41.019129429560536,
+        "risk_adjusted_saving_pct": {
+          "0": 41.019129429560536,
+          "0.5": 40.924127923064155,
+          "1": 40.82912641656777,
+          "2": 40.639123403575006,
+          "5": 40.06911436459672,
+          "10": 39.11909929963291
+        },
+        "break_even_false_hit_cost": 215.88673139158576,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.99,
+        "hit_ratio_pct": 14.15,
+        "precision_of_hits_pct": 99.29328621908127,
+        "false_discovery_rate_pct": 0.7067137809187279,
+        "false_hit_rate_pct": 0.1,
+        "token_saving_pct": 14.137904883712826,
+        "token_saving_correct_only_pct": 14.021074552099154,
+        "risk_adjusted_saving_pct": {
+          "0": 14.021074552099154,
+          "0.5": 13.962659386292318,
+          "1": 13.90424422048548,
+          "2": 13.787413888871809,
+          "5": 13.43692289403079,
+          "10": 12.852771235962425
+        },
+        "break_even_false_hit_cost": 120.01228070175439,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      },
+      {
+        "threshold": 0.995,
+        "hit_ratio_pct": 2.85,
+        "precision_of_hits_pct": 100.0,
+        "false_discovery_rate_pct": 0.0,
+        "false_hit_rate_pct": 0.0,
+        "token_saving_pct": 2.8522998153260897,
+        "token_saving_correct_only_pct": 2.8522998153260897,
+        "risk_adjusted_saving_pct": {
+          "0": 2.8522998153260897,
+          "0.5": 2.8522998153260897,
+          "1": 2.8522998153260897,
+          "2": 2.8522998153260897,
+          "5": 2.8522998153260897,
+          "10": 2.8522998153260897
+        },
+        "break_even_false_hit_cost": Infinity,
+        "correct_miss_ratio_on_hard_negatives_pct": null,
+        "hit_ratio_on_servable_repeats_pct": null,
+        "judge_calls_per_request": null,
+        "total_tokens_no_cache_equivalent": 487887
+      }
+    ]
+  },
+  "matched": {
+    "at_hit_ratio": {
+      "45": {
+        "C1_bi_only": {
+          "precision_of_hits_pct": 99.1427195504408,
+          "token_saving_correct_only_pct": 46.87695474194192
+        },
+        "C2_bi_geo_lgb": {
+          "precision_of_hits_pct": 98.64655068261447,
+          "token_saving_correct_only_pct": 46.808328567885596
+        },
+        "C3_bi_cross": {
+          "precision_of_hits_pct": 99.05797681220876,
+          "token_saving_correct_only_pct": 46.953501072538884
+        },
+        "C4_full_stacking": {
+          "precision_of_hits_pct": 98.83709082688073,
+          "token_saving_correct_only_pct": 46.855862028393474
+        }
+      },
+      "50": {
+        "C1_bi_only": {
+          "precision_of_hits_pct": 96.2185081764277,
+          "token_saving_correct_only_pct": 50.271886727869365
+        },
+        "C2_bi_geo_lgb": {
+          "precision_of_hits_pct": 95.62056652988517,
+          "token_saving_correct_only_pct": 50.04904824272833
+        },
+        "C3_bi_cross": {
+          "precision_of_hits_pct": 95.92377288700095,
+          "token_saving_correct_only_pct": 50.19822391161318
+        },
+        "C4_full_stacking": {
+          "precision_of_hits_pct": 96.18960971706184,
+          "token_saving_correct_only_pct": 50.32852552606102
+        }
+      },
+      "55": {
+        "C1_bi_only": {
+          "precision_of_hits_pct": 89.37639847744364,
+          "token_saving_correct_only_pct": 51.38595439196942
+        },
+        "C2_bi_geo_lgb": {
+          "precision_of_hits_pct": 89.00119314544644,
+          "token_saving_correct_only_pct": 51.21406487688385
+        },
+        "C3_bi_cross": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        },
+        "C4_full_stacking": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        }
+      },
+      "60": {
+        "C1_bi_only": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        },
+        "C2_bi_geo_lgb": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        },
+        "C3_bi_cross": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        },
+        "C4_full_stacking": {
+          "precision_of_hits_pct": null,
+          "token_saving_correct_only_pct": null
+        }
+      }
+    },
+    "at_precision": {
+      "85": {
+        "C1_bi_only": {
+          "hit_ratio_pct": 57.50599332349973,
+          "token_saving_correct_only_pct": 51.1480056298829
+        },
+        "C2_bi_geo_lgb": {
+          "hit_ratio_pct": null,
+          "token_saving_correct_only_pct": null
+        },
+        "C3_bi_cross": {
+          "hit_ratio_pct": 49.138188073394495,
+          "token_saving_correct_only_pct": 47.317193798742025
+        },
+        "C4_full_stacking": {
+          "hit_ratio_pct": null,
+          "token_saving_correct_only_pct": null
+        }
+      },
+      "90": {
+        "C1_bi_only": {
+          "hit_ratio_pct": 54.57527780499755,
+          "token_saving_correct_only_pct": 51.33758298404869
+        },
+        "C2_bi_geo_lgb": {
+          "hit_ratio_pct": 54.3911848825332,
+          "token_saving_correct_only_pct": 51.19101615177712
+        },
+        "C3_bi_cross": {
+          "hit_ratio_pct": 52.02866972477064,
+          "token_saving_correct_only_pct": 50.1005581398445
+        },
+        "C4_full_stacking": {
+          "hit_ratio_pct": 54.646075126414644,
+          "token_saving_correct_only_pct": 51.43693381696918
+        }
+      },
+      "95": {
+        "C1_bi_only": {
+          "hit_ratio_pct": 51.048803755650866,
+          "token_saving_correct_only_pct": 50.66764431999921
+        },
+        "C2_bi_geo_lgb": {
+          "hit_ratio_pct": 50.69626072041166,
+          "token_saving_correct_only_pct": 50.37542228736633
+        },
+        "C3_bi_cross": {
+          "hit_ratio_pct": 51.08549627791563,
+          "token_saving_correct_only_pct": 50.7906132476543
+        },
+        "C4_full_stacking": {
+          "hit_ratio_pct": 51.32008963367108,
+          "token_saving_correct_only_pct": 51.06983389891908
+        }
+      }
+    }
+  },
+  "best_per_lambda": {
+    "0": {
+      "C1_bi_only": {
+        "threshold": 0.675,
+        "risk_adjusted_saving_pct": 51.44859362926251,
+        "hit_ratio_pct": 55.55,
+        "precision_of_hits_pct": 88.56885688568858
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.25,
+        "risk_adjusted_saving_pct": 51.347545640691386,
+        "hit_ratio_pct": 52.95,
+        "precision_of_hits_pct": 92.63456090651557
+      },
+      "C3_bi_cross": {
+        "threshold": 0.1,
+        "risk_adjusted_saving_pct": 51.27662757974695,
+        "hit_ratio_pct": 53.25,
+        "precision_of_hits_pct": 92.11267605633803
+      },
+      "C4_full_stacking": {
+        "threshold": 0.1,
+        "risk_adjusted_saving_pct": 51.44920852574469,
+        "hit_ratio_pct": 54.75,
+        "precision_of_hits_pct": 89.86301369863014
+      }
+    },
+    "0.5": {
+      "C1_bi_only": {
+        "threshold": 0.8,
+        "risk_adjusted_saving_pct": 49.41707813489599,
+        "hit_ratio_pct": 50.8,
+        "precision_of_hits_pct": 95.3740157480315
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.35,
+        "risk_adjusted_saving_pct": 49.503061159653775,
+        "hit_ratio_pct": 52.0,
+        "precision_of_hits_pct": 93.84615384615384
+      },
+      "C3_bi_cross": {
+        "threshold": 0.6,
+        "risk_adjusted_saving_pct": 49.589761563640764,
+        "hit_ratio_pct": 51.3,
+        "precision_of_hits_pct": 94.83430799220272
+      },
+      "C4_full_stacking": {
+        "threshold": 0.5,
+        "risk_adjusted_saving_pct": 49.79083271331272,
+        "hit_ratio_pct": 51.3,
+        "precision_of_hits_pct": 95.02923976608187
+      }
+    },
+    "1": {
+      "C1_bi_only": {
+        "threshold": 0.825,
+        "risk_adjusted_saving_pct": 48.47474927595939,
+        "hit_ratio_pct": 49.75,
+        "precision_of_hits_pct": 96.48241206030151
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.75,
+        "risk_adjusted_saving_pct": 48.12138876420155,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 96.8335035750766
+      },
+      "C3_bi_cross": {
+        "threshold": 0.6,
+        "risk_adjusted_saving_pct": 48.261995093126075,
+        "hit_ratio_pct": 51.3,
+        "precision_of_hits_pct": 94.83430799220272
+      },
+      "C4_full_stacking": {
+        "threshold": 0.55,
+        "risk_adjusted_saving_pct": 48.59649877943048,
+        "hit_ratio_pct": 51.0,
+        "precision_of_hits_pct": 95.3921568627451
+      }
+    },
+    "2": {
+      "C1_bi_only": {
+        "threshold": 0.85,
+        "risk_adjusted_saving_pct": 46.89917952312728,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 97.13993871297242
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.75,
+        "risk_adjusted_saving_pct": 46.56959500868029,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 96.8335035750766
+      },
+      "C3_bi_cross": {
+        "threshold": 0.8,
+        "risk_adjusted_saving_pct": 46.734387265903784,
+        "hit_ratio_pct": 47.95,
+        "precision_of_hits_pct": 97.49739311783108
+      },
+      "C4_full_stacking": {
+        "threshold": 0.8,
+        "risk_adjusted_saving_pct": 47.0813938473458,
+        "hit_ratio_pct": 48.95,
+        "precision_of_hits_pct": 97.2420837589377
+      }
+    },
+    "5": {
+      "C1_bi_only": {
+        "threshold": 0.925,
+        "risk_adjusted_saving_pct": 45.326479287211995,
+        "hit_ratio_pct": 45.15,
+        "precision_of_hits_pct": 99.1140642303433
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.95,
+        "risk_adjusted_saving_pct": 44.06963087764175,
+        "hit_ratio_pct": 44.5,
+        "precision_of_hits_pct": 98.87640449438203
+      },
+      "C3_bi_cross": {
+        "threshold": 0.9,
+        "risk_adjusted_saving_pct": 45.1582026165895,
+        "hit_ratio_pct": 44.75,
+        "precision_of_hits_pct": 99.21787709497207
+      },
+      "C4_full_stacking": {
+        "threshold": 0.9,
+        "risk_adjusted_saving_pct": 44.208187551625684,
+        "hit_ratio_pct": 46.7,
+        "precision_of_hits_pct": 98.28693790149893
+      }
+    },
+    "10": {
+      "C1_bi_only": {
+        "threshold": 0.97,
+        "risk_adjusted_saving_pct": 43.96653323413003,
+        "hit_ratio_pct": 41.45,
+        "precision_of_hits_pct": 100.0
+      },
+      "C2_bi_geo_lgb": {
+        "threshold": 0.97,
+        "risk_adjusted_saving_pct": 42.404696169399884,
+        "hit_ratio_pct": 42.45,
+        "precision_of_hits_pct": 99.52885747938751
+      },
+      "C3_bi_cross": {
+        "threshold": 0.9,
+        "risk_adjusted_saving_pct": 43.53487590364162,
+        "hit_ratio_pct": 44.75,
+        "precision_of_hits_pct": 99.21787709497207
+      },
+      "C4_full_stacking": {
+        "threshold": 0.97,
+        "risk_adjusted_saving_pct": 42.66520731234897,
+        "hit_ratio_pct": 42.85,
+        "precision_of_hits_pct": 99.41656942823803
+      }
+    }
+  }
+}

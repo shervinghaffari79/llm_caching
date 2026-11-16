@@ -1,0 +1,13 @@
+{
+ "fold": 1,
+ "clusters_per_group": [
+  10,
+  10,
+  10
+ ],
+ "rows_train_side": 99445,
+ "rows_heldout_group": 50555,
+ "rows_dropped_shared_class": 15134,
+ "rows_eval_side": 35421,
+ "classes_shared_between_sides": 0
+}

@@ -24,6 +24,9 @@ References
 GPTCache    Bang, F. (2023). NLP-OSS @ EMNLP.  https://aclanthology.org/2023.nlposs-1.24/
 SCALM       Li, J. et al. (2024). IEEE/ACM IWQoS.
 VectorQ     Schroeder, L. G. (2024). MSc thesis, TUM.
+vCache      Schroeder, L. G. et al. (2026). vCache: Verified Semantic Prompt
+            Caching. ICLR 2026. arXiv:2502.03771 (v5). Re-implemented from the
+            paper and the official algorithm (vcache-project/vCache).
 ContextCache Yan et al. (2025).
 """
 from __future__ import annotations
@@ -65,6 +68,12 @@ BASELINES: dict[str, BaselineSpec] = {
         "Schroeder 2024, TUM",
         "Each entry keeps a Beta posterior over match correctness and adapts "
         "its own threshold; fed ground-truth feedback here."),
+    "vcache": BaselineSpec(
+        "vcache", "vCache (per-entry sigmoid, error bound delta)",
+        "Schroeder et al. 2026, ICLR",
+        "Per-entry logistic model of correctness vs. similarity with a "
+        "confidence-bounded exploration probability; fed ground-truth "
+        "feedback (oracle judge) on explored requests."),
     "contextcache": BaselineSpec(
         "contextcache", "ContextCache (two-stage, context-aware re-ranking)",
         "Yan et al. 2025",
@@ -104,6 +113,14 @@ class BaselineCache:
                   sim: float) -> None: ...
 
     def on_insert_extra(self, eid: int, vec: np.ndarray, ev) -> None: ...
+
+    def should_insert(self, ev) -> bool:
+        """Whether a miss inserts its fresh response (default: always)."""
+        return True
+
+    def extra_summary(self, n_requests: int) -> dict:
+        """Method-specific counters merged into the run summary."""
+        return {}
 
     # -- machinery ---------------------------------------------------------
     def _insert(self, query: str, vec: np.ndarray, gen, topic_id: int,
@@ -166,8 +183,12 @@ class BaselineCache:
                 self.policy.on_hit(entry, eq)
                 correct = (self.topic_of.get(eid) == ev.topic_id and ev.topic_id >= 0)
                 would = backend.pool.get(ev.query)
-                stats.tokens_served_by_cache += (would.total_tokens if would
-                                                 else entry.total_tokens)
+                saved = would.total_tokens if would else entry.total_tokens
+                stats.tokens_served_by_cache += saved
+                if correct:
+                    stats.tokens_served_correct += saved
+                else:
+                    stats.tokens_served_false += saved
                 total_s = time.perf_counter() - t0
                 stats.hits += 1
                 stats.true_hits += int(correct)
@@ -177,8 +198,12 @@ class BaselineCache:
             else:
                 gen = backend.generate(ev.query)
                 stats.tokens_generated += gen.total_tokens
-                self._insert(ev.query, eq, gen, ev.topic_id, stats, ev)
+                if self.should_insert(ev):
+                    self._insert(ev.query, eq, gen, ev.topic_id, stats, ev)
                 total_s = time.perf_counter() - t0
+                if getattr(backend, "virtual_time", False):
+                    total_s += gen.latency_s
+                correct = None
                 stats.misses += 1
                 stats.false_misses += int(oracle)
                 stats.true_misses += int(not oracle)
@@ -189,10 +214,13 @@ class BaselineCache:
             stats.oracle_hits += int(oracle)
             stats.latencies_s.append(total_s)
             stats.overheads_ms.append(overhead_s * 1000.0)
-            per_event.append({"hit": bool(hit), "oracle": bool(oracle),
+            served = bool(hit and eid is not None and correct is not None)
+            per_event.append({"step": ev.step, "hit": served, "oracle": bool(oracle),
+                              "correct": correct, "bi_sim": sim0,
                               "is_repeat": ev.is_repeat,
                               "is_hard_negative": ev.is_hard_negative,
-                              "overhead_ms": overhead_s * 1000.0})
+                              "overhead_ms": overhead_s * 1000.0,
+                              "total_s": total_s})
 
         from .pipeline import SemanticCache
         out = stats.summary()
@@ -200,6 +228,10 @@ class BaselineCache:
         out.update(SemanticCache._quality_adjusted(stats, per_event))
         out["system"] = self.key
         out["label"] = BASELINES[self.key].label if self.key in BASELINES else self.key
+        out["threshold"] = self.threshold
+        out["virtual_time"] = bool(getattr(backend, "virtual_time", False))
+        out.update(self.extra_summary(stats.n))
+        self.last_events = per_event
         return out
 
 
@@ -360,6 +392,171 @@ class VectorQBaseline(BaselineCache):
 
 
 # --------------------------------------------------------------------------
+# Separation-case variance of t for 6..48 observations, from the official
+# vCache implementation (used when a logistic fit is perfectly separated and
+# the delta-method variance is undefined).
+_VCACHE_VAR_MAP = {
+    6: 0.035445, 7: 0.028285, 8: 0.026436, 9: 0.021349, 10: 0.019371,
+    11: 0.012615, 12: 0.011433, 13: 0.010228, 14: 0.009963, 15: 0.009253,
+    16: 0.011674, 17: 0.013015, 18: 0.010897, 19: 0.011841, 20: 0.013081,
+    21: 0.010585, 22: 0.014255, 23: 0.012058, 24: 0.013002, 25: 0.011715,
+    26: 0.00839, 27: 0.008839, 28: 0.010628, 29: 0.009899, 30: 0.008033,
+    31: 0.00457, 32: 0.007335, 33: 0.008932, 34: 0.00729, 35: 0.007445,
+    36: 0.00761, 37: 0.011423, 38: 0.011233, 39: 0.006783, 40: 0.005233,
+    41: 0.00872, 42: 0.010005, 43: 0.01199, 44: 0.00977, 45: 0.01891,
+    46: 0.01513, 47: 0.02109, 48: 0.01531,
+}
+
+
+class VCacheBaseline(BaselineCache):
+    """vCache (Schroeder et al., ICLR 2026): verified semantic caching with a
+    user-set error bound delta.
+
+    Every cached entry keeps the observations (s, c) of earlier requests whose
+    nearest neighbour it was, where s is the cosine similarity and c whether
+    reusing its response would have been correct. A logistic model
+    Pr(c=1 | s) = sigmoid(gamma (s - t)) is fitted per entry; with the
+    pessimistic threshold t' taken from a (1-eps) confidence band, the request
+    is served from cache with probability 1 - tau, where
+
+        tau = min_eps 1 - delta / (1 - (1-eps) sigmoid(gamma (s - t'(eps)))).
+
+    Otherwise vCache calls the LLM ("explore"), records (s, c) for the
+    neighbour, and inserts the new prompt only if the neighbour's response was
+    not correct. Constants follow the official implementation: an entry is
+    always explored until it has 6 observations, eps is searched on a
+    50-point grid, the variance of t comes from the delta method (or a lookup
+    table when the fit is separable), s is rounded to 3 decimals, and each
+    new entry starts with the synthetic observations (0, 0) and (1, 1).
+
+    Correctness feedback c is the stream's equivalence label, i.e. an oracle
+    judge. In deployment it comes from an LLM judge or string match, which
+    the paper runs off the critical path; `judge_calls` counts those checks so
+    their cost can be charged separately.
+
+    insertion="native" follows the paper (insert only when c = 0);
+    insertion="always" inserts on every miss, like every other system here.
+    """
+    key = "vcache"
+
+    def __init__(self, delta: float = 0.02, insertion: str = "native",
+                 seed: int = C.SEED, min_obs: int = 6, threshold: float = 0.0,
+                 **kw):
+        if insertion not in ("native", "always"):
+            raise ValueError("insertion must be 'native' or 'always'")
+        kw.setdefault("policy_name", "LRU")
+        super().__init__(threshold=threshold, **kw)
+        from scipy.stats import norm
+        self.delta, self.insertion, self.min_obs = delta, insertion, min_obs
+        self.rng = np.random.default_rng(seed)
+        self.eps = np.linspace(1e-6, 1 - 1e-6, 50)
+        self.z = norm.ppf(1 - self.eps)
+        self.obs: dict[int, list[tuple[float, int]]] = {}
+        self._fit: dict[int, tuple[int, float, float, float] | None] = {}
+        self._pending: tuple[int, float, int] | None = None
+        self._insert_next = True
+        self.n_explore = self.n_exploit = self.n_cold = self.judge_calls = 0
+
+    # -- per-entry model ----------------------------------------------------
+    def _params(self, eid: int):
+        """(t_hat, gamma, var_t) for an entry, refitted only when its
+        observations change (the fit is deterministic)."""
+        o = self.obs.get(eid, [])
+        cached = self._fit.get(eid)
+        if cached is not None and cached[0] == len(o):
+            return cached[1:]
+        from sklearn.linear_model import LogisticRegression
+        s = np.array([x for x, _ in o], dtype=float)
+        c = np.array([y for _, y in o], dtype=int)
+        X = np.column_stack([np.ones_like(s), s])
+        try:
+            lr = LogisticRegression(penalty=None, solver="lbfgs", tol=1e-8,
+                                    max_iter=1000, fit_intercept=False)
+            lr.fit(X, c)
+        except ValueError:                     # as in the official code: explore
+            self._fit[eid] = (len(o), None, None, None)
+            return None, None, None
+        b0, g = lr.coef_[0]
+        gamma = max(float(g), 1e-6)
+        t_hat = float(np.clip(-b0 / gamma, 0.0, 1.0))
+        if s[c == 1].min() > s[c == 0].max():
+            var_t = _VCACHE_VAR_MAP.get(len(o), _VCACHE_VAR_MAP[48])
+        else:
+            p = lr.predict_proba(X)[:, 1]
+            H = X.T @ ((p * (1 - p))[:, None] * X)
+            grad = np.array([-1.0 / gamma, b0 / gamma ** 2])
+            try:
+                var_t = max(0.0, float(grad @ np.linalg.inv(H) @ grad))
+            except np.linalg.LinAlgError:
+                var_t = _VCACHE_VAR_MAP[48]
+        t_hat, gamma = round(t_hat, 3), round(gamma, 3)
+        self._fit[eid] = (len(o), t_hat, gamma, var_t)
+        return t_hat, gamma, var_t
+
+    def _tau(self, s: float, eid: int) -> float:
+        t_hat, gamma, var_t = self._params(eid)
+        if t_hat is None:
+            return 1.0
+        t_prime = np.clip(t_hat + self.z * np.sqrt(var_t), 0.0, 1.0)
+        lik = 1.0 / (1.0 + np.exp(-gamma * (s - t_prime)))
+        taus = 1.0 - self.delta / (1.0 - (1.0 - self.eps) * lik)
+        return float(np.clip(np.min(taus), 0.0, 1.0))
+
+    # -- hooks --------------------------------------------------------------
+    def decide(self, query, eq, sims, ids, ev, timer):
+        self._pending = None
+        self._insert_next = True
+        if len(ids) == 0:
+            return False, None
+        eid, s = int(ids[0]), round(float(sims[0]), 3)
+        with timer.stage("vcache_policy"):
+            if len(self.obs.get(eid, [])) < self.min_obs:
+                explore = True
+                self.n_cold += 1
+            else:
+                explore = self.rng.uniform() <= self._tau(s, eid)
+        if not explore:
+            self.n_exploit += 1
+            return True, eid
+        self.n_explore += 1
+        self.judge_calls += 1
+        c = int(ev.topic_id >= 0 and self.topic_of.get(eid) == ev.topic_id)
+        self._pending = (eid, s, c)
+        if self.insertion == "native":
+            self._insert_next = (c == 0)
+        return False, eid
+
+    def should_insert(self, ev) -> bool:
+        return self._insert_next
+
+    def on_served(self, hit, eid, correct, sim):
+        if self._pending is None:
+            return
+        eid, s, c = self._pending
+        self._pending = None
+        if eid in self.topic_of:              # still cached
+            self.obs.setdefault(eid, []).append((s, c))
+
+    def on_insert_extra(self, eid, vec, ev):
+        # The official metadata starts every entry with two synthetic
+        # observations, one per class, so the logistic fit is always defined.
+        self.obs[eid] = [(0.0, 0), (1.0, 1)]
+
+    def on_evict_extra(self, eid):
+        self.obs.pop(eid, None)
+        self._fit.pop(eid, None)
+
+    def extra_summary(self, n_requests: int) -> dict:
+        n = max(1, n_requests)
+        return {"delta": self.delta, "insertion": self.insertion,
+                "explores": self.n_explore, "exploits": self.n_exploit,
+                "cold_start_explores": self.n_cold,
+                "judge_calls": self.judge_calls,
+                "judge_calls_per_request": self.judge_calls / n,
+                "cache_entries": len(self.cachebase)}
+
+
+# --------------------------------------------------------------------------
 class ContextCacheBaseline(BaselineCache):
     """ContextCache: two-stage retrieval with a context-integrated query
     representation.
@@ -451,3 +648,6 @@ BASELINE_CLASSES = {
     "vectorq": VectorQBaseline,
     "contextcache": ContextCacheBaseline,
 }
+
+# Baselines whose operating point is not a similarity threshold.
+DELTA_BASELINES = {"vcache": VCacheBaseline}

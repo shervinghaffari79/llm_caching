@@ -1,0 +1,899 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "mps",
+      "torch_threads": 1,
+      "cpu": "Apple MPS (arm)",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch_version": "2.8.0",
+      "host_cpu": "Apple M2",
+      "host_cpu_count": 8
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "phase": "tune",
+    "tune": {
+      "qqp": {
+        "seeds": [
+          1043
+        ],
+        "caps": [
+          300
+        ]
+      },
+      "shift": {
+        "pairs": [
+          [
+            1042,
+            1043
+          ]
+        ],
+        "caps": [
+          300
+        ]
+      },
+      "log": {
+        "start": 100000,
+        "n": 3000,
+        "caps": [
+          500
+        ]
+      }
+    },
+    "grid": {
+      "agings": [
+        [
+          "exp",
+          1
+        ],
+        [
+          "halve",
+          4
+        ]
+      ],
+      "admissions": [
+        "off",
+        "compete",
+        "second"
+      ],
+      "radius_offset": [
+        0.0
+      ],
+      "exact_radius": 0.9999
+    },
+    "serve": {
+      "qqp": [
+        "C2_bi_geo_lgb",
+        {},
+        0.726
+      ],
+      "shift": [
+        "C2_bi_geo_lgb",
+        {},
+        0.726
+      ],
+      "log": [
+        "C1_bi_only",
+        {
+          "bi_threshold": 0.895
+        },
+        0.895
+      ]
+    },
+    "objective": "mean net hit ratio over the eighteen tuning cells"
+  },
+  "rows": [
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "exp",
+        "mult": 1,
+        "admission": "off",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 46.45,
+          "correct_hit_ratio_pct": 43.8,
+          "false_hit_rate_pct": 2.65,
+          "precision_of_hits_pct": 94.29494079655544,
+          "net_hit_ratio_pct": 41.15,
+          "evictions": 771,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9879012345679011
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 50.55,
+          "correct_hit_ratio_pct": 48.699999999999996,
+          "false_hit_rate_pct": 1.8499999999999999,
+          "precision_of_hits_pct": 96.3402571711177,
+          "net_hit_ratio_pct": 46.849999999999994,
+          "evictions": 689,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9672839506172838,
+          "second_half_correct_pct": 47.8,
+          "recovery_correct_pct": 48.5,
+          "second_half_false_pct": 2.4
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.7,
+          "correct_hit_ratio_pct": 1.1333333333333333,
+          "false_hit_rate_pct": 0.5666666666666667,
+          "precision_of_hits_pct": 66.66666666666667,
+          "net_hit_ratio_pct": 0.5666666666666667,
+          "evictions": 2449,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9898367346938776
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.522222222222222,
+      "qqp_net": 41.15,
+      "shift_net": 46.849999999999994,
+      "log_net": 0.5666666666666667,
+      "qqp_correct": 43.8,
+      "shift_correct": 48.699999999999996,
+      "log_correct": 1.1333333333333333,
+      "qqp_false": 2.65,
+      "shift_false": 1.8499999999999999,
+      "log_false": 0.5666666666666667,
+      "shift_second_half_correct": 47.8,
+      "shift_recovery_correct": 48.5
+    },
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "exp",
+        "mult": 1,
+        "admission": "compete",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 46.45,
+          "correct_hit_ratio_pct": 43.8,
+          "false_hit_rate_pct": 2.65,
+          "precision_of_hits_pct": 94.29494079655544,
+          "net_hit_ratio_pct": 41.15,
+          "evictions": 771,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9879012345679011
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 50.55,
+          "correct_hit_ratio_pct": 48.699999999999996,
+          "false_hit_rate_pct": 1.8499999999999999,
+          "precision_of_hits_pct": 96.3402571711177,
+          "net_hit_ratio_pct": 46.849999999999994,
+          "evictions": 689,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9672839506172838,
+          "second_half_correct_pct": 47.8,
+          "recovery_correct_pct": 48.5,
+          "second_half_false_pct": 2.4
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.7,
+          "correct_hit_ratio_pct": 1.1333333333333333,
+          "false_hit_rate_pct": 0.5666666666666667,
+          "precision_of_hits_pct": 66.66666666666667,
+          "net_hit_ratio_pct": 0.5666666666666667,
+          "evictions": 2449,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9898367346938776
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.522222222222222,
+      "qqp_net": 41.15,
+      "shift_net": 46.849999999999994,
+      "log_net": 0.5666666666666667,
+      "qqp_correct": 43.8,
+      "shift_correct": 48.699999999999996,
+      "log_correct": 1.1333333333333333,
+      "qqp_false": 2.65,
+      "shift_false": 1.8499999999999999,
+      "log_false": 0.5666666666666667,
+      "shift_second_half_correct": 47.8,
+      "shift_recovery_correct": 48.5
+    },
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "exp",
+        "mult": 1,
+        "admission": "second",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.85,
+          "correct_hit_ratio_pct": 46.25,
+          "false_hit_rate_pct": 1.6,
+          "precision_of_hits_pct": 96.65621734587252,
+          "net_hit_ratio_pct": 44.65,
+          "evictions": 743,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9786419753086419
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 46.5,
+          "correct_hit_ratio_pct": 45.1,
+          "false_hit_rate_pct": 1.4000000000000001,
+          "precision_of_hits_pct": 96.98924731182795,
+          "net_hit_ratio_pct": 43.7,
+          "evictions": 770,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9608641975308643,
+          "second_half_correct_pct": 39.2,
+          "recovery_correct_pct": 36.0,
+          "second_half_false_pct": 1.7000000000000002
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.6666666666666667,
+          "correct_hit_ratio_pct": 1.0666666666666667,
+          "false_hit_rate_pct": 0.6,
+          "precision_of_hits_pct": 64.0,
+          "net_hit_ratio_pct": 0.4666666666666667,
+          "evictions": 2450,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.983469387755102
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.605555555555554,
+      "qqp_net": 44.65,
+      "shift_net": 43.7,
+      "log_net": 0.4666666666666667,
+      "qqp_correct": 46.25,
+      "shift_correct": 45.1,
+      "log_correct": 1.0666666666666667,
+      "qqp_false": 1.6,
+      "shift_false": 1.4000000000000001,
+      "log_false": 0.6,
+      "shift_second_half_correct": 39.2,
+      "shift_recovery_correct": 36.0
+    },
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "halve",
+        "mult": 4,
+        "admission": "off",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.25,
+          "correct_hit_ratio_pct": 44.6,
+          "false_hit_rate_pct": 2.65,
+          "precision_of_hits_pct": 94.39153439153439,
+          "net_hit_ratio_pct": 41.95,
+          "evictions": 755,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9811111111111112
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 49.65,
+          "correct_hit_ratio_pct": 47.75,
+          "false_hit_rate_pct": 1.9,
+          "precision_of_hits_pct": 96.17321248741189,
+          "net_hit_ratio_pct": 45.85,
+          "evictions": 707,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9649382716049382,
+          "second_half_correct_pct": 45.800000000000004,
+          "recovery_correct_pct": 48.5,
+          "second_half_false_pct": 2.5
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.6666666666666667,
+          "correct_hit_ratio_pct": 1.1333333333333333,
+          "false_hit_rate_pct": 0.5333333333333333,
+          "precision_of_hits_pct": 68.0,
+          "net_hit_ratio_pct": 0.6,
+          "evictions": 2450,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9893061224489798
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.46666666666667,
+      "qqp_net": 41.95,
+      "shift_net": 45.85,
+      "log_net": 0.6,
+      "qqp_correct": 44.6,
+      "shift_correct": 47.75,
+      "log_correct": 1.1333333333333333,
+      "qqp_false": 2.65,
+      "shift_false": 1.9,
+      "log_false": 0.5333333333333333,
+      "shift_second_half_correct": 45.800000000000004,
+      "shift_recovery_correct": 48.5
+    },
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "halve",
+        "mult": 4,
+        "admission": "compete",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.75,
+          "correct_hit_ratio_pct": 45.800000000000004,
+          "false_hit_rate_pct": 1.95,
+          "precision_of_hits_pct": 95.91623036649214,
+          "net_hit_ratio_pct": 43.85,
+          "evictions": 745,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9796296296296297
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.5,
+          "correct_hit_ratio_pct": 46.1,
+          "false_hit_rate_pct": 1.4000000000000001,
+          "precision_of_hits_pct": 97.05263157894737,
+          "net_hit_ratio_pct": 44.7,
+          "evictions": 750,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9629629629629629,
+          "second_half_correct_pct": 41.199999999999996,
+          "recovery_correct_pct": 36.0,
+          "second_half_false_pct": 1.7000000000000002
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.8333333333333333,
+          "correct_hit_ratio_pct": 1.2333333333333334,
+          "false_hit_rate_pct": 0.6,
+          "precision_of_hits_pct": 67.27272727272727,
+          "net_hit_ratio_pct": 0.6333333333333334,
+          "evictions": 2445,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9847755102040816
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.727777777777785,
+      "qqp_net": 43.85,
+      "shift_net": 44.7,
+      "log_net": 0.6333333333333334,
+      "qqp_correct": 45.800000000000004,
+      "shift_correct": 46.1,
+      "log_correct": 1.2333333333333334,
+      "qqp_false": 1.95,
+      "shift_false": 1.4000000000000001,
+      "log_false": 0.6,
+      "shift_second_half_correct": 41.199999999999996,
+      "shift_recovery_correct": 36.0
+    },
+    {
+      "spec": {
+        "kind": "SemDemand",
+        "aging": "halve",
+        "mult": 4,
+        "admission": "second",
+        "radius_offset": 0.0
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 48.5,
+          "correct_hit_ratio_pct": 46.949999999999996,
+          "false_hit_rate_pct": 1.55,
+          "precision_of_hits_pct": 96.80412371134021,
+          "net_hit_ratio_pct": 45.4,
+          "evictions": 730,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9786419753086419
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 44.05,
+          "correct_hit_ratio_pct": 42.6,
+          "false_hit_rate_pct": 1.4500000000000002,
+          "precision_of_hits_pct": 96.7082860385925,
+          "net_hit_ratio_pct": 41.15,
+          "evictions": 819,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9640740740740742,
+          "second_half_correct_pct": 34.0,
+          "recovery_correct_pct": 30.0,
+          "second_half_false_pct": 2.0
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.5,
+          "correct_hit_ratio_pct": 0.9666666666666667,
+          "false_hit_rate_pct": 0.5333333333333333,
+          "precision_of_hits_pct": 64.44444444444444,
+          "net_hit_ratio_pct": 0.43333333333333335,
+          "evictions": 2455,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9819591836734693
+        }
+      ],
+      "objective_net_hit_ratio_pct": 28.994444444444444,
+      "qqp_net": 45.4,
+      "shift_net": 41.15,
+      "log_net": 0.43333333333333335,
+      "qqp_correct": 46.949999999999996,
+      "shift_correct": 42.6,
+      "log_correct": 0.9666666666666667,
+      "qqp_false": 1.55,
+      "shift_false": 1.4500000000000002,
+      "log_false": 0.5333333333333333,
+      "shift_second_half_correct": 34.0,
+      "shift_recovery_correct": 30.0
+    },
+    {
+      "spec": {
+        "kind": "TinyLFU",
+        "aging": "exp",
+        "mult": 1,
+        "admission": "compete"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 46.5,
+          "correct_hit_ratio_pct": 43.8,
+          "false_hit_rate_pct": 2.7,
+          "precision_of_hits_pct": 94.19354838709677,
+          "net_hit_ratio_pct": 41.099999999999994,
+          "evictions": 770,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9939506172839505
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 50.85,
+          "correct_hit_ratio_pct": 49.0,
+          "false_hit_rate_pct": 1.8499999999999999,
+          "precision_of_hits_pct": 96.36184857423795,
+          "net_hit_ratio_pct": 47.15,
+          "evictions": 683,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9754320987654322,
+          "second_half_correct_pct": 48.4,
+          "recovery_correct_pct": 48.5,
+          "second_half_false_pct": 2.4
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.5333333333333334,
+          "correct_hit_ratio_pct": 1.0666666666666667,
+          "false_hit_rate_pct": 0.46666666666666673,
+          "precision_of_hits_pct": 69.56521739130434,
+          "net_hit_ratio_pct": 0.5999999999999999,
+          "evictions": 2454,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9899183673469389
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.616666666666664,
+      "qqp_net": 41.099999999999994,
+      "shift_net": 47.15,
+      "log_net": 0.5999999999999999,
+      "qqp_correct": 43.8,
+      "shift_correct": 49.0,
+      "log_correct": 1.0666666666666667,
+      "qqp_false": 2.7,
+      "shift_false": 1.8499999999999999,
+      "log_false": 0.46666666666666673,
+      "shift_second_half_correct": 48.4,
+      "shift_recovery_correct": 48.5
+    },
+    {
+      "spec": {
+        "kind": "TinyLFU",
+        "aging": "exp",
+        "mult": 1,
+        "admission": "second"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 48.4,
+          "correct_hit_ratio_pct": 47.15,
+          "false_hit_rate_pct": 1.25,
+          "precision_of_hits_pct": 97.41735537190083,
+          "net_hit_ratio_pct": 45.9,
+          "evictions": 732,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9795061728395061
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 43.45,
+          "correct_hit_ratio_pct": 42.6,
+          "false_hit_rate_pct": 0.8500000000000001,
+          "precision_of_hits_pct": 98.04372842347526,
+          "net_hit_ratio_pct": 41.75,
+          "evictions": 831,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9725925925925926,
+          "second_half_correct_pct": 33.900000000000006,
+          "recovery_correct_pct": 32.0,
+          "second_half_false_pct": 0.8
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.5,
+          "correct_hit_ratio_pct": 0.9666666666666667,
+          "false_hit_rate_pct": 0.5333333333333333,
+          "precision_of_hits_pct": 64.44444444444444,
+          "net_hit_ratio_pct": 0.43333333333333335,
+          "evictions": 2455,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9820000000000001
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.361111111111114,
+      "qqp_net": 45.9,
+      "shift_net": 41.75,
+      "log_net": 0.43333333333333335,
+      "qqp_correct": 47.15,
+      "shift_correct": 42.6,
+      "log_correct": 0.9666666666666667,
+      "qqp_false": 1.25,
+      "shift_false": 0.8500000000000001,
+      "log_false": 0.5333333333333333,
+      "shift_second_half_correct": 33.900000000000006,
+      "shift_recovery_correct": 32.0
+    },
+    {
+      "spec": {
+        "kind": "TinyLFU",
+        "aging": "halve",
+        "mult": 4,
+        "admission": "compete"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.85,
+          "correct_hit_ratio_pct": 46.0,
+          "false_hit_rate_pct": 1.8499999999999999,
+          "precision_of_hits_pct": 96.1337513061651,
+          "net_hit_ratio_pct": 44.15,
+          "evictions": 743,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.982962962962963
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 46.3,
+          "correct_hit_ratio_pct": 45.2,
+          "false_hit_rate_pct": 1.0999999999999999,
+          "precision_of_hits_pct": 97.62419006479482,
+          "net_hit_ratio_pct": 44.1,
+          "evictions": 774,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9759259259259261,
+          "second_half_correct_pct": 39.1,
+          "recovery_correct_pct": 32.0,
+          "second_half_false_pct": 1.3
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.6333333333333333,
+          "correct_hit_ratio_pct": 1.1666666666666667,
+          "false_hit_rate_pct": 0.46666666666666673,
+          "precision_of_hits_pct": 71.42857142857143,
+          "net_hit_ratio_pct": 0.7,
+          "evictions": 2451,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9840408163265307
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.650000000000002,
+      "qqp_net": 44.15,
+      "shift_net": 44.1,
+      "log_net": 0.7,
+      "qqp_correct": 46.0,
+      "shift_correct": 45.2,
+      "log_correct": 1.1666666666666667,
+      "qqp_false": 1.8499999999999999,
+      "shift_false": 1.0999999999999999,
+      "log_false": 0.46666666666666673,
+      "shift_second_half_correct": 39.1,
+      "shift_recovery_correct": 32.0
+    },
+    {
+      "spec": {
+        "kind": "TinyLFU",
+        "aging": "halve",
+        "mult": 4,
+        "admission": "second"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 48.65,
+          "correct_hit_ratio_pct": 47.4,
+          "false_hit_rate_pct": 1.25,
+          "precision_of_hits_pct": 97.4306269270298,
+          "net_hit_ratio_pct": 46.15,
+          "evictions": 727,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9790123456790124
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 41.4,
+          "correct_hit_ratio_pct": 40.6,
+          "false_hit_rate_pct": 0.8,
+          "precision_of_hits_pct": 98.06763285024155,
+          "net_hit_ratio_pct": 39.800000000000004,
+          "evictions": 872,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.971604938271605,
+          "second_half_correct_pct": 29.9,
+          "recovery_correct_pct": 25.5,
+          "second_half_false_pct": 0.7000000000000001
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.5,
+          "correct_hit_ratio_pct": 0.9666666666666667,
+          "false_hit_rate_pct": 0.5333333333333333,
+          "precision_of_hits_pct": 64.44444444444444,
+          "net_hit_ratio_pct": 0.43333333333333335,
+          "evictions": 2455,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9820000000000001
+        }
+      ],
+      "objective_net_hit_ratio_pct": 28.794444444444448,
+      "qqp_net": 46.15,
+      "shift_net": 39.800000000000004,
+      "log_net": 0.43333333333333335,
+      "qqp_correct": 47.4,
+      "shift_correct": 40.6,
+      "log_correct": 0.9666666666666667,
+      "qqp_false": 1.25,
+      "shift_false": 0.8,
+      "log_false": 0.5333333333333333,
+      "shift_second_half_correct": 29.9,
+      "shift_recovery_correct": 25.5
+    },
+    {
+      "spec": {
+        "kind": "LFU"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "stream": [
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 47.55,
+          "correct_hit_ratio_pct": 44.9,
+          "false_hit_rate_pct": 2.65,
+          "precision_of_hits_pct": 94.42691903259727,
+          "net_hit_ratio_pct": 42.25,
+          "evictions": 749,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.989753086419753
+        },
+        {
+          "data": "shift",
+          "stream": [
+            1042,
+            1043
+          ],
+          "cap": 300,
+          "hit_ratio_pct": 49.75,
+          "correct_hit_ratio_pct": 47.8,
+          "false_hit_rate_pct": 1.95,
+          "precision_of_hits_pct": 96.08040201005025,
+          "net_hit_ratio_pct": 45.849999999999994,
+          "evictions": 705,
+          "cache_size_end": 300,
+          "distinct_groups_per_slot": 0.9737037037037036,
+          "second_half_correct_pct": 45.9,
+          "recovery_correct_pct": 48.5,
+          "second_half_false_pct": 2.6
+        },
+        {
+          "data": "log",
+          "stream": [
+            100000,
+            3000
+          ],
+          "cap": 500,
+          "hit_ratio_pct": 1.5666666666666667,
+          "correct_hit_ratio_pct": 1.0999999999999999,
+          "false_hit_rate_pct": 0.46666666666666673,
+          "precision_of_hits_pct": 70.2127659574468,
+          "net_hit_ratio_pct": 0.6333333333333331,
+          "evictions": 2453,
+          "cache_size_end": 500,
+          "distinct_groups_per_slot": 0.9895510204081631
+        }
+      ],
+      "objective_net_hit_ratio_pct": 29.57777777777778,
+      "qqp_net": 42.25,
+      "shift_net": 45.849999999999994,
+      "log_net": 0.6333333333333331,
+      "qqp_correct": 44.9,
+      "shift_correct": 47.8,
+      "log_correct": 1.0999999999999999,
+      "qqp_false": 2.65,
+      "shift_false": 1.95,
+      "log_false": 0.46666666666666673,
+      "shift_second_half_correct": 45.9,
+      "shift_recovery_correct": 48.5
+    }
+  ],
+  "selected": {
+    "SemDemand": {
+      "kind": "SemDemand",
+      "aging": "halve",
+      "mult": 4,
+      "admission": "compete",
+      "radius_offset": 0.0
+    },
+    "TinyLFU": {
+      "kind": "TinyLFU",
+      "aging": "halve",
+      "mult": 4,
+      "admission": "compete"
+    }
+  }
+}

@@ -22,3 +22,11 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+.venv-lightning/
+manuscript/
+
+# Local environments, logs, nested Overleaf clones (snapshot is tracked instead)
+.venv-vast/
+results/logs/
+manuscript_v2/
+manuscript_v3/

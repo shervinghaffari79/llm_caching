@@ -1,0 +1,246 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "mps",
+      "torch_threads": 1,
+      "cpu": "Apple MPS (arm)",
+      "platform": "macOS-27.0-arm64-arm-64bit",
+      "torch_version": "2.8.0",
+      "host_cpu": "Apple M2",
+      "host_cpu_count": 8
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "phase": "tune",
+    "tune": {
+      "qqp": {
+        "seeds": [
+          1043
+        ],
+        "caps": [
+          300
+        ]
+      },
+      "log": {
+        "start": 100000,
+        "n": 3000,
+        "caps": [
+          500
+        ]
+      }
+    },
+    "grid": {
+      "alpha": [
+        0.0,
+        1.0
+      ],
+      "beta": [
+        0.0,
+        8.0
+      ],
+      "half_life_mult": [
+        null
+      ]
+    },
+    "serve": {
+      "qqp": [
+        "C2_bi_geo_lgb",
+        {},
+        0.5,
+        0.726
+      ],
+      "log": [
+        "C1_bi_only",
+        {
+          "bi_threshold": 0.895
+        },
+        0.895,
+        0.895
+      ]
+    },
+    "amendment": "log served by C1 at 0.895; beta grid extended; three QQP tuning streams; relative uncertainty; see module docstring",
+    "objective": "mean net hit ratio (correct - false) over the twelve tuning cells"
+  },
+  "rows": [
+    {
+      "spec": {
+        "kind": "SD-RR",
+        "alpha": 0.0,
+        "beta": 0.0,
+        "half_life_mult": null
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "cap": 300,
+          "hit_ratio_pct": 47.55,
+          "correct_hit_ratio_pct": 44.9,
+          "precision_of_hits_pct": 94.42691903259727,
+          "false_hit_rate_pct": 2.65,
+          "net_hit_ratio_pct": 42.25,
+          "evictions": 749,
+          "distinct_groups_per_slot": 0.989753086419753
+        },
+        {
+          "data": "log",
+          "cap": 500,
+          "hit_ratio_pct": 1.5666666666666667,
+          "correct_hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 70.2127659574468,
+          "false_hit_rate_pct": 0.4666666666666667,
+          "net_hit_ratio_pct": 0.6333333333333334,
+          "evictions": 2453,
+          "distinct_groups_per_slot": 0.9895510204081631
+        }
+      ],
+      "objective_net_hit_ratio_pct": 21.441666666666666,
+      "qqp_net": 42.25,
+      "log_net": 0.6333333333333334
+    },
+    {
+      "spec": {
+        "kind": "SD-RR",
+        "alpha": 0.0,
+        "beta": 8.0,
+        "half_life_mult": null
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "cap": 300,
+          "hit_ratio_pct": 46.5,
+          "correct_hit_ratio_pct": 43.95,
+          "precision_of_hits_pct": 94.51612903225806,
+          "false_hit_rate_pct": 2.55,
+          "net_hit_ratio_pct": 41.400000000000006,
+          "evictions": 770,
+          "distinct_groups_per_slot": 0.9885185185185185
+        },
+        {
+          "data": "log",
+          "cap": 500,
+          "hit_ratio_pct": 1.4666666666666666,
+          "correct_hit_ratio_pct": 1.0,
+          "precision_of_hits_pct": 68.18181818181819,
+          "false_hit_rate_pct": 0.4666666666666667,
+          "net_hit_ratio_pct": 0.5333333333333333,
+          "evictions": 2456,
+          "distinct_groups_per_slot": 0.9894285714285715
+        }
+      ],
+      "objective_net_hit_ratio_pct": 20.96666666666667,
+      "qqp_net": 41.400000000000006,
+      "log_net": 0.5333333333333333
+    },
+    {
+      "spec": {
+        "kind": "SD-RR",
+        "alpha": 1.0,
+        "beta": 0.0,
+        "half_life_mult": null
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "cap": 300,
+          "hit_ratio_pct": 47.35,
+          "correct_hit_ratio_pct": 44.65,
+          "precision_of_hits_pct": 94.29778247096093,
+          "false_hit_rate_pct": 2.7,
+          "net_hit_ratio_pct": 41.949999999999996,
+          "evictions": 753,
+          "distinct_groups_per_slot": 0.9954320987654321
+        },
+        {
+          "data": "log",
+          "cap": 500,
+          "hit_ratio_pct": 1.5666666666666667,
+          "correct_hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 70.2127659574468,
+          "false_hit_rate_pct": 0.4666666666666667,
+          "net_hit_ratio_pct": 0.6333333333333334,
+          "evictions": 2453,
+          "distinct_groups_per_slot": 0.9895510204081631
+        }
+      ],
+      "objective_net_hit_ratio_pct": 21.291666666666664,
+      "qqp_net": 41.949999999999996,
+      "log_net": 0.6333333333333334
+    },
+    {
+      "spec": {
+        "kind": "SD-RR",
+        "alpha": 1.0,
+        "beta": 8.0,
+        "half_life_mult": null
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "cap": 300,
+          "hit_ratio_pct": 46.55,
+          "correct_hit_ratio_pct": 43.95,
+          "precision_of_hits_pct": 94.41460794844254,
+          "false_hit_rate_pct": 2.6,
+          "net_hit_ratio_pct": 41.35,
+          "evictions": 769,
+          "distinct_groups_per_slot": 0.9950617283950616
+        },
+        {
+          "data": "log",
+          "cap": 500,
+          "hit_ratio_pct": 1.4666666666666666,
+          "correct_hit_ratio_pct": 1.0,
+          "precision_of_hits_pct": 68.18181818181819,
+          "false_hit_rate_pct": 0.4666666666666667,
+          "net_hit_ratio_pct": 0.5333333333333333,
+          "evictions": 2456,
+          "distinct_groups_per_slot": 0.9894285714285715
+        }
+      ],
+      "objective_net_hit_ratio_pct": 20.941666666666666,
+      "qqp_net": 41.35,
+      "log_net": 0.5333333333333333
+    },
+    {
+      "spec": {
+        "kind": "LFU"
+      },
+      "cells": [
+        {
+          "data": "qqp",
+          "cap": 300,
+          "hit_ratio_pct": 47.55,
+          "correct_hit_ratio_pct": 44.9,
+          "precision_of_hits_pct": 94.42691903259727,
+          "false_hit_rate_pct": 2.65,
+          "net_hit_ratio_pct": 42.25,
+          "evictions": 749,
+          "distinct_groups_per_slot": 0.989753086419753
+        },
+        {
+          "data": "log",
+          "cap": 500,
+          "hit_ratio_pct": 1.5666666666666667,
+          "correct_hit_ratio_pct": 1.1,
+          "precision_of_hits_pct": 70.2127659574468,
+          "false_hit_rate_pct": 0.4666666666666667,
+          "net_hit_ratio_pct": 0.6333333333333334,
+          "evictions": 2453,
+          "distinct_groups_per_slot": 0.9895510204081631
+        }
+      ],
+      "objective_net_hit_ratio_pct": 21.441666666666666,
+      "qqp_net": 42.25,
+      "log_net": 0.6333333333333334
+    }
+  ],
+  "selected": {
+    "kind": "SD-RR",
+    "alpha": 0.0,
+    "beta": 0.0,
+    "half_life_mult": null
+  }
+}

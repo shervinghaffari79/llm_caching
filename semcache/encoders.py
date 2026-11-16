@@ -52,6 +52,18 @@ class StageTimer:
         return {k: v * 1000.0 for k, v in self.totals.items()}
 
 
+def _content_key(prefix: str, name: str, tag: str, items) -> str:
+    """Cache key over the model, the tag and the exact content. Keying on the
+    row count alone would silently return stale arrays when a different seed
+    or split produced the same number of rows."""
+    h = hashlib.blake2b(digest_size=12)
+    h.update(f"{name}|{tag}|{len(items)}".encode())
+    for it in items:
+        h.update(("\t".join(it) if isinstance(it, tuple) else it).encode())
+        h.update(b"\n")
+    return f"{prefix}{h.hexdigest()}"
+
+
 def configure_torch() -> None:
     torch.set_grad_enabled(False)
     if C.TORCH_THREADS:
@@ -89,10 +101,7 @@ class BiEncoder:
     # -- disk-cached bulk encoding (offline feature prep only, never timed) --
     def encode_cached(self, texts: list[str], tag: str,
                       batch_size: int = C.OFFLINE_BATCH) -> np.ndarray:
-        key = hashlib.blake2b(
-            (self.name + "|" + tag + "|" + str(len(texts))).encode(), digest_size=12
-        ).hexdigest()
-        path = C.EMB_CACHE_DIR / f"{key}.npy"
+        path = C.EMB_CACHE_DIR / f"{_content_key('v2_', self.name, tag, texts)}.npy"
         if path.exists():
             arr = np.load(path)
             if arr.shape[0] == len(texts):
@@ -117,6 +126,13 @@ class CrossEncoderWrapper:
         self.device = device or C.preferred_torch_device()
         self.model = CrossEncoder(name, device=self.device)
         self.model.model.eval()
+        # sentence-transformers applies the checkpoint's configured activation
+        # inside predict(): STS heads ship a sigmoid, MS-MARCO rankers ship an
+        # identity and return logits. Decide once per model, never per batch,
+        # so a pair's score does not depend on which other pairs share its
+        # batch.
+        act = getattr(self.model, "default_activation_function", None)
+        self.apply_sigmoid = isinstance(act, torch.nn.Identity)
 
     def score(self, pairs: list[tuple[str, str]], batch_size: int = C.OFFLINE_BATCH,
               timer: StageTimer | None = None, stage: str = "cross_encode",
@@ -127,9 +143,7 @@ class CrossEncoderWrapper:
                                      show_progress_bar=show_progress,
                                      convert_to_numpy=True)
         raw = np.asarray(raw, dtype=np.float32).reshape(-1)
-        # stsb heads emit a similarity in ~[0,5] or a logit depending on the
-        # checkpoint; squash to [0,1] the same way the manuscript describes.
-        return raw if (raw.min() >= 0.0 and raw.max() <= 1.0) else _sigmoid(raw)
+        return _sigmoid(raw) if self.apply_sigmoid else raw
 
     def score_one(self, a: str, b: str, timer: StageTimer | None = None,
                   stage: str = "cross_encode") -> float:
@@ -138,10 +152,7 @@ class CrossEncoderWrapper:
 
     def score_cached(self, pairs: list[tuple[str, str]], tag: str,
                      batch_size: int = C.OFFLINE_BATCH) -> np.ndarray:
-        key = hashlib.blake2b(
-            (self.name + "|" + tag + "|" + str(len(pairs))).encode(), digest_size=12
-        ).hexdigest()
-        path = C.EMB_CACHE_DIR / f"ce_{key}.npy"
+        path = C.EMB_CACHE_DIR / f"{_content_key('ce_v2_', self.name, tag, list(pairs))}.npy"
         if path.exists():
             arr = np.load(path)
             if arr.shape[0] == len(pairs):
@@ -170,9 +181,14 @@ def get_cross(name: str = C.CROSS_ENCODER) -> CrossEncoderWrapper:
     return _CE[name]
 
 
-def warmup() -> None:
+def warmup(include_cross: bool = False) -> None:
     """Run a few throwaway inferences so the first timed call is not paying
     lazy-init / kernel-autotune costs. Called by every timing experiment."""
     bi = get_bi()
     for _ in range(3):
         bi.encode_one("warmup query for the semantic cache")
+    if include_cross:
+        ce = get_cross()
+        for _ in range(3):
+            ce.score_one("warmup query for the semantic cache",
+                         "a second warmup query")
