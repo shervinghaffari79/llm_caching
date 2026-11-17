@@ -1,0 +1,58 @@
+{
+  "preregistration": "docs/PREREGISTRATION_round2b.md section E4",
+  "development": {
+    "pairs": 3000,
+    "families": {
+      "F1_idf": {
+        "delta_top_quintile_auc": -0.00616456714017688,
+        "ci": [
+          -0.0895220725177512,
+          0.07194229895502038
+        ],
+        "kept": false
+      },
+      "F2_numbers": {
+        "delta_top_quintile_auc": -0.010854998659876713,
+        "ci": [
+          -0.07133602942267456,
+          0.062146354493133514
+        ],
+        "kept": false
+      },
+      "F3_negation": {
+        "delta_top_quintile_auc": -0.030219780219780223,
+        "ci": [
+          -0.08983537361591412,
+          0.025439340244427486
+        ],
+        "kept": false
+      },
+      "F4_qtype": {
+        "delta_top_quintile_auc": -0.01058697400160813,
+        "ci": [
+          -0.08817002299662864,
+          0.07030725547515217
+        ],
+        "kept": false
+      },
+      "F5_caps": {
+        "delta_top_quintile_auc": -0.04710533369069947,
+        "ci": [
+          -0.10225050268283785,
+          0.01207559574233915
+        ],
+        "kept": false
+      },
+      "F6_char3": {
+        "delta_top_quintile_auc": 0.00616456714017688,
+        "ci": [
+          -0.06618212641048847,
+          0.0736714606271085
+        ],
+        "kept": false
+      }
+    },
+    "kept_columns": []
+  },
+  "decision": "no family kept on the development split; confirmation not run"
+}
