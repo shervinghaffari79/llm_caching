@@ -149,6 +149,7 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
     # victims: half LLM prompts (LmArena), half short QQP questions
     lm_path = C.DATA_DIR / "external" / "sembenchmark_lmarena.parquet"
     if not lm_path.exists():
+        lm_path.parent.mkdir(parents=True, exist_ok=True)
         from datasets import load_dataset
         d = next(iter(load_dataset("vCache/SemBenchmarkLmArena").values())).to_pandas()
         d.rename(columns={"ID_Set": "id_set"})[["prompt", "id_set"]].to_parquet(lm_path, index=False)
