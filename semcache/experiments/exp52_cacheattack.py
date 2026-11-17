@@ -189,12 +189,16 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
         for L in SUFFIX_LENGTHS:
             if f"{sname} L={L}" in results["attacks"]:
                 continue
-            texts = []
+            key = f"{sname} L={L}"
+            texts = results.setdefault("texts", {}).setdefault(key, [])      # resume mid-configuration
             for k, v in enumerate(victims):
+                if k < len(texts):
+                    continue
                 a, _ = sur.attack(pay[k], v, L, seed + k)
                 texts.append(a)
+                if len(texts) % 5 == 0:
+                    save_part()
             sc, Xs, ea, ev = decide(texts, victims)
-            key = f"{sname} L={L}"
             results["attacks"][key] = {str(r): hit_rates(sc, thr[r], rng) for r in RECALLS}
             results["attacks"][key]["mean_cosine"] = float(np.einsum("ij,ij->i", ea, ev).mean())
             results["attacks"][key]["mean_length_ratio"] = float(Xs[:, 1 + 2 + 1536 + 2].mean())   # len_ratio_chars
