@@ -18,6 +18,7 @@ Run: python -m semcache.experiments.exp52_cacheattack
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import time
 
@@ -163,7 +164,9 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
         Xs, Xsd = feats(list(attack_texts), list(victim_texts), ea, ev)
         return {"C1": Xs[:, 0], "C2": m2.predict_proba(Xs)[:, 1], "C2-diff": md.predict_proba(Xsd)[:, 1]}, Xs, ea, ev
 
-    results = {"controls": {}, "attacks": {}}
+    part = C.RESULTS_DIR / "raw" / "revision" / "exp52_partial.json"      # resumable: runtimes can be reclaimed
+    results = json.loads(part.read_text(encoding="utf8")) if part.exists() else {"controls": {}, "attacks": {}}
+    save_part = lambda: (part.parent.mkdir(parents=True, exist_ok=True), part.write_text(json.dumps(results), encoding="utf8"))
     pay = [PAYLOADS[i % len(PAYLOADS)] for i in range(len(victims))]
     sc, _, ea, ev = decide(pay, victims)
     results["controls"]["payload alone"] = {str(r): hit_rates(sc, thr[r], rng) for r in RECALLS}
@@ -177,11 +180,14 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
         sc, _, ea, ev = decide(rnd, victims)
         results["controls"][f"payload + random suffix L={L}"] = {str(r): hit_rates(sc, thr[r], rng) for r in RECALLS}
         results["controls"][f"payload + random suffix L={L}"]["mean_cosine"] = float(np.einsum("ij,ij->i", ea, ev).mean())
+    save_part()
 
     from sentence_transformers import SentenceTransformer  # noqa: F401
     for sname, mname in SURROGATES.items():
         sur = Surrogate(mname)
         for L in SUFFIX_LENGTHS:
+            if f"{sname} L={L}" in results["attacks"]:
+                continue
             texts = []
             for k, v in enumerate(victims):
                 a, _ = sur.attack(pay[k], v, L, seed + k)
@@ -193,6 +199,7 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
             results["attacks"][key]["mean_length_ratio"] = float(Xs[:, 1 + 2 + 1536 + 2].mean())   # len_ratio_chars
             results["attacks"][key]["mean_word_jaccard"] = float(Xs[:, 1 + 2 + 1536 + 4].mean())
             results["attacks"][key]["examples"] = texts[:2]
+            save_part()
             r = results["attacks"][key]["0.9"]
             print(f"  {key}: hit rate C1 {r['C1']['rate']:.2f} C2 {r['C2']['rate']:.2f} C2-diff {r['C2-diff']['rate']:.2f} "
                   f"(cos {results['attacks'][key]['mean_cosine']:.2f}) [{time.time() - t0:.0f}s]", flush=True)
