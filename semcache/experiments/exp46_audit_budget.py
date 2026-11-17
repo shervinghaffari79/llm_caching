@@ -40,6 +40,7 @@ WINDOWS = tuple((s, 20_000) for s in range(60_000, 140_000, 20_000))
 BUDGETS = (250, 500, 1000, 2000, 5000, 10000)
 DRAWS = 3
 P_STARS = (0.90, 0.95)
+P_AMEND = (0.70, 0.80)          # amendment 1 (see docs/PREREGISTRATION_round2b.md): targets reachable on this log
 MIN_ACCEPTED = 30
 CAND_FLOOR = 0.6
 CURVE_BUDGETS = (1000, 10000)
@@ -82,7 +83,9 @@ def features(prompts, V, pairs: pd.DataFrame) -> np.ndarray:
     return b.matrix(GROUPS)
 
 
-def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
+def main(window: int, seed: int = C.SEED, tag: str = "", amend: bool = False) -> dict:
+    p_stars = P_AMEND if amend else P_STARS
+    pre = ("amend",) if amend else ()
     banner(f"EXP 46 | audit-budgeted decision rules, window {window}")
     t0 = time.time()
     df = pd.read_parquet(DATA)
@@ -118,7 +121,7 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
 
     with memoized_encoders() as memo:
         memo._bi_cache.update({q: vecs[q] for q in wl.queries()})
-        if ("base", 0) not in done:
+        if not amend and ("base", 0) not in done:
             for thr in C1_GRID:                                   # budget-free C1 curve
                 r = serve("C1_bi_only", wl, NullBackend(), None, bi_threshold=thr)
                 curves.append({"system": "C1", "budget": None, "threshold": thr, **{k: r.stats.get(k) for k in KEYS}})
@@ -129,7 +132,7 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
 
         for budget in BUDGETS:
             for draw in range(DRAWS):
-                if (budget, draw) in done:
+                if (*pre, budget, draw) in done:
                     continue
                 rng = np.random.default_rng(seed * 1000 + budget + draw)
                 sel = pool.iloc[rng.choice(len(pool), size=min(budget, len(pool)), replace=False)].reset_index(drop=True)
@@ -140,24 +143,24 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
                 c2 = fit_final(X[tr], y[tr], GROUPS, seed=seed + draw) if len(np.unique(y[tr])) == 2 else None
                 s_c2 = c2.pipeline.predict_proba(X[ho])[:, 1] if c2 is not None else None
                 s_qqp = qqp.pipeline.predict_proba(X)[:, 1]
-                for p_star in P_STARS:
+                for p_star in p_stars:
                     jobs = [("C1-cal", pick_threshold(sel.cos.to_numpy(), y, p_star), "C1_bi_only", None),
                             ("C2-in", pick_threshold(s_c2, y[ho], p_star) if c2 is not None else None, "C2_bi_geo_lgb", c2),
                             ("C2-qqp-cal", pick_threshold(s_qqp, y, p_star), "C2_bi_geo_lgb", qqp)]
                     for system, thr, key, model in jobs:
                         if thr is None:
-                            record(system, budget, draw, p_star, None, {}, {"infeasible": True})
+                            record(system, budget, draw, p_star, None, {}, {"infeasible": True, "amendment": amend})
                             continue
                         kw = {"bi_threshold": thr} if key == "C1_bi_only" else {"meta_threshold": thr}
                         r = serve(key, wl, NullBackend(), {key: model} if model is not None else None, **kw)
                         record(system, budget, draw, p_star, thr, r.stats, {"audit_pairs": int(len(sel)),
-                                                                          "audit_pos_rate": float(y.mean())})
-                if budget in CURVE_BUDGETS and draw == 0 and c2 is not None:
+                                                                          "audit_pos_rate": float(y.mean()), "amendment": amend})
+                if not amend and budget in CURVE_BUDGETS and draw == 0 and c2 is not None:
                     for thr in C2_GRID:
                         r = serve("C2_bi_geo_lgb", wl, NullBackend(), {"C2_bi_geo_lgb": c2}, meta_threshold=thr)
                         curves.append({"system": "C2-in", "budget": budget, "threshold": thr,
                                        **{k: r.stats.get(k) for k in KEYS}})
-                done.add((budget, draw)); checkpoint()
+                done.add((*pre, budget, draw)); checkpoint()
                 print(f"  budget {budget} draw {draw} done [{time.time() - t0:.0f}s]", flush=True)
 
     out = {"manifest": hardware_manifest({"window": window, "start": start, "n": n, "audit_rows": AUDIT_ROWS,
@@ -165,7 +168,7 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
                                           "generation": "none", "latency_valid": False}, seed=seed),
            "audit_pool": {"pairs": int(len(pool)), "positive_rate": float(pool.y.mean())},
            "workload": wl.meta, "rows": rows, "curves": curves}
-    save_result(out, "exp46_audit_budget", tag=tag or f"w{window}")
+    save_result(out, "exp46_audit_budget", tag=tag or (f"w{window}_amend" if amend else f"w{window}"))
     return out
 
 
@@ -173,5 +176,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--window", type=int, required=True)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--amend", action="store_true", help="amendment 1: audit targets 0.70 and 0.80")
     a = ap.parse_args()
-    main(a.window, tag=a.tag)
+    main(a.window, tag=a.tag, amend=a.amend)

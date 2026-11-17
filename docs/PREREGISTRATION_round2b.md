@@ -56,3 +56,17 @@ If a result is unfavourable, the gap is first diagnosed using the saved per-conf
 new runs on tuning windows only. Exactly one change is specified in writing, with its decision rule, before it is
 run on any evaluation window; evaluation windows are then used once. A change is not adopted because it helps on
 data that guided it.
+
+## Amendment 1 to E1 (17 Nov 2026, after the first cells of windows 2 and 3 had run)
+
+What was seen: the budget-free C1 curve on evaluation windows 2 and 3 reaches at most about 83% precision (7% hit
+ratio, cosine 0.96); no setting reaches 90%. Consequently the pre-registered targets P* = 0.90 and 0.95 were
+infeasible for most small audit samples, and where feasible the realised precision was about 83%.
+
+What is unchanged: the primary decision rules (a) matched-coverage precision and (b) realised-minus-target error,
+the budgets, the audit pool, the windows and the systems. The pre-registered targets are still run and reported,
+including the infeasible rate.
+
+What is added (secondary, labelled as an amendment): the same pipeline with targets P* = 0.70 and 0.80, chosen
+because they lie inside the range the budget-free curve covers. They are reported as exploratory, next to, never
+in place of, the pre-registered targets.
