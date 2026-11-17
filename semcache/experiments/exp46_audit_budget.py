@@ -108,7 +108,7 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
         print(f"  resumed: {len(done)} (budget, draw) cells already done", flush=True)
 
     def checkpoint():
-        save_json({"rows": rows, "curves": curves, "done": sorted(done)}, part.name, directory=REVISION_DIR)
+        save_json({"rows": rows, "curves": curves, "done": sorted(done, key=str)}, part.name, directory=REVISION_DIR)
 
     def record(system, budget, draw, p_star, thr, stats, extra=None):
         r = {"system": system, "budget": budget, "draw": draw, "p_star": p_star, "threshold": thr,
