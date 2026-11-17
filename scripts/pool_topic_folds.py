@@ -9,7 +9,8 @@ import json, sys
 import numpy as np
 from scipy import stats
 
-LAMS, BASE, REF = (0, 1, 2, 5, 10), "WTinyLFU", 25000
+import os
+LAMS, BASE, REF = (0, 1, 2, 5, 10), "WTinyLFU", int(os.environ.get("POOL_REF", 25000))
 
 
 def pooled(files, key):
