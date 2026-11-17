@@ -85,10 +85,11 @@ class Surrogate:
         with torch.no_grad():
             best = loss_of(suf[None])[0].item()
         for _ in range(STEPS):
-            oh = F.one_hot(suf, self.W.shape[0]).float().requires_grad_(True)
-            emb = torch.cat([self.W[head], oh @ self.W, self.W[tail]], dim=0)[None]
-            loss = 1.0 - (self.pooled(embeds=emb)[0] * t).sum()
-            loss.backward()
+            with torch.enable_grad():      # semcache.encoders switches autograd off globally
+                oh = F.one_hot(suf, self.W.shape[0]).float().requires_grad_(True)
+                emb = torch.cat([self.W[head], oh @ self.W, self.W[tail]], dim=0)[None]
+                loss = 1.0 - (self.pooled(embeds=emb)[0] * t).sum()
+                loss.backward()
             grad = oh.grad.masked_fill(~self.allowed[None], float("inf"))
             cand = (-grad).topk(TOPK, dim=1).indices                          # length x TOPK, most negative gradient
             pos = torch.randint(length, (BATCH,), generator=g).to(self.device)
