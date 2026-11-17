@@ -1,6 +1,6 @@
 # E1 aggregate (pre-registered rules)
 
-Windows: [0, 1, 2, 3]; cells done: w0=19, w1=19, w2=30, w3=30
+Windows: [0, 1, 2, 3]; cells done: w0=19, w1=19, w2=37, w3=37
 
 ## Rule (a): precision gain of C2-in over C1 at matched hit ratio
 
@@ -69,9 +69,15 @@ Windows: [0, 1, 2, 3]; cells done: w0=19, w1=19, w2=30, w3=30
 | 0.70 (amendment) | 1000 | C1-cal | 6/6 | 64.3 | 22.2 |
 | 0.70 (amendment) | 1000 | C2-in | 6/6 | 69.2 | 17.8 |
 | 0.70 (amendment) | 1000 | C2-qqp-cal | 6/6 | 62.0 | 22.6 |
-| 0.70 (amendment) | 2000 | C1-cal | 4/4 | 67.0 | 19.7 |
-| 0.70 (amendment) | 2000 | C2-in | 4/4 | 67.1 | 20.2 |
-| 0.70 (amendment) | 2000 | C2-qqp-cal | 4/4 | 65.7 | 19.1 |
+| 0.70 (amendment) | 2000 | C1-cal | 6/6 | 65.9 | 20.7 |
+| 0.70 (amendment) | 2000 | C2-in | 6/6 | 63.8 | 23.1 |
+| 0.70 (amendment) | 2000 | C2-qqp-cal | 6/6 | 64.2 | 20.5 |
+| 0.70 (amendment) | 5000 | C1-cal | 6/6 | 66.2 | 20.4 |
+| 0.70 (amendment) | 5000 | C2-in | 6/6 | 63.4 | 23.7 |
+| 0.70 (amendment) | 5000 | C2-qqp-cal | 6/6 | 64.8 | 20.1 |
+| 0.70 (amendment) | 10000 | C1-cal | 6/6 | 65.3 | 21.4 |
+| 0.70 (amendment) | 10000 | C2-in | 6/6 | 66.1 | 22.2 |
+| 0.70 (amendment) | 10000 | C2-qqp-cal | 6/6 | 63.5 | 21.4 |
 | 0.80 (amendment) | 250 | C1-cal | 4/6 | 81.2 | 8.5 |
 | 0.80 (amendment) | 250 | C2-in | 0/6 | nan | nan |
 | 0.80 (amendment) | 250 | C2-qqp-cal | 4/6 | 77.6 | 9.4 |
@@ -81,9 +87,15 @@ Windows: [0, 1, 2, 3]; cells done: w0=19, w1=19, w2=30, w3=30
 | 0.80 (amendment) | 1000 | C1-cal | 6/6 | 79.3 | 10.1 |
 | 0.80 (amendment) | 1000 | C2-in | 4/6 | 75.1 | 13.4 |
 | 0.80 (amendment) | 1000 | C2-qqp-cal | 6/6 | 72.0 | 13.0 |
-| 0.80 (amendment) | 2000 | C1-cal | 4/4 | 79.5 | 9.9 |
-| 0.80 (amendment) | 2000 | C2-in | 4/4 | 82.1 | 7.5 |
-| 0.80 (amendment) | 2000 | C2-qqp-cal | 4/4 | 78.2 | 9.0 |
+| 0.80 (amendment) | 2000 | C1-cal | 6/6 | 79.0 | 10.2 |
+| 0.80 (amendment) | 2000 | C2-in | 6/6 | 78.5 | 10.4 |
+| 0.80 (amendment) | 2000 | C2-qqp-cal | 6/6 | 77.4 | 9.5 |
+| 0.80 (amendment) | 5000 | C1-cal | 6/6 | 78.6 | 10.4 |
+| 0.80 (amendment) | 5000 | C2-in | 6/6 | 74.6 | 14.6 |
+| 0.80 (amendment) | 5000 | C2-qqp-cal | 6/6 | 77.1 | 9.7 |
+| 0.80 (amendment) | 10000 | C1-cal | 6/6 | 77.9 | 10.9 |
+| 0.80 (amendment) | 10000 | C2-in | 6/6 | 78.3 | 12.6 |
+| 0.80 (amendment) | 10000 | C2-qqp-cal | 6/6 | 75.9 | 10.3 |
 
 ### Paired absolute target error, C2-in vs C1-cal (cells where both are feasible)
 
@@ -91,5 +103,5 @@ Windows: [0, 1, 2, 3]; cells done: w0=19, w1=19, w2=30, w3=30
 |---|---|---|---|---|---|---|
 | 0.90 | 32 | 2.43 | 4.24 | -1.81 | [-2.81, -0.83] | not favourable |
 | 0.95 | 12 | 3.18 | 6.04 | -2.87 | [-4.94, -0.65] | not favourable |
-| 0.70 (amendment) | 14 | 6.07 | 5.68 | +0.39 | [-1.69, +2.67] | not favourable |
-| 0.80 (amendment) | 10 | 3.14 | 5.27 | -2.13 | [-4.75, +0.18] | not favourable |
+| 0.70 (amendment) | 28 | 5.30 | 6.01 | -0.71 | [-2.14, +0.73] | not favourable |
+| 0.80 (amendment) | 24 | 2.36 | 4.69 | -2.33 | [-3.83, -1.04] | not favourable |
