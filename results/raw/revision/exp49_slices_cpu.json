@@ -1,0 +1,506 @@
+{
+  "preregistration": "docs/PREREGISTRATION_round2b.md section E5",
+  "partA_qqp": {
+    "number": {
+      "0.9": {
+        "n": 699,
+        "far": {
+          "C1": 0.6995708154506438,
+          "C2": 0.5908440629470673,
+          "C2-diff": 0.47782546494992845
+        },
+        "delta": {
+          "C2": -0.10872675250357655,
+          "C2-diff": -0.22174535050071537
+        },
+        "ci": {
+          "C2": [
+            -0.221043044017651,
+            -0.007080766563828433
+          ],
+          "C2-diff": [
+            -0.3500407120086685,
+            -0.10964735010706654
+          ]
+        }
+      },
+      "0.8": {
+        "n": 699,
+        "far": {
+          "C1": 0.5321888412017167,
+          "C2": 0.39914163090128757,
+          "C2-diff": 0.2832618025751073
+        },
+        "delta": {
+          "C2": -0.13304721030042915,
+          "C2-diff": -0.24892703862660942
+        },
+        "ci": {
+          "C2": [
+            -0.2867473916948801,
+            0.011791492085661052
+          ],
+          "C2-diff": [
+            -0.385376581274537,
+            -0.114976231633535
+          ]
+        }
+      }
+    },
+    "unit": {
+      "0.9": {
+        "n": 266,
+        "far": {
+          "C1": 0.6203007518796992,
+          "C2": 0.6278195488721805,
+          "C2-diff": 0.6127819548872181
+        },
+        "delta": {
+          "C2": 0.007518796992481258,
+          "C2-diff": -0.007518796992481147
+        },
+        "ci": {
+          "C2": [
+            -0.010666302939371205,
+            0.06551773455377576
+          ],
+          "C2-diff": [
+            -0.03424866310160431,
+            0.0726190476190475
+          ]
+        }
+      },
+      "0.8": {
+        "n": 266,
+        "far": {
+          "C1": 0.4849624060150376,
+          "C2": 0.4924812030075188,
+          "C2-diff": 0.46616541353383456
+        },
+        "delta": {
+          "C2": 0.007518796992481203,
+          "C2-diff": -0.018796992481203034
+        },
+        "ci": {
+          "C2": [
+            -0.03803498096419555,
+            0.07473003754165429
+          ],
+          "C2-diff": [
+            -0.05886001051893407,
+            0.07450238853503177
+          ]
+        }
+      }
+    },
+    "entity": {
+      "0.9": {
+        "n": 6437,
+        "far": {
+          "C1": 0.29734348298897,
+          "C2": 0.2661177567189685,
+          "C2-diff": 0.26409818238309773
+        },
+        "delta": {
+          "C2": -0.03122572627000153,
+          "C2-diff": -0.033245300605872274
+        },
+        "ci": {
+          "C2": [
+            -0.0497112744306251,
+            -0.01829314910846036
+          ],
+          "C2-diff": [
+            -0.05260582525379553,
+            -0.016621931457232265
+          ]
+        }
+      },
+      "0.8": {
+        "n": 6437,
+        "far": {
+          "C1": 0.19465589560354202,
+          "C2": 0.15302159391020662,
+          "C2-diff": 0.15224483455025634
+        },
+        "delta": {
+          "C2": -0.0416343016933354,
+          "C2-diff": -0.04241106105328568
+        },
+        "ci": {
+          "C2": [
+            -0.06992308009960613,
+            -0.021501191093919535
+          ],
+          "C2-diff": [
+            -0.07067470711933901,
+            -0.019393442926160232
+          ]
+        }
+      }
+    },
+    "time": {
+      "0.9": {
+        "n": 399,
+        "far": {
+          "C1": 0.6240601503759399,
+          "C2": 0.5764411027568922,
+          "C2-diff": 0.47368421052631576
+        },
+        "delta": {
+          "C2": -0.04761904761904767,
+          "C2-diff": -0.1503759398496241
+        },
+        "ci": {
+          "C2": [
+            -0.12020399879167765,
+            0.004515058944561611
+          ],
+          "C2-diff": [
+            -0.31406839107830303,
+            -0.05396546620849775
+          ]
+        }
+      },
+      "0.8": {
+        "n": 399,
+        "far": {
+          "C1": 0.5238095238095238,
+          "C2": 0.38345864661654133,
+          "C2-diff": 0.3157894736842105
+        },
+        "delta": {
+          "C2": -0.1403508771929825,
+          "C2-diff": -0.20802005012531333
+        },
+        "ci": {
+          "C2": [
+            -0.2710383601558111,
+            -0.045477380197923314
+          ],
+          "C2-diff": [
+            -0.40315831814339975,
+            -0.08669055027427848
+          ]
+        }
+      }
+    },
+    "negation": {
+      "0.9": {
+        "n": 14307,
+        "far": {
+          "C1": 0.7818550359963654,
+          "C2": 0.7826937862584749,
+          "C2-diff": 0.7841615992171664
+        },
+        "delta": {
+          "C2": 0.0008387502621094445,
+          "C2-diff": 0.002306563220801028
+        },
+        "ci": {
+          "C2": [
+            -0.018763993833650103,
+            0.018059389709926182
+          ],
+          "C2-diff": [
+            -0.014767658348629416,
+            0.025243218492393006
+          ]
+        }
+      },
+      "0.8": {
+        "n": 14307,
+        "far": {
+          "C1": 0.6244495701404906,
+          "C2": 0.6093520654225204,
+          "C2-diff": 0.6110994618019151
+        },
+        "delta": {
+          "C2": -0.015097504717970223,
+          "C2-diff": -0.013350108338575528
+        },
+        "ci": {
+          "C2": [
+            -0.02388794512424979,
+            0.004223644607061715
+          ],
+          "C2-diff": [
+            -0.02238210182910342,
+            0.009851967054201521
+          ]
+        }
+      }
+    },
+    "control": {
+      "0.9": {
+        "n": 14997,
+        "far": {
+          "C1": 0.8694405547776222,
+          "C2": 0.8611722344468894,
+          "C2-diff": 0.8634393545375741
+        },
+        "delta": {
+          "C2": -0.00826832033073277,
+          "C2-diff": -0.006001200240048021
+        },
+        "ci": {
+          "C2": [
+            -0.01720446075838738,
+            8.465481266934754e-05
+          ],
+          "C2-diff": [
+            -0.013989020933100582,
+            0.0033547368457530987
+          ]
+        }
+      },
+      "0.8": {
+        "n": 14997,
+        "far": {
+          "C1": 0.7484830299393211,
+          "C2": 0.7426818697072748,
+          "C2-diff": 0.7440154697606188
+        },
+        "delta": {
+          "C2": -0.005801160232046354,
+          "C2-diff": -0.004467560178702312
+        },
+        "ci": {
+          "C2": [
+            -0.01442230314491807,
+            0.008230230702659826
+          ],
+          "C2-diff": [
+            -0.012419321347694481,
+            0.009587599347726624
+          ]
+        }
+      }
+    }
+  },
+  "partB_external": {
+    "HEROS": {
+      "base": "Synonym+Typo (meaning-preserving)",
+      "slices": {
+        "Antonym": {
+          "0.9": {
+            "C1": 0.821,
+            "C2": 0.828,
+            "C2-diff": 0.813
+          },
+          "0.8": {
+            "C1": 0.65,
+            "C2": 0.657,
+            "C2-diff": 0.645
+          }
+        },
+        "Negation": {
+          "0.9": {
+            "C1": 0.937,
+            "C2": 0.963,
+            "C2-diff": 0.948
+          },
+          "0.8": {
+            "C1": 0.847,
+            "C2": 0.884,
+            "C2-diff": 0.877
+          }
+        },
+        "Random": {
+          "0.9": {
+            "C1": 0.785,
+            "C2": 0.808,
+            "C2-diff": 0.784
+          },
+          "0.8": {
+            "C1": 0.608,
+            "C2": 0.628,
+            "C2-diff": 0.624
+          }
+        },
+        "Negation (antonym)": {
+          "0.9": {
+            "C1": 0.959,
+            "C2": 0.974,
+            "C2-diff": 0.961
+          },
+          "0.8": {
+            "C1": 0.909,
+            "C2": 0.907,
+            "C2-diff": 0.908
+          }
+        },
+        "Synonym": {
+          "0.9": {
+            "C1": 0.966,
+            "C2": 0.962,
+            "C2-diff": 0.962
+          },
+          "0.8": {
+            "C1": 0.901,
+            "C2": 0.9,
+            "C2-diff": 0.9
+          }
+        },
+        "Typo": {
+          "0.9": {
+            "C1": 0.834,
+            "C2": 0.838,
+            "C2-diff": 0.838
+          },
+          "0.8": {
+            "C1": 0.699,
+            "C2": 0.7,
+            "C2-diff": 0.7
+          }
+        }
+      }
+    },
+    "PAWS": {
+      "n": 8000,
+      "positive_rate": 0.442,
+      "auc": {
+        "C1": 0.6520586322049499,
+        "C2": 0.6256847768573931,
+        "C2-diff": 0.6281720582153457
+      },
+      "far_at_recall": {
+        "0.9": {
+          "C1": 0.8048835125448028,
+          "C2": 0.8172043010752689,
+          "C2-diff": 0.8154121863799283
+        },
+        "0.8": {
+          "C1": 0.6169354838709677,
+          "C2": 0.6386648745519713,
+          "C2-diff": 0.6263440860215054
+        }
+      }
+    }
+  },
+  "slice_sizes": {
+    "number": 699,
+    "unit": 266,
+    "entity": 6437,
+    "time": 399,
+    "negation": 14307,
+    "control": 14997
+  },
+  "examples": {
+    "number": [
+      [
+        "Did Donald Trump really rape a 13 year old girl?",
+        "Did Donald Trump really rape a 1 year old girl?"
+      ],
+      [
+        "What were the major effects of the cambodia earthquake, and how do these effects compare to the Valparaiso earthquake in 1822?",
+        "What were the major effects of the cambodia earthquake, and how do these effects compare to the Valparaiso earthquake in 12?"
+      ],
+      [
+        "What's so unlucky about the number 13 and why don't buildings have a 13th floor?",
+        "What's so unlucky about the number 12 and why don't buildings have a 13th floor?"
+      ]
+    ],
+    "unit": [
+      [
+        "Can I get pregnant two days after my period ends?",
+        "Can I get pregnant two weeks after my period ends?"
+      ],
+      [
+        "Can I get pregnant a couple hours before I got my period?",
+        "Can I get pregnant a couple minutes before I got my period?"
+      ],
+      [
+        "What will President-elect Trump's priorities be in his first 100 days in office?",
+        "What will President-elect Trump's priorities be in his first 100 weeks in office?"
+      ]
+    ],
+    "entity": [
+      [
+        "What are Mutual funds? How do they work?",
+        "What are Mutual funds? Woman do they work?"
+      ],
+      [
+        "Did Donald Trump really rape a 13 year old girl?",
+        "Did Donald Warangal really rape a 13 year old girl?"
+      ],
+      [
+        "How much you can save in The Netherlands?",
+        "How much you can save in Envy Netherlands?"
+      ]
+    ],
+    "time": [
+      [
+        "What are the reasons of India China war in 1962?",
+        "What are the reasons of India China war in 1959?"
+      ],
+      [
+        "Which is the best movie of 2016?",
+        "Which is the best movie of 2021?"
+      ],
+      [
+        "What are best c++ books in 2016?",
+        "What are best c++ books in 2015?"
+      ]
+    ],
+    "negation": [
+      [
+        "How can I meet PM modi?",
+        "How can not I meet PM modi?"
+      ],
+      [
+        "How do you remove spray paint from concrete?",
+        "How do not you remove spray paint from concrete?"
+      ],
+      [
+        "What are Mutual funds? How do they work?",
+        "What are not Mutual funds? How do they work?"
+      ]
+    ],
+    "control": [
+      [
+        "How can I meet PM modi?",
+        "how can i meet pm modi"
+      ],
+      [
+        "How do you remove spray paint from concrete?",
+        "how do you remove spray paint from concrete"
+      ],
+      [
+        "What are Mutual funds? How do they work?",
+        "what are mutual funds how do they work"
+      ]
+    ]
+  },
+  "diff_columns": [
+    "n_a",
+    "n_b",
+    "n_eq",
+    "n_diff",
+    "neg_a",
+    "neg_b",
+    "neg_xor",
+    "cap_jac",
+    "cap_diff"
+  ],
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 4,
+      "cpu": "x86_64",
+      "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+      "torch_version": "2.14.1+cpu",
+      "host_cpu": "AMD EPYC 7B12",
+      "host_cpu_count": 8
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "bootstrap": 300,
+    "recalls": [
+      0.9,
+      0.8
+    ]
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "preregistration": "docs/PREREGISTRATION_round2b.md section E6",
+  "pairs": 30000,
+  "positive_rate": 0.5,
+  "thresholds_at_recall_0.90": {
+    "C1": 0.7468963384628295,
+    "C2": 0.3235421124860708,
+    "C2-diff": 0.3085718078721748
+  },
+  "bands": {
+    "QQP default 0.726": {
+      "pairs_in_band": 3961,
+      "positive_rate": 0.4299419338550871,
+      "C1": {
+        "auc": 0.6095771178564166,
+        "accept_rate": 0.358495329462257,
+        "precision": 0.5380281690140845
+      },
+      "C2": {
+        "auc": 0.751245782594879,
+        "accept_rate": 0.3981317849028023,
+        "precision": 0.6506024096385542
+      },
+      "C2-diff": {
+        "auc": 0.7531982584788892,
+        "accept_rate": 0.4200959353698561,
+        "precision": 0.6388221153846154
+      }
+    },
+    "search-log default 0.895": {
+      "pairs_in_band": 8242,
+      "positive_rate": 0.7960446493569522,
+      "C1": {
+        "auc": 0.5791197530229509,
+        "accept_rate": 1.0,
+        "precision": 0.7960446493569522
+      },
+      "C2": {
+        "auc": 0.7436113439056034,
+        "accept_rate": 0.9364231982528513,
+        "precision": 0.8329878206789324
+      },
+      "C2-diff": {
+        "auc": 0.7426695575798477,
+        "accept_rate": 0.9307206988595002,
+        "precision": 0.8335288749837049
+      }
+    }
+  },
+  "mcnemar_at_recall_0.90": {
+    "C2": {
+      "fixed": 1762,
+      "added": 710,
+      "mcnemar_p": 2.438039234868813e-102,
+      "false_hits": {
+        "fixed": 1335,
+        "added": 283,
+        "mcnemar_p": 3.225255877004646e-163
+      },
+      "misses": {
+        "fixed": 427,
+        "added": 427,
+        "mcnemar_p": 1.0
+      }
+    },
+    "C2-diff": {
+      "fixed": 1764,
+      "added": 786,
+      "mcnemar_p": 1.6405961361460683e-85,
+      "false_hits": {
+        "fixed": 1304,
+        "added": 326,
+        "mcnemar_p": 2.367550440775385e-138
+      },
+      "misses": {
+        "fixed": 460,
+        "added": 460,
+        "mcnemar_p": 1.0
+      }
+    }
+  },
+  "taxonomy": {
+    "C2": {
+      "number": {
+        "pairs": 3045,
+        "C1_errors": 569,
+        "fixed": 143,
+        "added": 139
+      },
+      "negation": {
+        "pairs": 2033,
+        "C1_errors": 320,
+        "fixed": 83,
+        "added": 52
+      },
+      "capitalised": {
+        "pairs": 9657,
+        "C1_errors": 1881,
+        "fixed": 865,
+        "added": 172
+      },
+      "question_type": {
+        "pairs": 6205,
+        "C1_errors": 1179,
+        "fixed": 287,
+        "added": 164
+      },
+      "length_ratio": {
+        "pairs": 271,
+        "C1_errors": 48,
+        "fixed": 9,
+        "added": 11
+      },
+      "other": {
+        "pairs": 8789,
+        "C1_errors": 1602,
+        "fixed": 375,
+        "added": 172
+      }
+    },
+    "C2-diff": {
+      "number": {
+        "pairs": 3045,
+        "C1_errors": 569,
+        "fixed": 177,
+        "added": 193
+      },
+      "negation": {
+        "pairs": 2033,
+        "C1_errors": 320,
+        "fixed": 80,
+        "added": 53
+      },
+      "capitalised": {
+        "pairs": 9657,
+        "C1_errors": 1881,
+        "fixed": 851,
+        "added": 189
+      },
+      "question_type": {
+        "pairs": 6205,
+        "C1_errors": 1179,
+        "fixed": 286,
+        "added": 166
+      },
+      "length_ratio": {
+        "pairs": 271,
+        "C1_errors": 48,
+        "fixed": 10,
+        "added": 7
+      },
+      "other": {
+        "pairs": 8789,
+        "C1_errors": 1602,
+        "fixed": 360,
+        "added": 178
+      }
+    }
+  },
+  "total_errors": {
+    "C1": 5599,
+    "C2": 4547,
+    "C2-diff": 4621
+  },
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 4,
+      "cpu": "x86_64",
+      "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+      "torch_version": "2.14.1+cpu",
+      "host_cpu": "AMD EPYC 7B12",
+      "host_cpu_count": 8
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "recall": 0.9
+  }
+}
