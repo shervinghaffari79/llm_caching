@@ -42,6 +42,7 @@ SURROGATES = {"white-box (mpnet)": "sentence-transformers/all-mpnet-base-v2",
               "transfer (MiniLM-L6)": "sentence-transformers/all-MiniLM-L6-v2"}
 STEPS, TOPK, BATCH = 150, 64, 128
 N_VICTIMS = 80
+PARTIAL = "exp52_partial.json"
 RECALLS = (0.90, 0.80)
 
 
@@ -124,8 +125,13 @@ def hit_rates(scores, thr, rng, B=300):
     return out
 
 
-def main(seed: int = C.SEED, tag: str = "") -> dict:
+def main(seed: int = C.SEED, tag: str = "", device: str = "cuda", surrogates=None, lengths=None) -> dict:
     banner("EXP 52 | key-collision robustness (non-adaptive)")
+    global SURROGATES, SUFFIX_LENGTHS
+    if surrogates:
+        SURROGATES = {k: v for k, v in SURROGATES.items() if k.split(" ")[0] in surrogates}
+    if lengths:
+        SUFFIX_LENGTHS = tuple(lengths)
     t0 = time.time()
     rng = np.random.default_rng(seed)
     splits = build_splits()
@@ -165,7 +171,7 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
         Xs, Xsd = feats(list(attack_texts), list(victim_texts), ea, ev)
         return {"C1": Xs[:, 0], "C2": m2.predict_proba(Xs)[:, 1], "C2-diff": md.predict_proba(Xsd)[:, 1]}, Xs, ea, ev
 
-    part = C.RESULTS_DIR / "raw" / "revision" / "exp52_partial.json"      # resumable: runtimes can be reclaimed
+    part = C.RESULTS_DIR / "raw" / "revision" / PARTIAL      # resumable: runtimes can be reclaimed
     results = json.loads(part.read_text(encoding="utf8")) if part.exists() else {"controls": {}, "attacks": {}}
     save_part = lambda: (part.parent.mkdir(parents=True, exist_ok=True), part.write_text(json.dumps(results), encoding="utf8"))
     pay = [PAYLOADS[i % len(PAYLOADS)] for i in range(len(victims))]
@@ -185,7 +191,7 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
 
     from sentence_transformers import SentenceTransformer  # noqa: F401
     for sname, mname in SURROGATES.items():
-        sur = Surrogate(mname)
+        sur = Surrogate(mname, device=device)
         for L in SUFFIX_LENGTHS:
             if f"{sname} L={L}" in results["attacks"]:
                 continue
@@ -209,8 +215,9 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
             print(f"  {key}: hit rate C1 {r['C1']['rate']:.2f} C2 {r['C2']['rate']:.2f} C2-diff {r['C2-diff']['rate']:.2f} "
                   f"(cos {results['attacks'][key]['mean_cosine']:.2f}) [{time.time() - t0:.0f}s]", flush=True)
         del sur
-        torch.cuda.empty_cache()
-    out = {"preregistration": "docs/PREREGISTRATION_round2b.md section E7", "victims": len(victims),
+        if device == "cuda":
+            torch.cuda.empty_cache()
+    out = {"preregistration": "docs/PREREGISTRATION_round2b.md section E7 (+ Amendment 2)", "victims": len(victims), "device": device,
            "steps": STEPS, "topk": TOPK, "batch": BATCH, "payloads": PAYLOADS, "results": results,
            "manifest": hardware_manifest({"recalls": list(RECALLS)}, seed=seed)}
     save_result(out, "exp52_cacheattack", tag=tag)
@@ -220,4 +227,15 @@ def main(seed: int = C.SEED, tag: str = "") -> dict:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default="")
-    main(tag=ap.parse_args().tag)
+    ap.add_argument("--device", default="cuda")
+    ap.add_argument("--victims", type=int, default=N_VICTIMS)
+    ap.add_argument("--steps", type=int, default=STEPS)
+    ap.add_argument("--batch", type=int, default=BATCH)
+    ap.add_argument("--surrogates", default="", help="comma list of: white-box,transfer")
+    ap.add_argument("--lengths", default="", help="comma list, e.g. 10,20")
+    ap.add_argument("--partial", default="exp52_partial.json")
+    a = ap.parse_args()
+    N_VICTIMS, STEPS, BATCH = a.victims, a.steps, a.batch
+    PARTIAL = a.partial
+    main(tag=a.tag, device=a.device, surrogates=[x for x in a.surrogates.split(",") if x] or None,
+         lengths=[int(x) for x in a.lengths.split(",") if x] or None)

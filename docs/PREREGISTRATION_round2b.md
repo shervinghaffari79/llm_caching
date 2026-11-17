@@ -160,3 +160,18 @@ Decision rule: C2 or C2-diff is reported as more robust than C1 when its attack 
 with a 95% bootstrap CI (over victims) excluding 0, for a given suffix length and surrogate; otherwise no robustness
 advantage is claimed. The attack has no fluency penalty (a stronger attack on the embedding, and one that is easy to
 flag by perplexity screening, as the paper itself notes), and the attacker does not know the C2 features.
+
+## Amendment 2 to E7 (17 Nov 2026, written before any reduced-scale E7 result existed)
+
+What happened: four GPU runtimes assigned for E7 were reclaimed by the platform before the run finished and before any
+result file was saved. Only unsaved log lines from one interrupted white-box run exist (not used as results).
+
+Change (compute only, no change to the question, the systems, the operating points or the decision rule): E7 is rerun
+on CPU runtimes at reduced scale: 40 victims (20 LmArena prompts, 20 QQP questions; the set differs from the 80-victim
+design because the sample size changed), 60 GCG steps instead of 150, 48 candidates per step instead of 128, top-k 64
+unchanged. A shorter search is a weaker attack, so attack hit rates are expected to be lower than at full scale and
+absolute values must not be compared with the paper's; only the comparison between systems under the same attack is
+reported. The 20-point decision rule and its bootstrap CI over victims are unchanged; with 40 victims intervals are wide.
+Runs are split over two runtimes by configuration (partial files merged), nothing else differs. The unsaved 80-victim
+numbers seen earlier (white-box L=10: C1 0.19, C2 0.04; L=20: C1 0.68, C2 0.07) played no part in this choice of design
+other than showing that lengths 10 and 20 are the informative ones; they are disclosed here for that reason.
