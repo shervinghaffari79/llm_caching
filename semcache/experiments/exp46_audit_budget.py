@@ -29,7 +29,9 @@ from ..features import build_bundle
 from ..llm import NullBackend
 from ..metaclf import fit_final
 from . import exp40_chronological_transfer as E40
-from ._common import banner, hardware_manifest, memoized_encoders, save_result, serve, train_metas
+from ..reporting import save_json
+from ._common import (REVISION_DIR, banner, hardware_manifest, memoized_encoders, save_result, serve,
+                      train_metas)
 
 DATA = C.DATA_DIR / "external" / "sembenchmark_searchqueries.parquet"
 VECS = C.DATA_DIR / "emb_cache" / "exp30_searchqueries_vectors.npz"
@@ -97,7 +99,16 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
     E40.DATA = DATA
     wl = E40.load_stream(start, n)
     qqp = train_metas(seed=seed, keys=("C2_bi_geo_lgb",))["C2_bi_geo_lgb"]
-    rows, curves = [], []
+    rows, curves, done = [], [], set()
+    part = REVISION_DIR / f"exp46_partial_w{window}.json"
+    if part.exists():                                   # resume after a lost runtime
+        import json
+        d = json.loads(part.read_text(encoding="utf8"))
+        rows, curves, done = d["rows"], d["curves"], {tuple(x) for x in d["done"]}
+        print(f"  resumed: {len(done)} (budget, draw) cells already done", flush=True)
+
+    def checkpoint():
+        save_json({"rows": rows, "curves": curves, "done": sorted(done)}, part.name, directory=REVISION_DIR)
 
     def record(system, budget, draw, p_star, thr, stats, extra=None):
         r = {"system": system, "budget": budget, "draw": draw, "p_star": p_star, "threshold": thr,
@@ -107,15 +118,19 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
 
     with memoized_encoders() as memo:
         memo._bi_cache.update({q: vecs[q] for q in wl.queries()})
-        for thr in C1_GRID:                                       # budget-free C1 curve
-            r = serve("C1_bi_only", wl, NullBackend(), None, bi_threshold=thr)
-            curves.append({"system": "C1", "budget": None, "threshold": thr, **{k: r.stats.get(k) for k in KEYS}})
-        r = serve("C2_bi_geo_lgb", wl, NullBackend(), {"C2_bi_geo_lgb": qqp}, meta_threshold=C.META_PROB_THRESHOLD)
-        record("C2-qqp-default", None, None, None, C.META_PROB_THRESHOLD, r.stats)
+        if ("base", 0) not in done:
+            for thr in C1_GRID:                                   # budget-free C1 curve
+                r = serve("C1_bi_only", wl, NullBackend(), None, bi_threshold=thr)
+                curves.append({"system": "C1", "budget": None, "threshold": thr, **{k: r.stats.get(k) for k in KEYS}})
+            r = serve("C2_bi_geo_lgb", wl, NullBackend(), {"C2_bi_geo_lgb": qqp}, meta_threshold=C.META_PROB_THRESHOLD)
+            record("C2-qqp-default", None, None, None, C.META_PROB_THRESHOLD, r.stats)
+            done.add(("base", 0)); checkpoint()
         print(f"  C1 grid + QQP default done [{time.time() - t0:.0f}s]", flush=True)
 
         for budget in BUDGETS:
             for draw in range(DRAWS):
+                if (budget, draw) in done:
+                    continue
                 rng = np.random.default_rng(seed * 1000 + budget + draw)
                 sel = pool.iloc[rng.choice(len(pool), size=min(budget, len(pool)), replace=False)].reset_index(drop=True)
                 X, y = features(prompts, V, sel), sel.y.to_numpy()
@@ -142,6 +157,7 @@ def main(window: int, seed: int = C.SEED, tag: str = "") -> dict:
                         r = serve("C2_bi_geo_lgb", wl, NullBackend(), {"C2_bi_geo_lgb": c2}, meta_threshold=thr)
                         curves.append({"system": "C2-in", "budget": budget, "threshold": thr,
                                        **{k: r.stats.get(k) for k in KEYS}})
+                done.add((budget, draw)); checkpoint()
                 print(f"  budget {budget} draw {draw} done [{time.time() - t0:.0f}s]", flush=True)
 
     out = {"manifest": hardware_manifest({"window": window, "start": start, "n": n, "audit_rows": AUDIT_ROWS,

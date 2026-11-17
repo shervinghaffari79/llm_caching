@@ -143,7 +143,10 @@ def train_metas(n_train: int | None = None, seed: int = C.SEED,
             out[key] = joblib.load(path).set_inference_threads()
             continue
         if enc is None:
-            enc = encode_frame(df, f"meta{len(df)}", with_cross=True, bi_name=bi_name)
+            # the cross-encoder score is needed only by configurations whose feature groups include it;
+            # C1/C2 never use it, so skipping it changes no feature and no model
+            need_cross = any("cross_score" in META_GROUPS[k] for k in keys)
+            enc = encode_frame(df, f"meta{len(df)}", with_cross=need_cross, bi_name=bi_name)
         X = enc.bundle.matrix(groups)
         out[key] = fit_final(X, enc.y, groups, seed=seed)
         joblib.dump(out[key], path)
