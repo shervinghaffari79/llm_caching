@@ -150,3 +150,13 @@ All claims are reported as tables with 95% bootstrap CIs; wins, ties and losses 
 * Break-even false-hit price and net benefit per 1,000 requests for false-hit prices 0, 1, 2, 5, 10, 20, 50, using the
   no-match subset of Combo as the zero-benefit traffic. Generation cost uses the recorded latency of real answers in
   the repository's answer pool; nothing is simulated.
+
+### E7 clarification (written before any E7 run)
+Operating points: thresholds are set so each system accepts 90% (and 80%) of held-out true-duplicate QQP pairs
+(recall-matched, as in E5). A victim query is "hijacked" when the decision rule accepts the planted attack entry as a
+match for it; the attack entry is treated as the nearest candidate (an upper bound on the attacker, since a real cache
+may have a closer benign entry). Controls: the payload alone and the payload plus a random suffix of equal length.
+Decision rule: C2 or C2-diff is reported as more robust than C1 when its attack hit rate is at least 20 points lower
+with a 95% bootstrap CI (over victims) excluding 0, for a given suffix length and surrogate; otherwise no robustness
+advantage is claimed. The attack has no fluency penalty (a stronger attack on the embedding, and one that is easy to
+flag by perplexity screening, as the paper itself notes), and the attacker does not know the C2 features.
