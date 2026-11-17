@@ -102,3 +102,51 @@ Metrics: precision at 90% and 80% recall (pooled out-of-fold / pooled test), ROC
 Decision rule: a substantive leap is a gain of C2+ over C1 in precision at 90% recall of at least 5 points with a
 95% CI above 0 on Q and at least 3 points on S. If met, a stream-level matched-coverage test follows on windows not
 used here; if not, the result is reported as no leap.
+
+## E5-E9. Failure-mode slices, band diagnostics, attack robustness, benchmark datasets, cost (written before any run)
+
+Systems compared everywhere: C1 (cosine), C2 (QQP-trained, current features), C2-diff (C2 plus three families fixed
+now, regardless of any result: number mismatch F2, negation flag F3, capitalised-token mismatch F5 of E4), and C2+
+(the E4-selected families, if any survive its development rule). Models are trained on QQP only unless stated.
+All claims are reported as tables with 95% bootstrap CIs; wins, ties and losses are all reported.
+
+### E5. Slice-based evaluation
+* Perturbation slices built by deterministic rules (fixed seeds) from QQP duplicate pairs (held-out folds, group-disjoint)
+  and from search-log duplicate pairs: number change, unit change, entity swap, time-period change, negation
+  insertion or removal. One side of the pair is perturbed, so the pair becomes non-equivalent. A label-preserving
+  control slice (case and punctuation) must stay accepted.
+* External minimal pairs, zero-shot from the QQP-trained models: HEROS (dcml0714/Heros, six subsets), SemAntoNeg
+  (3,152 entries), PAWS (labelled paraphrase / non-paraphrase). Their labels are used for scoring only.
+* Matched coverage: each system's threshold is set so it accepts the same fraction, 80% and 90%, of the true
+  duplicate pairs of the unperturbed base set. Metric: false-acceptance rate on each slice. Delta = system minus C1,
+  95% bootstrap CI over source pairs, Holm over slices. A slice "differs" if |Delta| >= 5 points with a CI excluding 0.
+
+### E6. Band diagnostic and decision-level comparison
+* AUC and precision inside the band cosine in 0.726 +/- 0.05 (QQP) and 0.895 +/- 0.05 (search log).
+* McNemar-style paired comparison at 90% matched recall: counts of C1 errors fixed by the other system and of new
+  errors it adds, exact McNemar p-value, and an error taxonomy by detector (number, negation, capitalised, question
+  type, length ratio) for fixed and added errors.
+
+### E7. Key-collision robustness (non-adaptive adversary)
+* Attack model after Zhang et al., "From Similarity to Vulnerability: Key Collision Attack on LLM Semantic Caching"
+  (arXiv 2601.23088): the attacker plants source prompt + adversarial suffix, optimised by a GCG-style token search
+  against a surrogate encoder to minimise 1 - cos(source+suffix, victim) plus a fluency penalty, so that benign victim
+  queries hit it. Our own implementation from the description; the authors' code is not run.
+* Non-adaptive: the attacker knows the encoder (surrogate or target) but not the C2 decision features.
+* Metric: attack hit rate (fraction of victim queries served by the planted entry) at operating points matched on
+  clean benign traffic (same benign hit ratio for every system); suffix lengths 5, 10, 20; surrogate = target and a
+  smaller surrogate (transfer). An adaptive attacker is out of scope and stated as a limitation.
+
+### E8. Benchmark datasets
+* vCache SemBenchmarkClassification (37,836 rows) and SemBenchmarkCombo (27,500 rows: 3,500 LmArena prompts that have
+  no match plus 24,000 classification queries). Combo is not a pure no-hit set: a hit is a guaranteed false hit only
+  for the 3,500 no-match prompts. Hypothesis to check on the data, not assumed: a shared instruction template inflates
+  cosine among short prompts. Report template share, cosine distribution of non-equivalent pairs, and for C1/C2 the
+  false-hit rate on the no-match subset at matched hit ratio on the matchable subset.
+
+### E9. Cost-sensitive analysis
+* Per-request decision overhead on CPU, standard and optimised LightGBM inference (single thread, contiguous float32,
+  booster predict without the sklearn wrapper), with and without the cross-encoder.
+* Break-even false-hit price and net benefit per 1,000 requests for false-hit prices 0, 1, 2, 5, 10, 20, 50, using the
+  no-match subset of Combo as the zero-benefit traffic. Generation cost uses the recorded latency of real answers in
+  the repository's answer pool; nothing is simulated.
