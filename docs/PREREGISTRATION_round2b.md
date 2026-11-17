@@ -70,3 +70,35 @@ including the infeasible rate.
 What is added (secondary, labelled as an amendment): the same pipeline with targets P* = 0.70 and 0.80, chosen
 because they lie inside the range the budget-free curve covers. They are reported as exploratory, next to, never
 in place of, the pre-registered targets.
+
+## E4. Cheap features that target what the cosine misses (gap protocol, written before any E4 run)
+
+Gap: C1 has almost no discriminating information among confusable pairs (top quintile of cosine: AUC 0.62-0.65),
+and the current C2 text features are only lengths, length ratios, word Jaccard and edit ratio. Hypothesis: a few
+cheap lexical features aimed at the usual causes of high-cosine false hits (rare-word mismatches, numbers,
+negation, question type, named entities) raise precision at fixed recall by a substantive margin.
+
+Feature families (each O(length), microseconds per pair):
+* F1 IDF-weighted word Jaccard, maximum IDF over the symmetric difference, IDF mass of the symmetric difference
+  over the IDF mass of the union. IDF comes from unlabelled reference text only (training-fold questions for QQP,
+  the audit-pool rows 0-39,999 for the search log).
+* F2 numbers: count in each question, set equality, count of differing numbers.
+* F3 negation: negation word in question A, in B, and their XOR.
+* F4 question type: wh-word / auxiliary class of the first token, equality.
+* F5 capitalised tokens (entity proxy): Jaccard and count of differences.
+* F6 character 3-gram Jaccard.
+
+Development (only here may a family be chosen): QQP ablation split (3,000 pairs), group-disjoint 5-fold CV.
+A family is kept if adding it to C2 raises the top-quintile-of-cosine AUC by at least 0.01 with a 95% bootstrap
+CI (over question components) above 0. C2+ = C2 plus the kept families.
+
+Confirmation, run once, no further choices: 
+* Q: QQP meta set (30,000 pairs), group-disjoint 5-fold CV, C1 vs C2 vs C2+.
+* S: transfer to the search log. Models trained on all 30,000 QQP pairs; test pairs are the nearest earlier
+  neighbour (cosine >= 0.6, window-local) of each request in rows 60,000-79,999; IDF from rows 0-39,999. No
+  search-log label is used in training or selection.
+Metrics: precision at 90% and 80% recall (pooled out-of-fold / pooled test), ROC-AUC, top-quintile AUC.
+
+Decision rule: a substantive leap is a gain of C2+ over C1 in precision at 90% recall of at least 5 points with a
+95% CI above 0 on Q and at least 3 points on S. If met, a stream-level matched-coverage test follows on windows not
+used here; if not, the result is reported as no leap.
