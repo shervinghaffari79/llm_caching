@@ -47,3 +47,22 @@ LmArena and search-log comparisons are rerun. Settings the paper fixes (lambda 5
 ## Decision rules
 No claim is made that ReuseGate beats SOLAR in SOLAR's setting unless the Stage B gap to the best of SOLAR, SOLAR-A, SOLAR-E at the
 same K has a 95% CI (over sessions x seeds) excluding 0. Negative and tied results are reported as found.
+
+## Stage D (24 Nov 2026, written before any run): SOLAR's synthetic stress tests, to show where our policy is strong and where it is weak
+
+Why: on LoCoMo (Stage A/B) the label-free ReuseGate is significantly below full SOLAR. A more useful comparison states the conditions under which each approach
+wins. The SOLAR repository ships four LLM-free synthetic workloads (numpy embeddings, top-3 cosine retrieval), the same ones behind the paper's Tables 8, 9 and 11:
+cycling (m topics in round robin, K = 10, m in {10, 15, 20, 30, 50}), topic drift (6 phases of 100 steps, K = 20, 30 topics, overlap 1), working-set sweep
+(15 topics x 10 items, 500 queries, K in {5 ... 200}, uniform and Zipf topic choice) and retrieval noise in stream mode (50 topics x 100 items, K in {200, 500, 1000, 5000}).
+
+* D1 (reproduction): the authors' code, unmodified, pinned commit 8d01e93, their seven methods plus embedder_unlimited, seeds 42, 1337, 2024. These need no LLM, so the paper's
+  numbers should reproduce exactly (same code, same seeds); any difference is reported.
+* D2 (our policies, same workloads and seeds, patched copy that only appends classes): `reusegate` = the label-free semantic-demand admission and eviction rule of
+  Stage B (score = hits + 1.0 x demand; demand counts earlier query embeddings with cosine >= 0.5 to the item; TinyLFU admission: a newcomer enters only if its demand
+  exceeds the lowest resident score, ties reject; halving every 1,000 queries; history 4,000) and `reusegate_e` (same scoring, always admits: an admission ablation). Parameters fixed now;
+  the cosine radius 0.5 is a guess for this embedding space and a sensitivity run at 0.3 and 0.7 is reported as a labelled sensitivity, not as the result.
+* Sanity check: the patched copy must reproduce D1 exactly for the authors' methods.
+* Reported: hit rate and F1 per workload and parameter (mean +/- sd over 3 seeds), the working-set crossover K* between each policy and FIFO, the hit-rate recovery after each phase boundary in topic drift, and
+  an explicit list of conditions where each approach wins or loses. The weaknesses we expect to find, stated in advance so they are not selected after the fact: our recency-free demand counts adapt slowly to topic drift
+  (halving is every 1,000 queries and the drift runs are 600 steps), and a TinyLFU-style gate can refuse every newcomer when all residents already have high demand (round-robin cycling).
+  No theoretical guarantee exists for ReuseGate (SOLAR proves a constant competitive ratio under stated assumptions and a sublinear regret bound); this is listed as a limitation.
