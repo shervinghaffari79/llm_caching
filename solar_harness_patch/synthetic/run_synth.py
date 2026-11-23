@@ -1,5 +1,5 @@
 """Run the authors' synthetic experiments (Stage D). Usage, from the repository root of a SOLAR checkout:
-  python /path/run_synth.py <out_dir> <methods comma list> <experiments comma list> [radius]
+  python /path/run_synth.py <out_dir> <methods comma list> <experiments comma list> [radius|-] [period]
 The patched runners module is built by apply_synth_patch.py; with only the authors' methods this is identical to their driver."""
 import sys
 from pathlib import Path
@@ -10,11 +10,13 @@ from synthetic_workloads import runners
 out = Path(sys.argv[1])
 methods = sys.argv[2].split(",")
 exps = sys.argv[3].split(",")
-radius = float(sys.argv[4]) if len(sys.argv) > 4 else None
-if radius is not None:
+radius = float(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[4] != "-" else None
+period = int(sys.argv[5]) if len(sys.argv) > 5 else None   # exploratory sensitivity: aging period (default 1000, pre-registered)
+extra = {k: v for k, v in (("radius", radius), ("period", period)) if v is not None}
+if extra:
     for name in ("reusegate", "reusegate_e"):
         cls = runners._RUNNER_REGISTRY[name]
-        runners._RUNNER_REGISTRY[name] = (lambda c, r=radius: (lambda capacity, retrieve_k=3, seed=42: c(capacity, retrieve_k, seed, radius=r)))(cls)
+        runners._RUNNER_REGISTRY[name] = (lambda c, kw=extra: (lambda capacity, retrieve_k=3, seed=42: c(capacity, retrieve_k, seed, **kw)))(cls)
 seeds = [42, 1337, 2024]
 if "cycling" in exps:
     R.run_cycling(out, seeds, methods)

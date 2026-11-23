@@ -66,3 +66,8 @@ cycling (m topics in round robin, K = 10, m in {10, 15, 20, 30, 50}), topic drif
   an explicit list of conditions where each approach wins or loses. The weaknesses we expect to find, stated in advance so they are not selected after the fact: our recency-free demand counts adapt slowly to topic drift
   (halving is every 1,000 queries and the drift runs are 600 steps), and a TinyLFU-style gate can refuse every newcomer when all residents already have high demand (round-robin cycling).
   No theoretical guarantee exists for ReuseGate (SOLAR proves a constant competitive ratio under stated assumptions and a sublinear regret bound); this is listed as a limitation.
+
+### Stage D amendment (24 Nov 2026, written after the main D2 cycling/drift/working-set results were seen, before the sensitivity runs)
+
+The main D2 result showed the weakness predicted above, far larger than expected: in topic drift ReuseGate's hit rate is 0.19 against 0.95 for FIFO. Three sensitivity runs of `reusegate` and `reusegate_e` only are added, all **labelled sensitivity, not the result**:
+radius 0.3 (D3_r03), radius 0.7 (D3_r07) as pre-registered, and aging period 100 queries instead of 1,000 (D3_p100), which is **exploratory and chosen after seeing the failure**; it tests whether the drift failure is the aging constant or the admission design, and is not used to replace the pre-registered setting.
