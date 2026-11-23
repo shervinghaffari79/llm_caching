@@ -71,3 +71,17 @@ cycling (m topics in round robin, K = 10, m in {10, 15, 20, 30, 50}), topic drif
 
 The main D2 result showed the weakness predicted above, far larger than expected: in topic drift ReuseGate's hit rate is 0.19 against 0.95 for FIFO. Three sensitivity runs of `reusegate` and `reusegate_e` only are added, all **labelled sensitivity, not the result**:
 radius 0.3 (D3_r03), radius 0.7 (D3_r07) as pre-registered, and aging period 100 queries instead of 1,000 (D3_p100), which is **exploratory and chosen after seeing the failure**; it tests whether the drift failure is the aging constant or the admission design, and is not used to replace the pre-registered setting.
+
+### Stage D2 (24 Nov 2026, written before any of these runs): three checks requested after the first Stage D results
+
+**(1) Numeric comparison with the SOLAR paper's synthetic tables.** Tables 8 (cycling), 9 (working-set sweep, uniform), 10 (frozen-pool retrieval-noise probe) and 11 (stream-mode retrieval noise) of arXiv:2607.00394 were transcribed
+(`scripts/compare_solar_paper_tables.py` holds the transcription with the table number next to each value). Our D1 values (authors' code unmodified, 3 seeds) are compared after rounding to the paper's precision; a cell "matches" if it agrees to the paper's last printed digit (+-0.01 for two-decimal tables, +-0.001 for three-decimal ones), otherwise the difference is listed.
+Table 10 needs the authors' frozen-pool mode, which has not been run yet; it is run unmodified as D1-frozen. Nothing is excluded after the comparison.
+
+**(2) ReuseGate radius chosen on separate reference traffic.** Radii {0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9} are run for `reusegate` on **tuning seeds 101, 102, 103** (never used for evaluation) over four families: cycling (5 configurations), topic drift (6: plen 50/100/200/500 at overlap 1, plen 100 at overlap 0 and 2),
+working set uniform (10 capacities) and working set Zipf (10 capacities). Rule (fixed now): for each radius the mean hit rate over seeds and configurations is computed inside each family; the four family means are averaged with equal weight; the radius with the highest value is the **global tuned radius** (ties: the one closest to 0.5).
+Primary = this single global radius. Secondary, reported separately and labelled as optimistic: the best radius per family. `reusegate_e` uses the same radius as `reusegate`. This is in-distribution tuning (same generator, different seeds), which is the analogue of reference traffic in our cache streams and is optimistic for any real stream.
+Expectation stated in advance: the working-set deficit shrinks; the topic-drift failure does not (0.19 against 0.95 for FIFO at the default radius).
+
+**(3) More seeds.** Evaluation seeds 42, 1337, 2024 (as before) plus 7, 11, 13, 17, 19, 23, 29: 10 seeds. All ten methods at the default radius 0.5 (D4-default) and `reusegate`, `reusegate_e` at the tuned radius (D4-tuned), over cycling, topic drift (6 configurations) and working set (uniform and Zipf). The retrieval-noise stream is not repeated (3 seeds showed no separation and it is the slowest run).
+Reported: mean hit rate, and for every pair (policy minus FIFO, policy minus SOLAR-A) the mean paired-by-seed gap with a 95% t-interval (10 seeds); a gap is called a difference only when the interval excludes 0. No multiple-comparison correction is applied to this descriptive table; it is stated as such.
