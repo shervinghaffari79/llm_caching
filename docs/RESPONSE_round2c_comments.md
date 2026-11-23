@@ -50,6 +50,16 @@ variants, tested them on our streams with the regret signal adapted to a respons
 added on LoCoMo. In our streams ReuseGate-R outperforms SOLAR and SOLAR-A at every false-hit price and label-free ReuseGate at prices up to lambda = 2; in
 SOLAR's own setting SOLAR is better than label-free ReuseGate at K = 10, so the two address different problems."
 
+### 1.3 Stress tests from SOLAR's own repository (Stage D; `docs/RESULTS_round2c_solar_synthetic.md`)
+
+Four LLM-free synthetic workloads shipped with SOLAR (authors' code unmodified; our policies added in a copy that reproduces their results exactly, 480 of 480 runs), 3 seeds.
+
+* **Strength:** cyclic access over more items than the cache holds. ReuseGate scores 0.45 / 0.30 / 0.18 at m = 20 / 30 / 50 (K = 10), above SOLAR-A (0.40 / 0.27 / 0.16), SOLAR and LFU; FIFO and LRU fall to about 0.
+* **Weakness 1, severe:** topic drift. ReuseGate 0.19 against FIFO 0.95; SOLAR-A 0.68 and SOLAR 0.62 are also below FIFO but far better than ReuseGate. An exploratory aging period of 100 queries only lifts it to 0.32.
+* **Weakness 2:** working-set sweep with a cache smaller than the working set. ReuseGate is up to 0.16 to 0.23 below FIFO at the pre-registered radius 0.5, while SOLAR-A and SOLAR beat FIFO by up to 0.20 there. A radius of 0.7 (labelled sensitivity) removes most of the deficit under uniform popularity.
+* SOLAR's own weakness: its gate stays closed for large caches (0.02 to 0.07 below FIFO). Retrieval-noise stream: no policy separates (differences below 0.01, seed sd about 0.02).
+* The paper's numbers for these workloads were not compared with ours (no reference outputs ship with the repository).
+
 ## 2. What to write about the SOLAR-A comparison conditions
 
 "Same streams, same features, same reference-traffic budget": the cache-stream runs use identical windows, capacities, thresholds grid and caps for every policy.

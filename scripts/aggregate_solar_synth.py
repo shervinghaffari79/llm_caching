@@ -132,5 +132,20 @@ rn = sorted(cfgs_of("retrieval_noise_stream"), key=lambda c: num(c, r"^K(\d+)"))
 for key, t in (("avg_hit_rate", "Hit rate"), ("avg_precision_at_k", "Precision@3"), ("store_rate", "Admission rate")):
     table(t, "retrieval_noise_stream", rn, lambda c: f"K={num(c, r'^K(\d+)')}", key=key)
 
+# 5. sensitivity (labelled; not the pre-registered result)
+lines.append("## 5. Sensitivity of ReuseGate (labelled: radius 0.3 / 0.7 pre-registered as sensitivity; aging period 100 is exploratory, chosen after seeing the drift failure)\n")
+SENS = {"default (r=0.5, period 1000)": D2, "radius 0.3": load(root / "synthD3_r03"), "radius 0.7": load(root / "synthD3_r07"), "period 100 (exploratory)": load(root / "synthD3_p100")}
+sel = [("cycling", "K10_m10", "cycling m=10"), ("cycling", "K10_m30", "cycling m=30"), ("working_set", "K20_distuniform", "working set uniform K=20"),
+       ("working_set", "K50_distuniform", "working set uniform K=50"), ("zipf/working_set", "K10_distzipf", "working set Zipf K=10"),
+       ("topic_drift", "K20_plen100_ov1", "drift plen 100"), ("topic_drift", "K20_plen50_ov1", "drift plen 50")]
+for m in ("reusegate", "reusegate_e"):
+    lines.append(f"### {m}: hit rate (FIFO in the last row)\n")
+    lines.append("| setting | " + " | ".join(t for _, _, t in sel) + " |")
+    lines.append("|---|" + "---|" * len(sel))
+    for name, D in SENS.items():
+        lines.append(f"| {name} | " + " | ".join("n/a" if not D.get((a, b, m)) else "{:.3f}".format(ms(D[(a, b, m)])[0]) for a, b, _ in sel) + " |")
+    lines.append("| fifo | " + " | ".join("{:.3f}".format(ms(D2[(a, b, "fifo")])[0]) for a, b, _ in sel) + " |")
+    lines.append("")
+
 out.write_text("\n".join(lines))
 print("wrote", out, len(lines), "lines")
