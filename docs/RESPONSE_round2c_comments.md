@@ -59,7 +59,7 @@ Four LLM-free synthetic workloads shipped with SOLAR (authors' code unmodified; 
 * **Weakness 2:** working-set sweep with a cache smaller than the working set. ReuseGate is up to 0.16 to 0.23 below FIFO at the pre-registered radius 0.5, while SOLAR-A and SOLAR beat FIFO by up to 0.20 there. A radius of 0.7 (labelled sensitivity) removes most of the deficit under uniform popularity.
 * SOLAR's own weakness: its gate stays closed for large caches (0.02 to 0.07 below FIFO). Retrieval-noise stream: no policy separates (differences below 0.01, seed sd about 0.02).
 * Reproduction check: all 66 transcribed cells of the SOLAR paper's synthetic Tables 8, 9, 10 and 11 match our run of the authors' code.
-* Follow-up with 10 seeds and a radius tuned on separate seeds (0.8): the small-cache deficit against FIFO disappears (no working-set configuration significantly below FIFO except Zipf K=75, -0.010), but SOLAR-A is still ahead at K = 10 to 20 (by 0.05 to 0.13), and the topic-drift failure is unchanged (0.70 to 0.78 below FIFO).
+* Follow-up with 10 seeds and a radius tuned on separate seeds (0.8): the small-cache deficit against FIFO disappears (no working-set configuration significantly below FIFO except Zipf K=75, -0.010), but SOLAR-A is still ahead at K = 10 to 20 (by 0.05 to 0.13), and the topic-drift failure is unchanged (0.70 to 0.79 below FIFO).
 
 ## 2. What to write about the SOLAR-A comparison conditions
 
