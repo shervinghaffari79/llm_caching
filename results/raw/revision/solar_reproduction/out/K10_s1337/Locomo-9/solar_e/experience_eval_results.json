@@ -1,0 +1,49 @@
+{
+  "method": "solar_e",
+  "dataset": "Locomo-9",
+  "num_samples": 40,
+  "avg_f1": 0.30856692490516024,
+  "std_f1": 0.40143677519229154,
+  "first_half_f1": 0.3803807303807304,
+  "second_half_f1": 0.23675311942959004,
+  "learning_slope": -0.007803760997613766,
+  "improvement": -0.14362761095114035,
+  "store_rate": 1.0,
+  "total_stored": 40,
+  "dislike_count": 29,
+  "like_count": 11,
+  "dislike_store_rate": 1.0,
+  "final_experience_memory_size": 10,
+  "corpus_size": 568,
+  "experience_capacity": 10,
+  "corpus_load_time": 13.554128408432007,
+  "category_f1": {
+    "adversarial": {
+      "avg": 0.14285714285714285,
+      "std": 0.34992710611188266,
+      "n": 14
+    },
+    "open-domain": {
+      "avg": 0.470936303515489,
+      "std": 0.4225138805703585,
+      "n": 13
+    },
+    "temporal": {
+      "avg": 0.27222222222222225,
+      "std": 0.23875965496604773,
+      "n": 8
+    },
+    "multi-hop": {
+      "avg": 0.4085454545454546,
+      "std": 0.48317257324602986,
+      "n": 5
+    }
+  },
+  "avg_latency_ms": 970.7940757274628,
+  "warmup": {
+    "num_samples": 164,
+    "avg_f1": 0.2612439380287525,
+    "store_rate": 1.0,
+    "final_experience_memory_size": 10
+  }
+}
