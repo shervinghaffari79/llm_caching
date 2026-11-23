@@ -74,6 +74,9 @@ def tune_specs() -> list[dict]:
     return out + [{"kind": k} for k in ("LRU", "LFU", "SphereLFU", "LeCaR")]
 
 
+EXTRA_KINDS = ("FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "SOLAR-E", "SOLAR-A", "SOLAR")
+
+
 def build(spec: dict, cap: int, data: str, seed: int):
     k, acc = spec["kind"], SERVE[data][2]
     if k in ("LRU", "LFU"):
@@ -89,6 +92,21 @@ def build(spec: dict, cap: int, data: str, seed: int):
         h = spec["mult"] * cap
         return WindowSemanticDemandPolicy(capacity=cap, window_frac=spec["window"], radius=radius,
                                           half_life=h, history=int(min(4 * h, 16 * cap)))
+    if k in EXTRA_KINDS:
+        from ..policies_extra import (ARCPolicy, FIFOPolicy, GDSFPolicy, S3FIFOPolicy, SIEVEPolicy, SolarPolicy,
+                                      SOLAR_VARIANTS)
+        if k == "FIFO":
+            return FIFOPolicy()
+        if k == "ARC":
+            return ARCPolicy(cap)
+        if k == "S3FIFO":
+            return S3FIFOPolicy(cap)
+        if k == "SIEVE":
+            return SIEVEPolicy()
+        if k == "GDSF":
+            return GDSFPolicy()
+        lam, gam = SOLAR_VARIANTS[int(spec.get("variant") or 0)]
+        return SolarPolicy(cap, {"SOLAR-E": "E", "SOLAR-A": "A", "SOLAR": "full"}[k], lam=lam, gamma=gam, seed=seed)
     if k == "SemDemand":
         h = spec["mult"] * cap
         return SemanticDemandPolicy(radius=min(0.999, acc + spec["radius_offset"]), aging="exp",

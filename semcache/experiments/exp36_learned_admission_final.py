@@ -190,7 +190,7 @@ def _policy(t: dict, wl, vecs):
         V = np.stack([vecs[e.query] for e in wl.events]).astype(np.float32)
         topics = [e.topic_id for e in wl.events]
         return ServableOracle(topics, *future_pairs(V, topics, DOMAIN["log"]["match"]))
-    spec = SELECTED["WTinyLFU"] if fam == "WTinyLFU" else {"kind": fam}
+    spec = SELECTED["WTinyLFU"] if fam == "WTinyLFU" else {"kind": fam, "variant": t.get("h")}
     return build(spec, cap, kind, C.SEED if kind == "log" else t["data"][1])
 
 

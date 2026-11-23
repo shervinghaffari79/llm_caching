@@ -61,6 +61,9 @@ REF_SIZES = (0, 1_000, 10_000, 50_000)
 BASE = ("LRU", "LFU", "SphereLFU", "WTinyLFU")
 LEARNED = "Learned[match]"
 WITH_GROUP = False         # also evaluate ReuseGate-R (group-label variant, labeled tuning traffic) at the largest reference size
+VARIANTS = {"SOLAR-E": (0, 1), "SOLAR-A": (0, 1, 2, 3), "SOLAR": (0, 1, 2, 3)}   # hyper-parameter grid indices (policies_extra.SOLAR_VARIANTS)
+EXTRA_BASE = ("LeCaR", "SemanticDecay_fixed", "FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "SOLAR-E", "SOLAR-A", "SOLAR")
+BASELINE_ONLY = False      # run only the baseline select/eval tasks (writes the checkpoint) and stop; lets families run on several machines
 BASE_SFX = None            # reuse the baseline checkpoint of an earlier run (baseline runs do not depend on the learned model)
 CAUSAL_TUNING = False      # score each tuning window with a model fitted on earlier tuning windows only
 
@@ -97,7 +100,8 @@ def main(workers: int, tag: str = "") -> dict:
     dim = len(next(iter(vecs.values())))
 
     # ---- baselines: selection on the tuning windows, evaluation on the evaluation windows
-    cfgs_b = [{"family": f, "kappa": None, "tau": tau} for f in BASE for tau in TAUS]
+    cfgs_b = [{"family": f, "kappa": None, "tau": tau, **({"h": v} if v is not None else {})}
+              for f in BASE for tau in TAUS for v in (VARIANTS.get(f) or (None,))]
     sel = [{"stage": "select", "data": ["log", *w], "cap": c, **cfg} for cfg in cfgs_b for w in SEL for c in CAPS]
     got = E36.run_tasks(sel, workers, ck_base)
     by_cfg = defaultdict(list)
@@ -111,6 +115,10 @@ def main(workers: int, tag: str = "") -> dict:
     res_b = defaultdict(lambda: defaultdict(dict))
     for t, r in zip(ev, got):
         res_b[E36._cfg(t)][json.dumps(t["data"])][str(t["cap"])] = r
+
+    if BASELINE_ONLY:
+        print("  baseline-only run finished (checkpoint written)", flush=True)
+        return {}
 
     def per_window(res, cfg, fn):
         return [float(np.mean([fn(r) for r in caps.values()])) for _, caps in sorted(res[cfg].items())]
@@ -258,17 +266,28 @@ if __name__ == "__main__":
     ap.add_argument("--base-suffix", default=None)
     ap.add_argument("--with-group", action="store_true")
     ap.add_argument("--lecar", action="store_true")
+    ap.add_argument("--extra-baselines", action="store_true")
+    ap.add_argument("--only-families", default="", help="comma list: restrict BASE to these families (use with --baseline-only)")
+    ap.add_argument("--baseline-only", action="store_true")
+    ap.add_argument("--ref-max-only", action="store_true", help="evaluate ReuseGate at the largest reference size only")
     a = ap.parse_args()
     CAUSAL_TUNING = a.causal_tuning
     WITH_GROUP = a.with_group
     if a.lecar:
         BASE = BASE + ("LeCaR",)
+    if a.extra_baselines:
+        BASE = BASE + EXTRA_BASE
+    if a.only_families:
+        BASE = tuple(x for x in a.only_families.split(",") if x)
+    BASELINE_ONLY = a.baseline_only
+    if a.ref_max_only:
+        REF_SIZES = (max(REF_SIZES),)
     BASE_SFX = None if a.base_suffix is None else ("" if a.base_suffix == "none" else a.base_suffix)
     if a.smoke:                 # code check on a few thousand queries
         REF = (0, 3000)
         TUNE = ((3000, 1500), (4500, 1500))
         EVAL = ((6000, 1500), (7500, 1500))
         CAPS, TAUS, LAMBDAS, REF_SIZES = (200,), (0.895, 0.94), (0, 1), (0, 1000, 3000)
-        BASE = ("LRU", "WTinyLFU")
+        BASE = ("LRU", "WTinyLFU") + (EXTRA_BASE if a.extra_baselines else ())
         a.tag = "smoke"
     main(a.workers, a.tag)

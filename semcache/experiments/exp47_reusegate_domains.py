@@ -71,9 +71,19 @@ if __name__ == "__main__":
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--with-group", action="store_true")
+    ap.add_argument("--extra-baselines", action="store_true", help="add FIFO, ARC, S3-FIFO, SIEVE, GDSF, SOLAR-E/A/full")
+    ap.add_argument("--lecar", action="store_true")
+    ap.add_argument("--only-families", default="")
+    ap.add_argument("--baseline-only", action="store_true")
+    ap.add_argument("--ref-max-only", action="store_true")
+    ap.add_argument("--tag-suffix", default="")
     a = ap.parse_args()
     total = build()
     E37.CAUSAL_TUNING = True
+    if a.lecar:
+        E37.BASE = E37.BASE + ("LeCaR",)
+    if a.extra_baselines:
+        E37.BASE = E37.BASE + E37.EXTRA_BASE
     E37.WITH_GROUP = a.with_group
     if DOMAIN == "lmarena":
         blk = total // 3
@@ -88,12 +98,17 @@ if __name__ == "__main__":
         E37.TUNE = tuple((50_000 + k * 10_000, 10_000) for k in range(5))
         E37.EVAL = tuple((100_000 + k * 10_000, 10_000) for k in range(5))
         E37.REF_SIZES = (0, 50_000)
+    if a.only_families:
+        E37.BASE = tuple(x for x in a.only_families.split(",") if x)
+    E37.BASELINE_ONLY = a.baseline_only
+    if a.ref_max_only:
+        E37.REF_SIZES = (max(E37.REF_SIZES),)
     tag = f"{DOMAIN}_rot{a.rotation}" if DOMAIN == "lmarena" else "tripclick"
     if a.smoke:
         E37.REF = (0, 2000)
         E37.TUNE = ((2000, 1500), (3500, 1500), (5000, 1500))
         E37.EVAL = ((6500, 1500), (8000, 1500))
         E37.CAPS, E37.TAUS, E37.LAMBDAS, E37.REF_SIZES = (200,), (0.895, 0.94), (0, 1), (0, 2000)
-        E37.BASE = ("LRU", "WTinyLFU")
+        E37.BASE = ("LRU", "WTinyLFU") + (E37.EXTRA_BASE if a.extra_baselines else ())
         tag += "_smoke"
-    E37.main(a.workers, tag)
+    E37.main(a.workers, tag + a.tag_suffix)
