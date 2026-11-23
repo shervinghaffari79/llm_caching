@@ -51,3 +51,27 @@ Setting: the four LLM-free synthetic workloads shipped with the SOLAR repository
 
 Synthetic embeddings (Gaussian topic clusters, dim 128); 3 seeds; the ReuseGate parameters were fixed before the run and the radius guess was poor for this space; the period-100 variant is exploratory and was chosen after seeing the failure;
 no numerical comparison with the paper's own tables; AUTO/SCION not run.
+
+## 6. Follow-up checks (Stage D2, pre-registered in `docs/PREREGISTRATION_round2c.md`)
+
+**6.1 Numeric comparison with the SOLAR paper** (`docs/RESULTS_round2c_solar_paper_comparison.md`). The paper's Tables 8 (cycling), 9 (working set), 10 (frozen-pool probe) and 11 (stream-mode retrieval noise) were transcribed (66 cells) and compared with the authors' code run unmodified:
+**66 of 66 cells match** to the paper's printed precision. The synthetic part of SOLAR's paper therefore reproduces exactly. (The paper's tables list FIFO and SOLAR only in Tables 9 and 11; in Table 11 the paper's claim "SOLAR dominates FIFO at every K" rests on gaps of 0.004 to 0.008 with a seed sd of about 0.02, which is not a statistically separated difference.)
+
+**6.2 Radius chosen on separate reference traffic.** On tuning seeds 101 to 103 (never used for evaluation) the pre-registered rule chose a **global radius of 0.8** (family-mean hit rate 0.576 at 0.8 and 0.9, 0.526 at 0.5; per-family radii: cycling 0.8, drift 0.6, working set uniform 0.7, Zipf 0.8). This is in-distribution tuning (same generator, other seeds), optimistic for real traffic.
+
+**6.3 Ten evaluation seeds** (3 original + 7 new; paired by seed, 95% t-interval, descriptive; retrieval noise not repeated). 31 configurations: cycling 5, topic drift 6, working set uniform 10, Zipf 10. Counts of ReuseGate better / worse / not distinguishable (interval excludes 0), full table in `docs/RESULTS_round2c_solar_synthetic_d2_tables.md`:
+
+| comparison | default radius 0.5 | tuned global radius 0.8 | tuned per-family |
+|---|---|---|---|
+| ReuseGate vs FIFO | 4 / 20 / 7 | 7 / 7 / 17 | 8 / 7 / 16 |
+| ReuseGate vs SOLAR-A | 9 / 18 / 4 | 15 / 12 / 4 | 15 / 12 / 4 |
+| ReuseGate vs SOLAR | 9 / 18 / 4 | 15 / 10 / 6 | 15 / 9 / 7 |
+
+What changed and what did not:
+
+* **The working-set deficit against FIFO was a calibration problem.** At the default radius ReuseGate is significantly below FIFO in 20 of 31 configurations; with the tuned radius it is not significantly below FIFO in any working-set configuration except Zipf K=75 (-0.010 [-0.017, -0.003]); in uniform K=5, 75, 100 it is slightly above (+0.036, +0.006, +0.001).
+* **SOLAR-A still wins small caches.** Uniform popularity K = 10, 15, 20: ReuseGate minus SOLAR-A = -0.111, -0.130, -0.079 (all intervals exclude 0); Zipf K = 10, 15, 20: -0.114, -0.069, -0.045. From K = 50 (uniform) and K = 50 (Zipf) upward ReuseGate is ahead of SOLAR-A (+0.025 to +0.070), because SOLAR-A's gate stays closed.
+* **Cycling:** unchanged or better. At m=10 the tuned radius removes the default-radius loss (-0.180 against FIFO) and equals FIFO (0.900); at m = 15 to 50 ReuseGate beats FIFO by +0.60, +0.45, +0.30, +0.18 and beats SOLAR-A by +0.057, +0.050, +0.031, +0.018 (intervals exclude 0). The gain over SOLAR-A is small in absolute terms.
+* **Topic drift: the failure is not a calibration problem.** ReuseGate is 0.70 to 0.78 below FIFO at every phase length and overlap, with the default, the tuned global and the tuned per-family radius (all intervals exclude 0), and 0.31 to 0.73 below SOLAR-A.
+
+Limits: radius tuned on the same generator; 10 seeds; the +/- counts are descriptive, with no multiplicity correction; several "wins" over FIFO are tiny (0.001 to 0.006); the retrieval-noise stream was run with 3 seeds only.
