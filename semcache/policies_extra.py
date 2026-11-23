@@ -408,3 +408,128 @@ class SolarPolicy(EvictionPolicy):
     def on_evict(self, eid):
         for d in (self.a, self.b, self.born, self.used, self.hits, self.vec):
             d.pop(eid, None)
+
+
+class SolarOfficialPolicy(EvictionPolicy):
+    """SOLAR with the constants and rules of the authors' reference code (github.com/ysunbp/SOLAR, commit 8d01e93), no free parameters.
+
+    Fixed as in their configs and code: lambda_cost 5, Lipschitz prior 2 (initial tau = sqrt(2 lambda / 2) = 2.236), adaptive window 30,
+    L_hat = EMA(0.7/0.3) of max(2 x std(last 30 regrets), 0.1), tau = clip(sqrt(2 lambda / L_hat), 0.1, 5), regret accumulated and
+    compared with '>' , reset to 0 on a store; bootstrap: store everything while fewer than min(max(K/2, 5), 25) entries are live;
+    Thompson sampling with optimistic prior Beta(2, 1), alpha += 1 for a retrieved (served) entry, beta += 0.05 every 5th request for
+    the others, score = Beta sample + 0.3 x novelty, novelty = 1 - exp(-d / (2 dim)) with d the mean squared L2 distance to the two
+    nearest other entries (computed once, at insertion, because the term is at most ~0.006 for unit vectors and changes a decision only
+    in exact ties). SOLAR-A (mode "A") evicts by 0.4 exp(-age/100) + 0.3 access_count/requests + 0.3 diversity, as in solar_a.py.
+    Adaptation to a response cache (not in the paper): the regret of a request is 1 for a miss and 1 - cosine(request, served entry)
+    for a hit (label-free, no feedback; the harness of the paper uses 1 - F1 of the agent's answer); the regret accumulates at every
+    request and the gate is evaluated when a miss produces a new entry. mode "E" always admits.
+    """
+
+    def __init__(self, capacity: int, mode: str = "full", dim: int = 768, seed: int = 0):
+        assert mode in ("E", "A", "full")
+        self.name = {"E": "SOLARo-E", "A": "SOLARo-A", "full": "SOLARo"}[mode]
+        self.mode, self.c, self.dim = mode, int(capacity), dim
+        self.lam, self.lip = 5.0, 2.0
+        self.tau = float(np.sqrt(2 * self.lam / self.lip))
+        self.window, self.tmin, self.tmax = 30, 0.1, 5.0
+        self.rng = np.random.default_rng(seed)
+        self.t = 0
+        self.regret = 0.0
+        self.hist: list[float] = []
+        self.L_ema: float | None = None
+        self.a: dict[int, float] = {}
+        self.b: dict[int, float] = {}
+        self.nov: dict[int, float] = {}
+        self.vec: dict[int, np.ndarray] = {}
+        self.born: dict[int, int] = {}
+        self.last: dict[int, int] = {}
+        self.cnt: dict[int, int] = {}
+        self._cost = 1.0
+        self._served: set[int] = set()
+        self._new: int | None = None
+        self._admit = True
+        self.stores = 0
+
+    def _novelty_of(self, v: np.ndarray, others: list[int]) -> float:
+        if len(others) < 1:
+            return 0.5
+        M = np.stack([self.vec[e] for e in others])
+        d2 = np.sort(((M - v) ** 2).sum(axis=1))[:2]
+        return float(1.0 - np.exp(-d2.mean() / (2 * self.dim)))
+
+    def on_query(self, vec):
+        self._finish()
+        self.t += 1
+        self._q = vec
+        self._cost, self._served = 1.0, set()
+
+    def _finish(self):
+        """Close the previous request: a hit contributes its regret here (a miss contributed 1 when its entry was produced);
+        every 5th request the entries that were not served get beta += 0.05, as in the reference code."""
+        if self.t == 0:
+            return
+        if self._served:
+            self.regret += self._cost
+            self.hist.append(self._cost)
+        if self.t % 5 == 0:
+            for e in self.a:
+                if e not in self._served:
+                    self.b[e] += 0.05
+
+    def on_hit(self, entry, vec):
+        e = entry.eid
+        v = self.vec.get(e)
+        sim = float(np.clip(np.dot(self._q, v), 0.0, 1.0)) if v is not None else 1.0
+        self._cost = 1.0 - sim
+        self._served.add(e)
+        self.a[e] += 1.0
+        self.last[e] = self.t
+        self.cnt[e] += 1
+
+    def on_insert(self, entry, vec):
+        e = entry.eid
+        self._new = e
+        v = np.asarray(vec, dtype=np.float32)
+        self.regret += 1.0
+        self.hist.append(1.0)
+        others = list(self.a)
+        self.a[e], self.b[e], self.born[e], self.last[e], self.cnt[e] = 2.0, 1.0, self.t, self.t, 0
+        self.nov[e] = self._novelty_of(v, others)
+        self.vec[e] = v
+        self._admit = True
+        if self.mode != "E":
+            if len(self.hist) >= self.window:
+                Lh = max(float(np.std(self.hist[-self.window:])) * 2, 0.1)
+                self.L_ema = Lh if self.L_ema is None else 0.7 * self.L_ema + 0.3 * Lh
+                self.tau = float(np.clip(np.sqrt(2 * self.lam / self.L_ema), self.tmin, self.tmax))
+            boot = min(max(self.c // 2, 5), 25)
+            live = len(self.a) - 1
+            if live < boot:
+                self._admit, self.regret = True, 0.0
+            elif self.regret > self.tau:
+                self._admit, self.regret = True, 0.0
+            else:
+                self._admit = False
+        if self._admit:
+            self.stores += 1
+
+    def choose_victim(self, cache, vb):
+        if not self._admit:
+            return self._new
+        ids = [e for e in self.a if e != self._new]
+        if not ids:
+            return self._new
+        if self.mode == "A":
+            age = np.array([self.t - self.last[e] for e in ids], dtype=np.float64)
+            freq = np.array([self.cnt[e] for e in ids], dtype=np.float64) / max(self.t, 1)
+            div = np.array([self.nov[e] for e in ids])
+            score = 0.4 * np.exp(-age / 100.0) + 0.3 * freq + 0.3 * div
+        else:
+            a = np.array([self.a[e] for e in ids])
+            b = np.array([self.b[e] for e in ids])
+            score = self.rng.beta(a, b) + 0.3 * np.array([self.nov[e] for e in ids])
+        return ids[int(np.argmin(score))]
+
+    def on_evict(self, eid):
+        for d in (self.a, self.b, self.nov, self.vec, self.born, self.last, self.cnt):
+            d.pop(eid, None)
