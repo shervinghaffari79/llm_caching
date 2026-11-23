@@ -126,7 +126,7 @@ def main(workers: int, tag: str = "") -> dict:
     lam_fn = lambda lam: (lambda r: r["correct_hit_ratio_pct"] - lam * r["false_hit_rate_pct"])
     metrics = ("correct_hit_ratio_pct", "false_hit_rate_pct", "net_hit_ratio_pct", "precision_of_hits_pct")
 
-    out_R, tests = {}, {}
+    out_R, tests, PW = {}, {}, {}
     for R in REF_SIZES:
         print(f"\n  --- reference size R = {R}", flush=True)
         ref = NullRef(dim) if R == 0 else E36.Ref(queries_ref[:R], vecs)
@@ -209,6 +209,7 @@ def main(workers: int, tag: str = "") -> dict:
                 row["Learned[group]"] = {"tau": grp[0][lam]["tau"], "kappa": grp[0][lam]["kappa"],
                                          "score": seed_ci(per_window(grp[1], cg, lam_fn(lam))),
                                          **{m_: seed_ci(per_window(grp[1], cg, lambda r, m_=m_: r[m_])) for m_ in metrics}}
+                PW.setdefault(str(R), {}).setdefault(str(lam), {})["Learned[group]"] = per_window(grp[1], cg, lam_fn(lam))
                 for b in BASE:
                     tests[f"R{R}|lambda{lam}|Learned[group]-{b}"] = paired_seed_test(
                         per_window(grp[1], cg, lam_fn(lam)), per_window(res_b, E36._cfg(chosen_b[lam][b]), lam_fn(lam)))
@@ -216,7 +217,9 @@ def main(workers: int, tag: str = "") -> dict:
             print(f"    lambda {lam}: " + "  ".join(f"{f} {row[f]['score']['mean']:.2f}" for f in (LEARNED, *BASE)),
                   flush=True)
             a = per_window(res_l, cl, lam_fn(lam))
+            PW.setdefault(str(R), {}).setdefault(str(lam), {})[LEARNED] = a
             for b in BASE:
+                PW[str(R)][str(lam)][b] = per_window(res_b, E36._cfg(chosen_b[lam][b]), lam_fn(lam))
                 tests[f"R{R}|lambda{lam}|{LEARNED}-{b}"] = paired_seed_test(
                     a, per_window(res_b, E36._cfg(chosen_b[lam][b]), lam_fn(lam)))
         out_R[str(R)] = {"auc": auc, "feature_importance": imp, "table": table,
@@ -251,7 +254,7 @@ def main(workers: int, tag: str = "") -> dict:
                                           "caps": list(CAPS), "taus": list(TAUS), "lambdas": list(LAMBDAS),
                                           "reference_sizes": list(REF_SIZES), "lightgbm": E34.LGB,
                                           "half_life_x_cap": E36.HALF_LIFE}),
-           "by_reference_size": out_R, "tests": tests, "primary_keys": primary_keys,
+           "by_reference_size": out_R, "per_window_scores": PW, "tests": tests, "primary_keys": primary_keys,
            "secondary_keys": secondary_keys, "group_keys": group_keys, "decision": decision}
     save_result(out, "exp37_causal_reusegate", tag=tag)
     return out
