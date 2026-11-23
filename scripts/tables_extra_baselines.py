@@ -46,8 +46,10 @@ def ttest(a, b):
 
 
 out = ["# Round 2c: ReuseGate against further replacement and admission policies", "",
-       "Definitions are in `scripts/tables_extra_baselines.py`. All baselines are reimplemented from their published descriptions; "
-       "no third-party code was run. SOLAR's settings the paper does not give were tuned on the tuning windows only (grid in "
+       "Definitions are in `scripts/tables_extra_baselines.py`. FIFO, ARC, S3-FIFO, SIEVE, GDSF and DynamicAdaptiveClimb are reimplemented from their published descriptions "
+       "(no third-party code was run for them). SOLAR is ported twice: the first reimplementation follows the paper, and the second (`SOLARo`) uses the constants of the authors' public code, "
+       "with the regret signal adapted because a response cache has no graded feedback. The authors' own code was run only in the LoCoMo and synthetic experiments "
+       "(`docs/RESULTS_round2c_solar_harness.md`, `docs/RESULTS_round2c_solar_synthetic.md`). SOLAR's settings the paper does not give were tuned on the tuning windows only (grid in "
        "`semcache/policies_extra.py`). DynamicAdaptiveClimb runs with its resizing disabled so that every policy has the same capacity budget. "
        "Score = correct-hit % minus lambda x false-hit %, mean over cache capacities, per evaluation window.", ""]
 for spec in sys.argv[2:]:
