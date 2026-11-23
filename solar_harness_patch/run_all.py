@@ -34,9 +34,10 @@ echo SERVER_READY
 # task list: breadth first over seeds and sessions; K=10 before K=50; baselines in the unmodified copy, ReuseGate in the patched copy
 python3 - <<'PY'
 tasks = []
-for K in (10, 50):
+SIZE = "__SIZE__"
+for K in ((10, 50) if SIZE == "4b" else (10,)):                      # the 27B run is capped at K = 10 (user decision)
     for seed in (42, 1337, 2024):
-        for i in range(10):
+        for i in range(10 if SIZE == "4b" else 5):                    # ... and at five sessions (Locomo-0 to Locomo-4)
             base = "fifo lru lfu arc solar_a solar_e solar" + (" embedder_message" if K == 50 else "")
             tasks.append(f"/content/SOLAR {K} {seed} Locomo-{i} {base}")
             tasks.append(f"/content/SOLAR_patched {K} {seed} Locomo-{i} reusegate")
@@ -56,7 +57,7 @@ cat /content/tasks.txt | xargs -P 8 -L 1 bash /content/run_one.sh
 echo ALL_TASKS_DONE > /content/all_done.txt
 """)
 
-open("/content/run_all.sh", "w").write(SCRIPT.replace("__SERVE__", SERVE).replace("__OUT__", OUT).replace("__EXTRA_PIP__", EXTRA_PIP))
+open("/content/run_all.sh", "w").write(SCRIPT.replace("__SERVE__", SERVE).replace("__OUT__", OUT).replace("__EXTRA_PIP__", EXTRA_PIP).replace("__SIZE__", SIZE))
 subprocess.Popen(["setsid", "nohup", "bash", "/content/run_all.sh"], stdout=open("/content/run_all.log", "w"), stderr=subprocess.STDOUT,
                  stdin=subprocess.DEVNULL, close_fds=True)
 print("run_all launched")
