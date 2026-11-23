@@ -65,14 +65,19 @@ if __name__ == "__main__":
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--with-group", action="store_true")
     ap.add_argument("--lecar", action="store_true")
+    ap.add_argument("--extra-baselines", action="store_true", help="also run the round-2c replacement/admission policies (FIFO, ARC, S3-FIFO, SIEVE, GDSF, DynamicAdaptiveClimb, SOLAR-E/-A/full in two ports, ...)")
+    ap.add_argument("--ref-max-only", action="store_true", help="evaluate ReuseGate at the largest reference size only")
+    ap.add_argument("--tag-suffix", default="", help="appended to the result tag so earlier result files are not overwritten")
     a = ap.parse_args()
     build()
     E37.CAUSAL_TUNING = True
     E37.WITH_GROUP = a.with_group
     if a.lecar:
         E37.BASE = E37.BASE + ("LeCaR",)
-    E37.REF_SIZES = (0, 50_000)
-    tag = f"rot{a.rotation}"
+    if a.extra_baselines:
+        E37.BASE = E37.BASE + E37.EXTRA_BASE
+    E37.REF_SIZES = (50_000,) if a.ref_max_only else (0, 50_000)
+    tag = f"rot{a.rotation}{a.tag_suffix}"
     if a.smoke:
         E37.REF = (0, 3000)
         E37.TUNE = ((3000, 1500), (4500, 1500), (6000, 1500))
