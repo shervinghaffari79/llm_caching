@@ -74,7 +74,7 @@ def tune_specs() -> list[dict]:
     return out + [{"kind": k} for k in ("LRU", "LFU", "SphereLFU", "LeCaR")]
 
 
-EXTRA_KINDS = ("FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "SOLAR-E", "SOLAR-A", "SOLAR")
+EXTRA_KINDS = ("FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "DynamicAdaptiveClimb", "SOLAR-E", "SOLAR-A", "SOLAR")
 
 
 def build(spec: dict, cap: int, data: str, seed: int):
@@ -93,7 +93,7 @@ def build(spec: dict, cap: int, data: str, seed: int):
         return WindowSemanticDemandPolicy(capacity=cap, window_frac=spec["window"], radius=radius,
                                           half_life=h, history=int(min(4 * h, 16 * cap)))
     if k in EXTRA_KINDS:
-        from ..policies_extra import (ARCPolicy, FIFOPolicy, GDSFPolicy, S3FIFOPolicy, SIEVEPolicy, SolarPolicy,
+        from ..policies_extra import (ARCPolicy, DACPolicy, FIFOPolicy, GDSFPolicy, S3FIFOPolicy, SIEVEPolicy, SolarPolicy,
                                       SOLAR_VARIANTS)
         if k == "FIFO":
             return FIFOPolicy()
@@ -105,6 +105,8 @@ def build(spec: dict, cap: int, data: str, seed: int):
             return SIEVEPolicy()
         if k == "GDSF":
             return GDSFPolicy()
+        if k == "DynamicAdaptiveClimb":
+            return DACPolicy(cap)
         lam, gam = SOLAR_VARIANTS[int(spec.get("variant") or 0)]
         return SolarPolicy(cap, {"SOLAR-E": "E", "SOLAR-A": "A", "SOLAR": "full"}[k], lam=lam, gamma=gam, seed=seed)
     if k == "SemDemand":

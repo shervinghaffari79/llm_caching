@@ -16,6 +16,9 @@ Policies
                     keeps its position.
   GDSFPolicy        Cherkasova (1998), Greedy-Dual-Size-Frequency: H = L + frequency * cost / size, L = H of the last victim;
                     cost = 1 (one generation), size = prompt + completion tokens of the entry.
+  DACPolicy         Berend et al. (2025), DynamicAdaptiveClimb (arXiv:2511.21235), promotion logic exactly as in their
+                    Algorithm 2 with the dynamic resizing disabled (capacity is the experiment's budget, so the size K stays
+                    fixed; the resize rule would change the budget being compared).
   SolarPolicy       Sun, Cao and Lam (2026), SOLAR (arXiv:2607.00394), three variants:
                       mode "E"    always admit; eviction by Thompson sampling over per-entry Beta posteriors plus a novelty
                                   bonus;
@@ -272,6 +275,43 @@ class GDSFPolicy(EvictionPolicy):
     def on_evict(self, eid):
         for d in (self.freq, self.size, self.H, self.seq):
             d.pop(eid, None)
+
+
+class DACPolicy(EvictionPolicy):
+    """DynamicAdaptiveClimb with fixed K. cache[1] is the top. A hit at position i climbs actualJump = max(1, min(jump, i-1))
+    places; a miss inserts the newcomer at position K - actualJump + 1 (actualJump = max(1, min(K-1, jump))) and the bottom
+    entry is evicted. jump starts at K, falls by 1 on a hit (down to -K/2) and rises by 1 on a miss."""
+    name = "DynamicAdaptiveClimb"
+
+    def __init__(self, capacity: int) -> None:
+        self.K = int(capacity)
+        self.jump = self.K
+        self.order: list[int] = []                  # top first
+
+    def on_hit(self, entry, vec):
+        e = entry.eid
+        if self.jump > -self.K // 2:
+            self.jump -= 1
+        i = self.order.index(e) + 1
+        actual = max(1, min(self.jump, i - 1))
+        if i > 1:
+            self.order.pop(i - 1)
+            self.order.insert(i - actual - 1, e)
+
+    def on_insert(self, entry, vec):
+        self.jump += 1
+        actual = max(1, min(self.K - 1, self.jump))
+        pos = max(1, self.K - actual + 1)           # 1-indexed position in the post-eviction list
+        self.order.insert(min(pos, len(self.order) + 1) - 1, entry.eid)
+
+    def choose_victim(self, cache, vb):
+        return self.order[-1]
+
+    def on_evict(self, eid):
+        try:
+            self.order.remove(eid)
+        except ValueError:
+            pass
 
 
 class SolarPolicy(EvictionPolicy):
