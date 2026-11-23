@@ -13,6 +13,7 @@ pip install -q uv
 [ -d SOLAR ] || (git clone -q https://github.com/ysunbp/SOLAR.git && cd SOLAR && git checkout -q 8d01e9340eb3a9ab77761366e57a29c53dafefe7)
 [ -x hvenv/bin/python ] || (uv venv --clear hvenv --python 3.12 && uv pip install --python hvenv/bin/python -q -r SOLAR/requirements.txt)
 [ -x qvenv/bin/vllm ] || (uv venv --clear qvenv --python 3.12 && uv pip install --python qvenv/bin/python -q vllm openai huggingface_hub)
+[ -f /content/prior_results.tgz ] && tar xzf /content/prior_results.tgz -C /content   # results of earlier (reclaimed) runtimes: the harness skips finished runs
 rm -rf SOLAR_patched && tar xzf /content/solar_patch.tgz && cp -r SOLAR SOLAR_patched && hvenv/bin/python solar_harness_patch/apply_patch.py /content/SOLAR_patched
 unset UV_SYSTEM_PYTHON HF_TOKEN
 nohup /content/qvenv/bin/vllm serve Qwen/Qwen3-4B --dtype float16 --served-model-name gpt-4o-mini \
