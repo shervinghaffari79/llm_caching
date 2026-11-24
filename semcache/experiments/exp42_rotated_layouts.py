@@ -67,6 +67,8 @@ if __name__ == "__main__":
     ap.add_argument("--lecar", action="store_true")
     ap.add_argument("--extra-baselines", action="store_true", help="also run the round-2c replacement/admission policies (FIFO, ARC, S3-FIFO, SIEVE, GDSF, DynamicAdaptiveClimb, SOLAR-E/-A/full in two ports, ...)")
     ap.add_argument("--ref-max-only", action="store_true", help="evaluate ReuseGate at the largest reference size only")
+    ap.add_argument("--only-families", default="", help="comma list: restrict the baselines to these families (use with --baseline-only; lets families run on several machines)")
+    ap.add_argument("--baseline-only", action="store_true", help="run only the baseline select/eval tasks (writes the checkpoint) and stop")
     ap.add_argument("--tag-suffix", default="", help="appended to the result tag so earlier result files are not overwritten")
     a = ap.parse_args()
     build()
@@ -76,6 +78,9 @@ if __name__ == "__main__":
         E37.BASE = E37.BASE + ("LeCaR",)
     if a.extra_baselines:
         E37.BASE = E37.BASE + E37.EXTRA_BASE
+    if a.only_families:
+        E37.BASE = tuple(x for x in a.only_families.split(",") if x)
+    E37.BASELINE_ONLY = a.baseline_only
     E37.REF_SIZES = (50_000,) if a.ref_max_only else (0, 50_000)
     tag = f"rot{a.rotation}{a.tag_suffix}"
     if a.smoke:
