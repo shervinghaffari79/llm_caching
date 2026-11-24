@@ -21,12 +21,10 @@ SOLAR was designed for an agent's experience memory with a graded feedback score
 signal had to be adapted (1 for a miss, 1 - cosine for a hit; no labels). Two ports give the same picture, so the conclusion does not depend on
 which one is used.
 
-* Search log (5 evaluation windows), score = correct-hit % - lambda x false-hit %, ReuseGate minus SOLAR-A (reference constants):
-  +2.14 at lambda 0, +1.06, +0.49, +0.17 at lambda 5 and -0.32 at lambda 10 (label-free; the intervals exclude 0 at lambda 0 to 5 and at lambda 10, the last in SOLAR-A's favour). ReuseGate-R: +2.15, +1.47, +0.83, +0.53, +0.55 for lambda 0, 1, 2, 5, 10.
-* LmArena (9 windows, first port only): ReuseGate minus SOLAR-A = +3.29, +2.46, +1.64, -1.09, -3.52 for lambda 0, 1, 2, 5, 10 (all Holm-adjusted
-  p < 0.001); ReuseGate-R: +3.63, +6.31, +9.53, +17.41, +20.71.
+* Search log, 15 evaluation windows over the three block rotations, score = correct-hit % - lambda x false-hit %. Label-free ReuseGate minus SOLAR-A, first reimplementation: +1.84, +0.95, +0.53, +0.19 [+0.11, +0.27], -0.17 [-0.31, -0.03] for lambda 0, 1, 2, 5, 10 (the lambda 10 gap is not significant after the Holm correction, p = 0.141). Against the port with the authors' constants (SOLAR-A): +2.14, +1.04, +0.56, +0.18, -0.29 [-0.39, -0.19] (SOLAR-A better at lambda 10, Holm p < 0.001). ReuseGate-R minus first-port SOLAR-A: +1.88, +1.34, +0.94, +0.54, +0.73; minus reference-constants SOLAR-A: +2.18, +1.44, +0.97, +0.53, +0.60.
+* LmArena (9 windows, three rotations; both SOLAR ports): label-free ReuseGate minus first-port SOLAR-A = +3.32, +2.50, +1.68, -1.07, -3.49 for lambda 0, 1, 2, 5, 10; minus reference-constants SOLAR-A = +2.70, +1.73, +0.76, -2.83, -5.64 (all Holm p < 0.02). ReuseGate-R minus first-port SOLAR-A: +3.59, +6.28, +9.50, +17.40, +20.72; minus reference-constants SOLAR-A: +2.96, +5.51, +8.58, +15.63, +18.57. The reference-constants SOLAR-A is the strongest SOLAR variant at high false-hit prices (it admits very few entries, about 10%), so the advantage of label-free ReuseGate over SOLAR holds at lambda <= 2 and reverses at lambda >= 5 on LmArena.
 * SOLAR-A, SOLAR-E and SOLAR are within about 0.5 points of W-TinyLFU, ARC and SIEVE on these streams. Against the best-in-hindsight bound over
-  GDSF, S3-FIFO, SIEVE, DynamicAdaptiveClimb and W-TinyLFU, label-free ReuseGate is ahead at lambda 0 to 2 and behind at lambda 10; ReuseGate-R is ahead at every lambda.
+  GDSF, S3-FIFO, SIEVE, DynamicAdaptiveClimb and W-TinyLFU, label-free ReuseGate is ahead on the search log at lambda 0 to 5 (+1.67, +0.85, +0.49, +0.12) and behind at lambda 10 (-0.32); on LmArena it is ahead at lambda 0 to 2 and behind at lambda 5 and 10 (-1.60, -4.07). ReuseGate-R is ahead of the bound at every lambda on both datasets.
 
 ### 1.2 In SOLAR's own setting (LoCoMo, the authors' code unmodified, K = 10, 3 seeds x 10 sessions)
 
@@ -65,7 +63,7 @@ Four LLM-free synthetic workloads shipped with SOLAR (authors' code unmodified; 
 
 "Same streams, same features, same reference-traffic budget": the cache-stream runs use identical windows, capacities, thresholds grid and caps for every policy.
 SOLAR-A uses no learned features, so there is no feature set to match; its gate state starts empty on each window and its few free settings were tuned on the
-same tuning windows as ReuseGate (first port) or fixed to the authors' constants (second port). ReuseGate's reference traffic (50,000 requests) is used by
+same tuning windows as ReuseGate (first port) or fixed to the authors' constants (second port). The search-log numbers are pooled over three block rotations (15 windows); the Colab-run ReuseGate in these tables differs from the Modal-run numbers of the main tables by up to about 0.1 points (cross-machine nondeterminism of the learned model; the baselines match exactly). ReuseGate's reference traffic (50,000 requests) is used by
 ReuseGate and not by SOLAR-A, which learns online; this asymmetry favours ReuseGate and should be stated.
 
 ## 3. Draft text: answer-cache admission versus KV-cache reuse (MeritKV)
@@ -88,7 +86,7 @@ caching) are different."
 
 * AUTO and SCION as methods: not reproducible without their offline training traces. Replaced by a labelled bound, not by a claim of equivalence.
 * LHD and W-TinyLFU-AV (other portfolio members): not implemented.
-* SOLAR on TripClick: not run (the data needs a token); on LmArena the reference-constants port was not run.
+* SOLAR on TripClick: not run (the data needs a token). The reference-constants SOLAR port is now run on both the search log and LmArena (all three rotations).
 * A learned ReuseGate in SOLAR's setting: not attempted (about 160 warm-up examples per session).
 
 ## 5. Needs the co-author

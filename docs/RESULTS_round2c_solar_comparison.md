@@ -54,51 +54,54 @@ Decision rule fixed in advance: a claim that ReuseGate beats SOLAR needs the 95%
 
 The paper's SOLAR is built for an agent's experience memory with a graded feedback score. A response cache has no such score, so the regret signal is adapted (1 for a miss, 1 - cosine for a hit; no labels). Two ports are reported: the first reimplementation (parameters tuned on tuning windows only) and a port with the constants of the authors' code (no free parameters). Score = correct-hit % minus lambda x false-hit %, mean over cache capacities and evaluation windows.
 
-### Search log (SemBenchmarkSearchQueries, 5 evaluation windows)
+### Search log (SemBenchmarkSearchQueries, 15 evaluation windows over three block rotations)
 
-
+Rotation 0 is `exp54_searchlog_extra_v2.json`; rotations 1 and 2 are the Colab reruns with the same protocol. ReuseGate comes from the same runs as the baselines (it differs from the Modal-run numbers of the main tables by up to about 0.05 points because of cross-machine nondeterminism of the learned model).
 
 | policy | λ=0 | λ=1 | λ=2 | λ=5 | λ=10 |
 |---|---|---|---|---|---|
-| ReuseGate (label-free) | 4.47 | 2.22 | 1.07 | 0.25 | -0.73 |
-| ReuseGate-R (uses earlier group labels) | 4.49 | 2.62 | 1.41 | 0.61 | 0.14 |
-| WTinyLFU | 2.65 | 1.26 | 0.55 | 0.13 | -0.40 |
-| SOLAR-E (first reimplementation) | 2.61 | 1.27 | 0.58 | 0.06 | -0.51 |
-| SOLAR-A (first reimplementation) | 2.64 | 1.25 | 0.60 | 0.07 | -0.50 |
-| SOLAR (first reimplementation) | 2.61 | 1.27 | 0.57 | 0.06 | -0.50 |
-| SOLAR-E (reference constants) | 2.67 | 1.29 | 0.58 | 0.10 | -0.44 |
-| SOLAR-A (reference constants) | 2.34 | 1.16 | 0.58 | 0.09 | -0.41 |
-| SOLAR (reference constants) | 2.57 | 1.23 | 0.58 | 0.09 | -0.45 |
-| GDSF | 2.67 | 1.30 | 0.58 | 0.07 | -0.49 |
-| S3FIFO | 2.53 | 1.24 | 0.57 | 0.08 | -0.47 |
-| SIEVE | 2.83 | 1.38 | 0.63 | 0.07 | -0.50 |
-| DynamicAdaptiveClimb | 2.55 | 1.25 | 0.58 | 0.07 | -0.49 |
-| ARC | 2.83 | 1.38 | 0.63 | 0.07 | -0.50 |
-| FIFO | 2.45 | 1.22 | 0.57 | 0.08 | -0.47 |
-| LRU | 2.55 | 1.24 | 0.57 | 0.07 | -0.49 |
-| LFU | 2.83 | 1.38 | 0.63 | 0.07 | -0.50 |
+| ReuseGate (label-free) | 4.44 | 2.14 | 1.11 | 0.27 | -0.66 |
+| ReuseGate-R (uses earlier group labels) | 4.48 | 2.54 | 1.52 | 0.62 | 0.23 |
+| WTinyLFU | 2.61 | 1.20 | 0.57 | 0.11 | -0.41 |
+| SOLAR-E (first reimplementation) | 2.57 | 1.20 | 0.56 | 0.09 | -0.47 |
+| SOLAR-A (first reimplementation) | 2.60 | 1.20 | 0.59 | 0.08 | -0.49 |
+| SOLAR (first reimplementation) | 2.57 | 1.20 | 0.56 | 0.07 | -0.51 |
+| SOLAR-E (reference constants) | 2.63 | 1.23 | 0.57 | 0.11 | -0.43 |
+| SOLAR-A (reference constants) | 2.30 | 1.10 | 0.56 | 0.09 | -0.37 |
+| SOLAR (reference constants) | 2.55 | 1.18 | 0.58 | 0.09 | -0.44 |
+| GDSF | 2.60 | 1.20 | 0.56 | 0.08 | -0.47 |
+| S3FIFO | 2.49 | 1.18 | 0.55 | 0.09 | -0.45 |
+| SIEVE | 2.77 | 1.28 | 0.60 | 0.10 | -0.47 |
+| DynamicAdaptiveClimb | 2.52 | 1.19 | 0.56 | 0.09 | -0.46 |
+| ARC | 2.77 | 1.28 | 0.60 | 0.10 | -0.47 |
+| FIFO | 2.43 | 1.17 | 0.55 | 0.10 | -0.44 |
+| LRU | 2.52 | 1.19 | 0.56 | 0.09 | -0.46 |
+| LFU | 2.77 | 1.28 | 0.60 | 0.10 | -0.47 |
 
 ReuseGate minus SOLAR-A, delta [95% CI] over evaluation windows:
 
 | variant | SOLAR-A version | λ=0 | λ=1 | λ=2 | λ=5 | λ=10 |
 |---|---|---|---|---|---|---|
-| ReuseGate | first | +1.83 [+1.76, +1.91] | +0.97 [+0.85, +1.09] | +0.47 [+0.25, +0.68] | +0.18 [-0.08, +0.45] | -0.23 [-0.66, +0.20] |
-| ReuseGate | reference constants | +2.14 [+2.03, +2.24] | +1.06 [+0.97, +1.15] | +0.49 [+0.26, +0.71] | +0.17 [+0.06, +0.27] | -0.32 [-0.49, -0.16] |
-| ReuseGate-R | first | +1.85 [+1.77, +1.93] | +1.37 [+1.27, +1.47] | +0.81 [+0.66, +0.95] | +0.54 [+0.38, +0.70] | +0.64 [+0.31, +0.98] |
-| ReuseGate-R | reference constants | +2.15 [+2.07, +2.23] | +1.47 [+1.43, +1.50] | +0.83 [+0.74, +0.92] | +0.53 [+0.38, +0.67] | +0.55 [+0.01, +1.10] |
+| ReuseGate | first | +1.84 [+1.78, +1.89] | +0.95 [+0.88, +1.01] | +0.53 [+0.44, +0.62] | +0.19 [+0.11, +0.27] | -0.17 [-0.31, -0.03] |
+| ReuseGate | reference constants | +2.14 [+2.08, +2.21] | +1.04 [+0.95, +1.13] | +0.56 [+0.46, +0.65] | +0.18 [+0.13, +0.23] | -0.29 [-0.39, -0.19] |
+| ReuseGate-R | first | +1.88 [+1.82, +1.94] | +1.34 [+1.27, +1.40] | +0.94 [+0.85, +1.03] | +0.54 [+0.46, +0.62] | +0.73 [+0.59, +0.86] |
+| ReuseGate-R | reference constants | +2.18 [+2.12, +2.25] | +1.44 [+1.37, +1.50] | +0.97 [+0.88, +1.06] | +0.53 [+0.45, +0.61] | +0.60 [+0.43, +0.78] |
 
 ### LmArena prompts (3 rotations, 9 evaluation windows)
 
-The reference-constants port was not run on LmArena, so only the first reimplementation appears.
+ReuseGate, ReuseGate-R, W-TinyLFU and the reference-constants SOLAR port come from the reruns `exp37_causal_reusegate_cpu_lmarena_rot{0,1,2}_solaro.json` (same protocol, same windows); the other policies come from `exp54_lmarena_rot{0,1,2}_extra.json`.
 
 | policy | λ=0 | λ=1 | λ=2 | λ=5 | λ=10 |
 |---|---|---|---|---|---|
-| ReuseGate (label-free) | 19.49 | 15.33 | 11.17 | 0.19 | -6.17 |
-| ReuseGate-R (uses earlier group labels) | 19.83 | 19.18 | 19.06 | 18.68 | 18.06 |
+| ReuseGate (label-free) | 19.53 | 15.37 | 11.21 | 0.20 | -6.14 |
+| ReuseGate-R (uses earlier group labels) | 19.79 | 19.15 | 19.03 | 18.67 | 18.07 |
 | WTinyLFU | 16.69 | 13.15 | 9.61 | 1.08 | -3.09 |
 | SOLAR-E (first reimplementation) | 16.16 | 12.78 | 9.41 | 1.25 | -2.67 |
 | SOLAR-A (first reimplementation) | 16.20 | 12.87 | 9.53 | 1.27 | -2.65 |
 | SOLAR (first reimplementation) | 16.26 | 12.83 | 9.43 | 1.20 | -2.23 |
+| SOLAR-E (reference constants) | 16.26 | 12.89 | 9.52 | 1.21 | -2.66 |
+| SOLAR-A (reference constants) | 16.83 | 13.64 | 10.45 | 3.04 | -0.49 |
+| SOLAR (reference constants) | 16.39 | 12.97 | 9.54 | 0.93 | -2.88 |
 | GDSF | 16.60 | 13.24 | 9.88 | 1.20 | -2.55 |
 | S3FIFO | 15.78 | 12.57 | 9.36 | 1.36 | -2.45 |
 | SIEVE | 16.74 | 13.13 | 9.52 | 0.97 | -3.39 |
@@ -112,8 +115,10 @@ ReuseGate minus SOLAR-A, delta [95% CI] over evaluation windows:
 
 | variant | SOLAR-A version | λ=0 | λ=1 | λ=2 | λ=5 | λ=10 |
 |---|---|---|---|---|---|---|
-| ReuseGate | first | +3.29 [+3.10, +3.48] | +2.46 [+2.27, +2.66] | +1.64 [+1.43, +1.85] | -1.09 [-1.38, -0.80] | -3.52 [-4.15, -2.90] |
-| ReuseGate-R | first | +3.63 [+3.43, +3.83] | +6.31 [+6.08, +6.54] | +9.53 [+9.15, +9.90] | +17.41 [+16.77, +18.06] | +20.71 [+19.71, +21.72] |
+| ReuseGate | first | +3.32 [+3.16, +3.49] | +2.50 [+2.33, +2.67] | +1.68 [+1.47, +1.89] | -1.07 [-1.35, -0.79] | -3.49 [-4.11, -2.87] |
+| ReuseGate | reference constants | +2.70 [+2.51, +2.88] | +1.73 [+1.53, +1.93] | +0.76 [+0.51, +1.01] | -2.83 [-3.30, -2.36] | -5.64 [-6.56, -4.73] |
+| ReuseGate-R | first | +3.59 [+3.37, +3.81] | +6.28 [+6.08, +6.49] | +9.50 [+9.14, +9.86] | +17.40 [+16.79, +18.01] | +20.72 [+19.76, +21.69] |
+| ReuseGate-R | reference constants | +2.96 [+2.77, +3.15] | +5.51 [+5.20, +5.83] | +8.58 [+8.08, +9.07] | +15.63 [+15.11, +16.16] | +18.57 [+17.85, +19.28] |
 
 ## 5. How the first SOLAR reimplementation differed from the authors' code
 
