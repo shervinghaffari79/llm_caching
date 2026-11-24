@@ -96,7 +96,7 @@ L += ["", "**Reading.** In the agent-memory setting of the SOLAR paper the label
       "A learned ReuseGate was not attempted because each session offers only about 160 warm-up examples.", ""]
 
 # cache-stream comparison
-def pw_table(files, title, extra_note=""):
+def _load_pw(files):
     pw = {}
     for f in files:
         d = json.load(open(ROOT + f))
@@ -104,6 +104,16 @@ def pw_table(files, title, extra_note=""):
         for lam, fams in d["per_window_scores"][Rm].items():
             for fam, v in fams.items():
                 pw.setdefault(lam, {}).setdefault(fam, []).extend(v)
+    return pw
+
+
+def pw_table(files, title, extra_note="", over=()):
+    """over: files whose families replace those of `files` (same windows), so ReuseGate is paired with a ReuseGate from the same run."""
+    pw = _load_pw(files)
+    for lam_, fams_ in _load_pw(over).items():
+        for fam_, v_ in fams_.items():
+            assert len(v_) == len(pw[lam_].get(fam_, v_)), (fam_, len(v_))
+            pw[lam_][fam_] = v_
     lam = list(pw)
     out = [f"### {title}", "", extra_note, "", "| policy | " + " | ".join(f"λ={l}" for l in lam) + " |", "|---|" + "---|" * len(lam)]
     order = ["Learned[match]", "Learned[group]", "WTinyLFU", "SOLAR-E", "SOLAR-A", "SOLAR", "SOLARo-E", "SOLARo-A", "SOLARo", "GDSF", "S3FIFO", "SIEVE",
@@ -136,9 +146,15 @@ L += ["## 4. SOLAR as an adapted baseline in the semantic-cache streams (our set
       "The paper's SOLAR is built for an agent's experience memory with a graded feedback score. A response cache has no such score, so the regret signal "
       "is adapted (1 for a miss, 1 - cosine for a hit; no labels). Two ports are reported: the first reimplementation (parameters tuned on tuning windows only) "
       "and a port with the constants of the authors' code (no free parameters). Score = correct-hit % minus lambda x false-hit %, mean over cache capacities and evaluation windows.", ""]
-L += pw_table(["exp54_searchlog_extra_v2.json"], "Search log (SemBenchmarkSearchQueries, 5 evaluation windows)")
+L += pw_table(["exp54_searchlog_extra_v2.json", "exp37_causal_reusegate_cpu_rot1_extra.json", "exp37_causal_reusegate_cpu_rot2_extra.json"],
+              "Search log (SemBenchmarkSearchQueries, 15 evaluation windows over three block rotations)",
+              "Rotation 0 is `exp54_searchlog_extra_v2.json`; rotations 1 and 2 are the Colab reruns with the same protocol. ReuseGate comes from the same runs as the baselines "
+              "(it differs from the Modal-run numbers of the main tables by up to about 0.05 points because of cross-machine nondeterminism of the learned model).")
 L += pw_table(["exp54_lmarena_rot0_extra.json", "exp54_lmarena_rot1_extra.json", "exp54_lmarena_rot2_extra.json"],
-              "LmArena prompts (3 rotations, 9 evaluation windows)", "The reference-constants port was not run on LmArena, so only the first reimplementation appears.")
+              "LmArena prompts (3 rotations, 9 evaluation windows)",
+              "ReuseGate, ReuseGate-R, W-TinyLFU and the reference-constants SOLAR port come from the reruns `exp37_causal_reusegate_cpu_lmarena_rot{0,1,2}_solaro.json` "
+              "(same protocol, same windows); the other policies come from `exp54_lmarena_rot{0,1,2}_extra.json`.",
+              over=["exp37_causal_reusegate_cpu_lmarena_rot0_solaro.json", "exp37_causal_reusegate_cpu_lmarena_rot1_solaro.json", "exp37_causal_reusegate_cpu_lmarena_rot2_solaro.json"])
 
 L += ["## 5. How the first SOLAR reimplementation differed from the authors' code", "",
       "| element | authors' code | first reimplementation (round 2c cache streams) |", "|---|---|---|",

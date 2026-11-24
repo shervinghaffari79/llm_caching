@@ -54,7 +54,16 @@ out = ["# Round 2c: ReuseGate against further replacement and admission policies
        "Score = correct-hit % minus lambda x false-hit %, mean over cache capacities, per evaluation window.", ""]
 for spec in sys.argv[2:]:
     label, files = spec.split("=", 1)
-    pw = load(files.split(","))
+    # "<label>=<primary files>|<override files>": families present in the override files (e.g. the LmArena SOLARo reruns, which also
+    # recompute ReuseGate, ReuseGate-R and W-TinyLFU) replace those of the primary files, so a delta is always paired with a ReuseGate from the same run.
+    primary, _, over = files.partition("|")
+    pw = load(primary.split(","))
+    if over:
+        ov = load(over.split(","))
+        for lam_, fams_ in ov.items():
+            for fam_, v_ in fams_.items():
+                assert len(v_) == len(pw[lam_].get(fam_, v_)), (fam_, len(v_), len(pw[lam_].get(fam_, v_)))
+                pw[lam_][fam_] = v_
     n = len(pw["0"]["LRU"])
     base = [f for f in pw["0"] if not f.startswith("Learned")]
     out += [f"## {label} ({n} evaluation windows)", "", "### Mean score per policy", "",
