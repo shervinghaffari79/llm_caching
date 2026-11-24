@@ -69,6 +69,7 @@ RADIUS_OFFSETS = (0.0, 0.05)
 EXACT = 0.9999
 REFS = ("LRU", "LFU", "SphereLFU", "LeCaR", "SemanticDecay_fixed", "SemanticDecay_tuned")
 HALF, RECOVERY, SAMPLE_EVERY = 1000, 200, 50
+CKPTS = (1000, 2500, 5000, 10000)
 
 
 def specs() -> list[dict]:
@@ -115,10 +116,23 @@ def run_one(wl, meta, cap: int, policy, key: str, seed: int, **kw) -> dict:
     backend = LLMBackend(mode="sim", pool=AnswerPool(), virtual_time=True, seed=seed)
     stats, timer = StreamStats(), StageTimer()
     red, corr, fals = [], [], []
+    admitted = misses = 0                       # newcomers kept after the eviction step / all misses
+    adm_full = miss_full = 0                    # the same, counted only for misses that arrive at a full cache
+    ckpt: dict = {}                             # cumulative counts at request checkpoints (cold start from an empty cache)
     for i, ev in enumerate(wl.events):
+        was_full = len(cache.cachebase) >= cap
         rec = cache.handle(ev.query, ev.topic_id, backend, stats, timer)
         corr.append(bool(rec["hit"] and rec["correct"]))
         fals.append(bool(rec["hit"] and not rec["correct"]))
+        if not rec["hit"]:
+            misses += 1
+            kept = int(cache.cachebase.get(cache._next_id - 1) is not None)
+            admitted += kept
+            if was_full:
+                miss_full += 1
+                adm_full += kept
+        if (i + 1) in CKPTS:
+            ckpt[str(i + 1)] = {"correct": int(sum(corr)), "false": int(sum(fals)), "admitted": admitted}
         size = len(cache.cachebase)
         if size >= cap and i % SAMPLE_EVERY == 0:
             red.append(len(cache.live_topics) / size)
@@ -128,7 +142,11 @@ def run_one(wl, meta, cap: int, policy, key: str, seed: int, **kw) -> dict:
     out = {"hit_ratio_pct": s["hit_ratio_pct"], "correct_hit_ratio_pct": c, "false_hit_rate_pct": f,
            "precision_of_hits_pct": s["precision_of_hits_pct"], "net_hit_ratio_pct": c - f,
            "evictions": s["evictions"], "cache_size_end": len(cache.cachebase),
-           "distinct_groups_per_slot": float(np.mean(red)) if red else None}
+           "distinct_groups_per_slot": float(np.mean(red)) if red else None,
+           "admitted": admitted, "misses": misses, "admitted_per_1000_requests": 1000.0 * admitted / n,
+           "admitted_full": adm_full, "misses_full": miss_full,
+           "admitted_per_1000_requests_full": 1000.0 * adm_full / n,
+           "ckpt": ckpt}
     if wl.meta.get("kind") == "shift":
         out.update({"second_half_correct_pct": 100.0 * float(np.mean(corr[HALF:])),
                     "recovery_correct_pct": 100.0 * float(np.mean(corr[HALF:HALF + RECOVERY])),

@@ -74,7 +74,8 @@ def tune_specs() -> list[dict]:
     return out + [{"kind": k} for k in ("LRU", "LFU", "SphereLFU", "LeCaR")]
 
 
-EXTRA_KINDS = ("FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "DynamicAdaptiveClimb", "SOLAR-E", "SOLAR-A", "SOLAR", "SOLARo-E", "SOLARo-A", "SOLARo")
+EXTRA_KINDS = ("FIFO", "ARC", "S3FIFO", "SIEVE", "GDSF", "DynamicAdaptiveClimb", "SOLAR-E", "SOLAR-A", "SOLAR", "SOLARo-E", "SOLARo-A", "SOLARo",
+               "SOLARv2-E", "SOLARv2-A", "SOLARv2")
 
 
 def build(spec: dict, cap: int, data: str, seed: int):
@@ -107,6 +108,9 @@ def build(spec: dict, cap: int, data: str, seed: int):
             return GDSFPolicy()
         if k == "DynamicAdaptiveClimb":
             return DACPolicy(cap)
+        if k.startswith("SOLARv2"):        # the port verified decision for decision against the authors' code (exp56)
+            from ..authors_solar import SolarPortV2
+            return SolarPortV2(cap, {"SOLARv2-E": "E", "SOLARv2-A": "A", "SOLARv2": "full"}[k], seed=seed)
         if k.startswith("SOLARo"):
             return SolarOfficialPolicy(cap, {"SOLARo-E": "E", "SOLARo-A": "A", "SOLARo": "full"}[k], seed=seed)
         lam, gam = SOLAR_VARIANTS[int(spec.get("variant") or 0)]

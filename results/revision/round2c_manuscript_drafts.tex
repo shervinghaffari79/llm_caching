@@ -1,0 +1,65 @@
+% DRAFT, not pushed. Replacement text for the red blocks of Manuscript-2026-11-21-WithoutAuthorsDetails.tex.
+% Every block gives its anchor (the red text it replaces). Tokens of the form [[SL ...]] wait for the search-log runs of the
+% verified SOLAR port on all three block rotations (Modal, tag _adm) and are filled from results, never by hand.
+% Numbers: LmArena = 9 evaluation windows, three block rotations, capacities 250-2,000; LoCoMo = 30 session-seed runs.
+
+% =====================================================================================================
+% RED 1  (Introduction, end of the paragraph "To address these limitations ...")
+% Replace the red clause "a learned admission policy, ReuseGate, ... leakage controls on four corpora;"
+% =====================================================================================================
+a learned admission policy, ReuseGate, driven by cheap features available at arrival and evaluated with leakage controls on four corpora against classical and recent replacement policies, among them the regret-gated admission of SOLAR.
+
+% =====================================================================================================
+% RED 2  (Related work, last sentences of the paragraph that ends "... through labeled correct and false matches.")
+% Replace the red sentence "Section~\ref{subsec:admission_baselines} defines these admission rules ... matched cold start."
+% =====================================================================================================
+Section~\ref{subsec:admission_baselines} describes the replacement and admission policies that serve as baselines on a shared substrate, and Section~\ref{subsec:admission_baselines_results} compares ReuseGate with them on the search-query log and on SemBenchmarkLmArena, and with SOLAR in the setting of its own code.
+
+% =====================================================================================================
+% RED 3-4  (Section "Admission Baselines", whole subsection incl. the closing paragraph; keep the label)
+% =====================================================================================================
+\subsection{Admission Baselines}\label{subsec:admission_baselines}
+ReuseGate is compared with replacement and admission policies on the cache of Section~\ref{subsec:baseline_comparison}, with the same bi-encoder, exact FAISS index, streams, answers and batch size, so that the policies differ only in the decision about which entries stay. Open admission inserts every miss; LRU, FIFO, ARC, S3-FIFO, SIEVE, GDSF and DynamicAdaptiveClimb are reimplemented from their published descriptions, with the resizing of DynamicAdaptiveClimb disabled so that every policy holds the same number of entries. W-TinyLFU admits the entry that leaves a small window only if its count (exact in this paper) exceeds that of the victim of the main segment.
+\begin{itemize}
+\item \textbf{SOLAR} \citep{sun2026solar} stores an entry when the accumulated regret of the requests exceeds an adaptive threshold, and chooses victims by Thompson sampling over per-entry Beta posteriors. SOLAR-A uses the admission gate with a recency, frequency and diversity eviction score, and SOLAR-E uses Thompson-sampling eviction with open admission. The authors' agent computes regret from a graded feedback score of the answer; a response cache has no such score, so the regret of a request is 1 for a miss and 1 minus the cosine similarity of the served entry for a hit. All other constants are those of the authors' code (public repository, Apache-2.0 licence, commit 8d01e93), and the implementation follows its control flow call for call. Run beside the authors' unmodified agents on the same requests, it serves, inserts and evicts identically in every one of 5,000 requests in each of two search-log windows, for SOLAR and SOLAR-A at capacities 250 and 1,000 and for SOLAR-E at 250, and in 3,000 requests of SOLAR-E at 1,000.
+\item \textbf{ReuseGate} (Section~\ref{subsubsec:learned_admission}) and its labeled variant \textbf{ReuseGate-R}.
+\end{itemize}
+The policies choose their own admission rate, which Table~\ref{tab:admission_matched} reports as the share of misses that are inserted once the cache is full. Every threshold is selected on tuning windows that precede the evaluation windows (Section~\ref{subsubsec:leakage_controls}). ReuseGate reads reference traffic of 50,000 requests on the search log and 21,265 on LmArena; SOLAR learns online, and its gate starts empty in every window. SOLAR is also run unmodified on LoCoMo, the setting of its authors, where ReuseGate is applied as a feedback-free demand rule (Section~\ref{subsec:admission_baselines_results}).
+\\
+Against its closest prior art, ReuseGate differs from SOLAR in the signal and the learner: SOLAR gates admission by the accumulated regret of served answers, whereas ReuseGate predicts from features available at arrival whether a later request falls within the serving threshold, with a supervised classifier trained on reuse outcomes that the request log of the same workload reveals.
+% NOTE for the authors (not manuscript text): SCALM, RAC, SISO and the bandit policies of Liu et al. and Atalar et al. are not run;
+% they stay in Section 2 and Table~\ref{tab:related_work}. Limitations wording for this is proposed in the notes, not here.
+
+% =====================================================================================================
+% RED 10  (results subsection; keep the label subsec:admission_baselines_results; replaces text and all three tables)
+% =====================================================================================================
+\subsection{ReuseGate against SOLAR and Further Replacement Policies}
+\label{subsec:admission_baselines_results}
+Table~\ref{tab:admission_matched} reports, for each policy at the threshold chosen for $\lambda=1$, the share of misses it inserts once the cache is full, the correct-hit ratio, the false-hit rate, the precision of served hits and the break-even price $\lambda^{*}$, the false-hit price at which the policy's score falls to zero. The policies admit very different shares. Open admission, FIFO and SOLAR-E insert every miss, SOLAR and SOLAR-A insert [[SL admission share]] of them on the search log and 0.22 on LmArena, ReuseGate 0.41 on LmArena [[SL]] and ReuseGate-R 0.35 [[SL]].
+\\
+On LmArena, ReuseGate serves 19.49\% of requests correctly against 15.81\% for SOLAR, 15.55\% for SOLAR-A and 15.53\% for SOLAR-E, at the same precision of served hits (82.4\% against 82.2--82.8\%). Its score exceeds that of SOLAR-A by 3.94, 3.05 and 2.16 points at $\lambda=0$, 1 and 2 (nine windows, Holm $p<0.001$); at $\lambda=5$ the difference is $-0.21$ points (95\% interval $-0.70$ to $+0.28$, Holm $p=0.40$), and at $\lambda=10$ SOLAR-A is ahead by 2.76 points (Holm $p<0.001$). Against SOLAR the differences are $+3.69$, $+2.82$, $+1.95$, $-0.50$ ($p=0.22$) and $-3.02$, and against SOLAR-E $+3.96$, $+3.16$, $+2.37$, $-0.32$ ($p=0.40$) and $-2.46$. ReuseGate-R, which prices false hits with earlier labels, exceeds SOLAR, SOLAR-A and SOLAR-E at every $\lambda$, by 3.96 to 21.76 points (Holm $p<0.001$). [[SL search-log paragraph: ReuseGate and ReuseGate-R minus SOLAR, SOLAR-A, SOLAR-E at lambda 0, 1, 2, 5, 10 over the 15 windows, Holm p]]
+\\
+[[SL verify]] SOLAR, SOLAR-A and SOLAR-E stay within 1.3 points of W-TinyLFU, ARC and SIEVE at every $\lambda\le2$ on both corpora (Table~\ref{tab:learned_admission}, Table~\ref{tab:reusegate_domains} and Table~\ref{tab:extra_baselines} in the appendix). Table~\ref{tab:cold_start} gives the cumulative correct-hit ratio and the precision after the first 1,000, 2,500, 5,000 and 10,000 requests of an evaluation window from an empty cache. On LmArena ReuseGate is ahead of open admission after 1,000 requests (7.93\% against 7.48\%) and its lead grows to 2.75 points at 5,000, at a precision (82.2\%) within 1.4 points of open admission (83.6\%); the curves of SOLAR stay within 0.15 points of those of open admission. [[SL cold-start sentence]]
+
+\begin{table*}[htbp]
+\centering
+\caption{Admission rate and hit quality at the threshold selected for $\lambda=1$. Adm.: share of misses inserted once the cache is full; Correct and FHR: correct-hit ratio and false-hit rate (\% of requests); Prec.: precision of served hits (\%); $\lambda^{*}$: correct-hit ratio divided by false-hit rate. Mean over capacities 250--4,000 (search log) and 250--2,000 (LmArena) and over the evaluation windows (15 for the search log, 9 for LmArena). Open admission is LRU; the frequency sketch of W-TinyLFU decides on admission and eviction jointly, so it has no separate admission rate.}
+\label{tab:admission_matched}
+\resizebox{\textwidth}{!}{%
+% [[SL: insert tab_admission.tex here (search log and LmArena panels)]]
+}
+\end{table*}
+
+\begin{table*}[htbp]
+\centering
+\caption{Cold start from an empty cache: cumulative correct-hit ratio (\%) / precision of served hits (\%) after the first 1,000, 2,500, 5,000 and 10,000 requests of an evaluation window (the LmArena windows hold 7,088 requests), at the threshold selected for $\lambda=1$, mean over capacities and evaluation windows.}
+\label{tab:cold_start}
+\resizebox{\textwidth}{!}{%
+% [[SL: insert tab_coldstart.tex here]]
+}
+\end{table*}
+
+% ---- SOLAR's own setting (paragraph at the end of the subsection) ----
+SOLAR was also run in the setting it was built for. The authors' code, unmodified, manages an experience buffer of $K=10$ entries for an agent on LoCoMo (ten sessions, three seeds, 30 session-seed runs per policy, token F1 of the held-out questions, the authors' like and dislike feedback), with Qwen3-4B as the agent model. FIFO reaches an F1 of 0.249. SOLAR, SOLAR-A and SOLAR-E reach 0.278, 0.269 and 0.267, which exceeds FIFO by 0.029 (95\% interval 0.014 to 0.043), 0.020 (0.010 to 0.030) and 0.019 (0.005 to 0.032), paired over runs; LRU, ARC and LFU do not differ from FIFO. ReuseGate (demand rule), a score that counts earlier questions within a cosine radius of 0.6 of an entry's question and admits a newcomer only if its count exceeds the lowest resident score, uses neither feedback nor labels and reaches 0.261, which differs from FIFO by $+0.012$ ($-0.001$ to $+0.026$) and from SOLAR by $-0.016$ ($-0.030$ to $-0.003$); it does not differ from SOLAR-A ($-0.008$, $-0.021$ to $+0.005$) or SOLAR-E ($-0.006$, $-0.020$ to $+0.008$). A learned ReuseGate cannot be fitted there, since each session offers about 160 warm-up examples.
+\\
+On the four LLM-free workloads shipped with the SOLAR repository (authors' code unmodified; three seeds, and ten seeds for the comparisons with FIFO and SOLAR-A), ReuseGate (demand rule) keeps a stable subset when the cache is smaller than a cyclic scan: with a scan of 20 items and 10 slots it reaches a hit rate of 0.45 against 0.40 for SOLAR-A and SOLAR and 0.08 for LRU. It trails SOLAR-A on small caches with uniform popularity, by 0.08 to 0.13 at 10 to 20 slots with the radius of 0.8 selected on separate tuning seeds, and it trails FIFO and SOLAR-A when the topic changes every 100 steps. Table~\ref{tab:solar_synthetic} in the appendix lists the hit rates of all policies.

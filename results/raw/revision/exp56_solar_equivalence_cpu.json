@@ -1,0 +1,1138 @@
+{
+  "manifest": {
+    "hardware": {
+      "device": "cpu",
+      "torch_threads": 32,
+      "cpu": "x86_64",
+      "platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "torch_version": "2.8.0+cu128",
+      "host_cpu": "unknown",
+      "host_cpu_count": 48
+    },
+    "seed": 42,
+    "bi_encoder": "sentence-transformers/all-mpnet-base-v2",
+    "cross_encoder": "cross-encoder/stsb-roberta-large",
+    "meta_infer_threads": 1,
+    "windows": [
+      100000,
+      110000
+    ],
+    "caps": [
+      250,
+      1000
+    ],
+    "n": 5000,
+    "modes": [
+      "full",
+      "A",
+      "E"
+    ]
+  },
+  "runs": [
+    {
+      "task": {
+        "start": 100000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "full"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 38,
+          "misses": 4962,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.33999999999999997,
+          "false_hit_rate_pct": 0.42,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 47,
+          "misses": 4953,
+          "stores": 1046,
+          "evictions_of_old_entries": 796,
+          "correct_hit_ratio_pct": 0.6799999999999999,
+          "false_hit_rate_pct": 0.26,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 38,
+          "misses": 4962,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.33999999999999997,
+          "false_hit_rate_pct": 0.42,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 256,
+          "detail": {
+            "a": [
+              [
+                null,
+                254,
+                [
+                  254
+                ]
+              ],
+              [
+                null,
+                255,
+                [
+                  209
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                254,
+                [
+                  254
+                ]
+              ],
+              [
+                null,
+                255,
+                [
+                  65
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1321,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 100000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "A"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 48,
+          "misses": 4952,
+          "stores": 1045,
+          "evictions_of_old_entries": 795,
+          "correct_hit_ratio_pct": 0.5,
+          "false_hit_rate_pct": 0.45999999999999996,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 43,
+          "misses": 4957,
+          "stores": 1044,
+          "evictions_of_old_entries": 794,
+          "correct_hit_ratio_pct": 0.48,
+          "false_hit_rate_pct": 0.38,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 48,
+          "misses": 4952,
+          "stores": 1045,
+          "evictions_of_old_entries": 795,
+          "correct_hit_ratio_pct": 0.5,
+          "false_hit_rate_pct": 0.45999999999999996,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 256,
+          "detail": {
+            "a": [
+              [
+                null,
+                254,
+                [
+                  254
+                ]
+              ],
+              [
+                null,
+                255,
+                [
+                  198
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                254,
+                [
+                  254
+                ]
+              ],
+              [
+                null,
+                255,
+                [
+                  1
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 915,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 100000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "E"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 50,
+          "misses": 4950,
+          "stores": 4950,
+          "evictions_of_old_entries": 4700,
+          "correct_hit_ratio_pct": 0.42,
+          "false_hit_rate_pct": 0.58,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 46,
+          "misses": 4954,
+          "stores": 4954,
+          "evictions_of_old_entries": 4704,
+          "correct_hit_ratio_pct": 0.64,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 50,
+          "misses": 4950,
+          "stores": 4950,
+          "evictions_of_old_entries": 4700,
+          "correct_hit_ratio_pct": 0.42,
+          "false_hit_rate_pct": 0.58,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 251,
+          "detail": {
+            "a": [
+              [
+                null,
+                249,
+                []
+              ],
+              [
+                null,
+                250,
+                [
+                  209
+                ]
+              ],
+              [
+                null,
+                251,
+                [
+                  169
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                249,
+                []
+              ],
+              [
+                null,
+                250,
+                [
+                  65
+                ]
+              ],
+              [
+                null,
+                251,
+                [
+                  87
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 256,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 100000,
+        "n": 5000,
+        "cap": 1000,
+        "mode": "full"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 156,
+          "misses": 4844,
+          "stores": 1687,
+          "evictions_of_old_entries": 687,
+          "correct_hit_ratio_pct": 1.8800000000000001,
+          "false_hit_rate_pct": 1.24,
+          "cache_size_end": 1000
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 152,
+          "misses": 4848,
+          "stores": 1686,
+          "evictions_of_old_entries": 686,
+          "correct_hit_ratio_pct": 1.94,
+          "false_hit_rate_pct": 1.0999999999999999,
+          "cache_size_end": 1000
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 156,
+          "misses": 4844,
+          "stores": 1687,
+          "evictions_of_old_entries": 687,
+          "correct_hit_ratio_pct": 1.8800000000000001,
+          "false_hit_rate_pct": 1.24,
+          "cache_size_end": 1000
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 1014,
+          "detail": {
+            "a": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  948
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  1001
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  309
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  1001
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1704,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 100000,
+        "n": 5000,
+        "cap": 1000,
+        "mode": "A"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 152,
+          "misses": 4848,
+          "stores": 1687,
+          "evictions_of_old_entries": 687,
+          "correct_hit_ratio_pct": 1.92,
+          "false_hit_rate_pct": 1.1199999999999999,
+          "cache_size_end": 1000
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 127,
+          "misses": 4873,
+          "stores": 1679,
+          "evictions_of_old_entries": 679,
+          "correct_hit_ratio_pct": 1.48,
+          "false_hit_rate_pct": 1.06,
+          "cache_size_end": 1000
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 152,
+          "misses": 4848,
+          "stores": 1687,
+          "evictions_of_old_entries": 687,
+          "correct_hit_ratio_pct": 1.92,
+          "false_hit_rate_pct": 1.1199999999999999,
+          "cache_size_end": 1000
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 1014,
+          "detail": {
+            "a": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  437
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  1001
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  120
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  1001
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1249,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 110000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "full"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 39,
+          "misses": 4961,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.5,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 38,
+          "misses": 4962,
+          "stores": 1043,
+          "evictions_of_old_entries": 793,
+          "correct_hit_ratio_pct": 0.44,
+          "false_hit_rate_pct": 0.32,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 39,
+          "misses": 4961,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.5,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 257,
+          "detail": {
+            "a": [
+              [
+                183,
+                null,
+                []
+              ],
+              [
+                null,
+                255,
+                [
+                  191
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ],
+            "b": [
+              [
+                183,
+                null,
+                []
+              ],
+              [
+                null,
+                255,
+                [
+                  65
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1697,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 110000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "A"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 36,
+          "misses": 4964,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.44,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 36,
+          "misses": 4964,
+          "stores": 1043,
+          "evictions_of_old_entries": 793,
+          "correct_hit_ratio_pct": 0.5,
+          "false_hit_rate_pct": 0.22,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 36,
+          "misses": 4964,
+          "stores": 1042,
+          "evictions_of_old_entries": 792,
+          "correct_hit_ratio_pct": 0.44,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 257,
+          "detail": {
+            "a": [
+              [
+                183,
+                null,
+                []
+              ],
+              [
+                null,
+                255,
+                [
+                  129
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ],
+            "b": [
+              [
+                183,
+                null,
+                []
+              ],
+              [
+                null,
+                255,
+                [
+                  1
+                ]
+              ],
+              [
+                null,
+                256,
+                [
+                  256
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 880,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 110000,
+        "n": 5000,
+        "cap": 250,
+        "mode": "E"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 44,
+          "misses": 4956,
+          "stores": 4956,
+          "evictions_of_old_entries": 4706,
+          "correct_hit_ratio_pct": 0.6,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 53,
+          "misses": 4947,
+          "stores": 4947,
+          "evictions_of_old_entries": 4697,
+          "correct_hit_ratio_pct": 0.6,
+          "false_hit_rate_pct": 0.45999999999999996,
+          "cache_size_end": 250
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 44,
+          "misses": 4956,
+          "stores": 4956,
+          "evictions_of_old_entries": 4706,
+          "correct_hit_ratio_pct": 0.6,
+          "false_hit_rate_pct": 0.27999999999999997,
+          "cache_size_end": 250
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 251,
+          "detail": {
+            "a": [
+              [
+                null,
+                249,
+                []
+              ],
+              [
+                null,
+                250,
+                [
+                  224
+                ]
+              ],
+              [
+                null,
+                251,
+                [
+                  214
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                249,
+                []
+              ],
+              [
+                null,
+                250,
+                [
+                  65
+                ]
+              ],
+              [
+                null,
+                251,
+                [
+                  87
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 254,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 110000,
+        "n": 5000,
+        "cap": 1000,
+        "mode": "full"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 154,
+          "misses": 4846,
+          "stores": 1685,
+          "evictions_of_old_entries": 685,
+          "correct_hit_ratio_pct": 1.8399999999999999,
+          "false_hit_rate_pct": 1.24,
+          "cache_size_end": 1000
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 152,
+          "misses": 4848,
+          "stores": 1682,
+          "evictions_of_old_entries": 682,
+          "correct_hit_ratio_pct": 2.0,
+          "false_hit_rate_pct": 1.04,
+          "cache_size_end": 1000
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 154,
+          "misses": 4846,
+          "stores": 1685,
+          "evictions_of_old_entries": 685,
+          "correct_hit_ratio_pct": 1.8399999999999999,
+          "false_hit_rate_pct": 1.24,
+          "cache_size_end": 1000
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 1020,
+          "detail": {
+            "a": [
+              [
+                null,
+                1000,
+                [
+                  1000
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  652
+                ]
+              ],
+              [
+                null,
+                1002,
+                [
+                  1002
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                1000,
+                [
+                  1000
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  309
+                ]
+              ],
+              [
+                null,
+                1002,
+                [
+                  1002
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1646,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 110000,
+        "n": 5000,
+        "cap": 1000,
+        "mode": "A"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 5000,
+          "hits": 151,
+          "misses": 4849,
+          "stores": 1681,
+          "evictions_of_old_entries": 681,
+          "correct_hit_ratio_pct": 1.8800000000000001,
+          "false_hit_rate_pct": 1.1400000000000001,
+          "cache_size_end": 1000
+        },
+        "v1": {
+          "requests": 5000,
+          "hits": 128,
+          "misses": 4872,
+          "stores": 1678,
+          "evictions_of_old_entries": 678,
+          "correct_hit_ratio_pct": 1.54,
+          "false_hit_rate_pct": 1.02,
+          "cache_size_end": 1000
+        },
+        "v2": {
+          "requests": 5000,
+          "hits": 151,
+          "misses": 4849,
+          "stores": 1681,
+          "evictions_of_old_entries": 681,
+          "correct_hit_ratio_pct": 1.8800000000000001,
+          "false_hit_rate_pct": 1.1400000000000001,
+          "cache_size_end": 1000
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 1020,
+          "detail": {
+            "a": [
+              [
+                null,
+                1000,
+                [
+                  1000
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  98
+                ]
+              ],
+              [
+                null,
+                1002,
+                [
+                  1002
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                1000,
+                [
+                  1000
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  133
+                ]
+              ],
+              [
+                null,
+                1002,
+                [
+                  1002
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1330,
+          "requests_compared": 5000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 5000,
+          "requests_compared": 5000,
+          "identical_logs": true
+        }
+      }
+    },
+    {
+      "task": {
+        "start": 100000,
+        "n": 3000,
+        "cap": 1000,
+        "mode": "E"
+      },
+      "kinds": {
+        "authors": {
+          "requests": 3000,
+          "hits": 83,
+          "misses": 2917,
+          "stores": 2917,
+          "evictions_of_old_entries": 1917,
+          "correct_hit_ratio_pct": 1.7999999999999998,
+          "false_hit_rate_pct": 0.9666666666666667,
+          "cache_size_end": 1000
+        },
+        "v1": {
+          "requests": 3000,
+          "hits": 78,
+          "misses": 2922,
+          "stores": 2922,
+          "evictions_of_old_entries": 1922,
+          "correct_hit_ratio_pct": 1.7333333333333332,
+          "false_hit_rate_pct": 0.8666666666666666,
+          "cache_size_end": 1000
+        },
+        "v2": {
+          "requests": 3000,
+          "hits": 83,
+          "misses": 2917,
+          "stores": 2917,
+          "evictions_of_old_entries": 1917,
+          "correct_hit_ratio_pct": 1.7999999999999998,
+          "false_hit_rate_pct": 0.9666666666666667,
+          "cache_size_end": 1000
+        }
+      },
+      "pairs": {
+        "authors_vs_v1": {
+          "first_divergence_request": 1014,
+          "detail": {
+            "a": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  948
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  895
+                ]
+              ]
+            ],
+            "b": [
+              [
+                null,
+                999,
+                []
+              ],
+              [
+                null,
+                1000,
+                [
+                  309
+                ]
+              ],
+              [
+                null,
+                1001,
+                [
+                  556
+                ]
+              ]
+            ]
+          },
+          "identical_requests": 1038,
+          "requests_compared": 3000,
+          "identical_logs": false
+        },
+        "authors_vs_v2": {
+          "first_divergence_request": null,
+          "detail": null,
+          "identical_requests": 3000,
+          "requests_compared": 3000,
+          "identical_logs": true
+        }
+      }
+    }
+  ]
+}
