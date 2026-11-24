@@ -90,3 +90,9 @@ Reported: mean hit rate, and for every pair (policy minus FIFO, policy minus SOL
 
 Reason: a reviewer can ask why the port with the authors' constants (SOLARo-E, SOLARo-A, SOLARo) appears on the search log but only the first reimplementation on LmArena; the asymmetry looks selective. It was a compute limit, not a choice. The three SOLARo families are now run on all three LmArena rotations with the unchanged exp47 protocol
 (`--only-families WTinyLFU,SOLARo-E,SOLARo-A,SOLARo --with-group --ref-max-only`, W-TinyLFU included because the experiment's primary tests are defined against it and it serves as a reproduction check; same layout, caps, tau grid, tuning rule, seed). ReuseGate and ReuseGate-R are recomputed in the same run and must reproduce the earlier numbers; the paired comparison ReuseGate minus SOLARo-A uses windows from this run. Nothing is filtered after the result; all three rotations are reported pooled (9 windows) and per rotation.
+
+### Results notes (24 Nov 2026)
+
+* Stage D2: paper-table comparison 66 of 66 cells match; radius chosen on tuning seeds 101-103 = 0.8; 10-seed results in `docs/RESULTS_round2c_solar_synthetic.md` and `docs/RESULTS_round2c_solar_synthetic_d2_tables.md`.
+* Stage D3: the reference-constants SOLAR port was run on all three LmArena rotations as pre-registered. W-TinyLFU reproduced the earlier run exactly; ReuseGate and ReuseGate-R reproduced within about 0.1 points (cross-machine nondeterminism of the learned model). Results: `docs/RESULTS_round2c_extra_baselines.md`, `docs/RESULTS_round2c_solar_comparison.md`.
+* Search-log rotations 1 and 2 were rerun with the extra baselines on Colab CPU so that the search-log table pools 15 windows like the manuscript; W-TinyLFU, LRU and LFU match the earlier Modal runs exactly, ReuseGate within about 0.05 points. Pooled table: `docs/RESULTS_round2c_extra_baselines.md`; Table 31 rows: `results/revision/table31_extended.tex` (`scripts/build_table31_extended.py`).

@@ -170,7 +170,7 @@ L += ["## 6. Limitations to state", "",
       "* Qwen3-4B stands in for GPT-4o-mini; only K = 10 on LoCoMo is complete; DialSim, K = 20/50/100 and the Qwen3.8-27B rerun were not obtained.",
       "* The label-free ReuseGate in SOLAR's setting is a simple demand rule, not the learned model.",
       "* SOLAR in the cache streams is an adaptation (no graded feedback score); its constants are the authors' except the regret signal.",
-      "* TripClick was not rerun with SOLAR (needs a data token); LmArena was not rerun with the reference-constants port.",
+      "* TripClick was not rerun with SOLAR (needs a data token). The reference-constants port was run on the search log and on LmArena (three rotations each); the search-log and LmArena ReuseGate numbers in these tables come from Colab reruns and differ from the Modal-run main tables by up to about 0.1 points.",
       "* AUTO and SCION themselves are not reproducible without their offline training traces; a best-in-hindsight bound over the implementable portfolio members is reported instead (`docs/RESULTS_round2c_extra_baselines.md`).", ""]
 open("docs/RESULTS_round2c_solar_comparison.md", "w").write("\n".join(L) + "\n")
 print("\n".join(L[:75]))
