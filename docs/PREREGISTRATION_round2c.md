@@ -85,3 +85,8 @@ Expectation stated in advance: the working-set deficit shrinks; the topic-drift 
 
 **(3) More seeds.** Evaluation seeds 42, 1337, 2024 (as before) plus 7, 11, 13, 17, 19, 23, 29: 10 seeds. All ten methods at the default radius 0.5 (D4-default) and `reusegate`, `reusegate_e` at the tuned radius (D4-tuned), over cycling, topic drift (6 configurations) and working set (uniform and Zipf). The retrieval-noise stream is not repeated (3 seeds showed no separation and it is the slowest run).
 Reported: mean hit rate, and for every pair (policy minus FIFO, policy minus SOLAR-A) the mean paired-by-seed gap with a 95% t-interval (10 seeds); a gap is called a difference only when the interval excludes 0. No multiple-comparison correction is applied to this descriptive table; it is stated as such.
+
+### Stage D3 (24 Nov 2026, written before the run): the reference-constants SOLAR port on LmArena
+
+Reason: a reviewer can ask why the port with the authors' constants (SOLARo-E, SOLARo-A, SOLARo) appears on the search log but only the first reimplementation on LmArena; the asymmetry looks selective. It was a compute limit, not a choice. The three SOLARo families are now run on all three LmArena rotations with the unchanged exp47 protocol
+(`--only-families SOLARo-E,SOLARo-A,SOLARo --with-group --ref-max-only`, same layout, caps, tau grid, tuning rule, seed). ReuseGate and ReuseGate-R are recomputed in the same run and must reproduce the earlier numbers; the paired comparison ReuseGate minus SOLARo-A uses windows from this run. Nothing is filtered after the result; all three rotations are reported pooled (9 windows) and per rotation.
